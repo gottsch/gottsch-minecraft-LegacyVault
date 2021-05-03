@@ -8,28 +8,28 @@ loaderVersion="[36,)" #mandatory (32 is current forge version)
 license="GNU GPLv3"
 
 # A URL to refer people to when problems occur with this mod
-issueTrackerURL="https://github.com/gottsch/gottsch-minecraft-Treasure/issues" #optional
+issueTrackerURL="https://github.com/gottsch/gottsch-minecraft-LegacyVault/issues" #optional
 
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 
 # The modid of the mod
-modId="treasure2" #mandatory
+modId="legacyvault" #mandatory
 
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="1.0.0" #mandatory
+version="0.0.1" #mandatory
 
  # A display name for the mod
-displayName="Treasure2" #mandatory
+displayName="Legacy Valut" #mandatory
 
 # A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="https://raw.githubusercontent.com/gottsch/gottsch-minecraft-Treasure/1.16.5-master/update.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/gottsch/gottsch-minecraft-InterWorld-Bank/1.16.5-master/update.json" #optional
 
 # A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://www.curseforge.com/minecraft/mc-mods/treasure2" #optional
+displayURL="https://www.curseforge.com/minecraft/mc-mods/legacyvault" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="treasure2-curseforge-logo.png" #optional
+logoFile="legacyvault-curseforge-logo.png" #optional
 
 # A text field displayed in the mod UI
 credits="Authored by gottsch" #optional
@@ -44,7 +44,7 @@ Base API for all my mods.
 '''
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.treasure2]] #optional
+[[dependencies.legacyvault]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -55,13 +55,13 @@ Base API for all my mods.
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
-[[dependencies.treasure2]]
+[[dependencies.legacyvault]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.16.5]"
     ordering="NONE"
     side="BOTH"
-    [[dependencies.treasure2]] #optional
+    [[dependencies.legacyvault]] #optional
     # the modid of the dependency
     modId="gottschcore" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified

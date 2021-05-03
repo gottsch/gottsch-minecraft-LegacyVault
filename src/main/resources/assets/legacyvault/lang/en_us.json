@@ -1,0 +1,11 @@
+{
+	"itemGroup.legacyvault":"Legacy Vault",
+
+	"item.legacyvault.vault":"Legacy Vault",
+	
+	"block.legacyvault.vault":"Legacy Vault",
+
+	"tooltip.label.rarity":"Rarity: %s",
+
+	"display.vault.name":"Legacy Vault"
+}

@@ -50,7 +50,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                treasure2 {
+                interworldbank {
                     source sourceSets.main
                 }
             }
@@ -66,7 +66,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                treasure2 {
+                interworldbank {
                     source sourceSets.main
                 }
             }
@@ -81,10 +81,10 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'treasure2', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'interworldbank', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                treasure2 {
+                interworldbank {
                     source sourceSets.main
                 }
             }
@@ -102,7 +102,10 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-    compile files('../../ModCommonLibs/libs/commons-cli-1.4.jar')
+    compile files('../ModCommonLibs/libs/commons-cli-1.4.jar')
+	compile files('../ModCommonLibs/libs/h2-1.4.187.jar')
+	compile files('../ModCommonLibs/libs/ormlite-core-5.0.jar')
+	compile files('../ModCommonLibs/libs/ormlite-jdbc-5.0.jar')
 	compile files(gottschcore_path)	
 	//shadow files(gottschcore_path)
 }
@@ -120,6 +123,18 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+    
+
+	// for PROD only
+	from (zipTree('../ModCommonLibs/libs/h2-1.4.187.jar')) {
+		exclude 'META-INF/**'
+	}
+	from (zipTree('../ModCommonLibs/libs/ormlite-core-5.0.jar')) {
+		exclude 'META-INF/**'
+	}
+	from (zipTree('../ModCommonLibs/libs/ormlite-jdbc-5.0.jar')) {
+		exclude 'META-INF/**'
+	}
 }
 
 // an array containing destination paths
