@@ -1,0 +1,21 @@
+
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	"  A",
+	" C ",
+	"   "
+  ],
+  "key": {
+    "A": {
+		"item": "legacyvault:vault_application"
+	},
+	"C": {
+		"item": "minecraft:chest"
+	}	
+  },
+  "result": {
+    "item": "legacyvault:vault",
+    "count": 1
+  }
+}
