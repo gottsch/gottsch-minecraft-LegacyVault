@@ -5,7 +5,7 @@ package com.someguyssoftware.legacyvault.block;
 
 import com.google.common.base.Preconditions;
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.config.LegacyVaultConfig;
+import com.someguyssoftware.legacyvault.config.Config;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -40,7 +40,7 @@ public class LegacyVaultBlocks {
 		 */
 		@SubscribeEvent
 		public static void registerBlocks(RegistryEvent.Register<Block> event) {
-			VAULT = new VaultBlock(LegacyVault.MODID, LegacyVaultConfig.BlockID.VAULT_ID, Block.Properties.of(Material.METAL, MaterialColor.WOOD).strength(2.5F));
+			VAULT = new VaultBlock(LegacyVault.MODID, Config.BlockID.VAULT_ID, Block.Properties.of(Material.METAL, MaterialColor.WOOD).strength(2.5F));
 			
 			final IForgeRegistry<Block> registry = event.getRegistry();
 			registry.register(VAULT);

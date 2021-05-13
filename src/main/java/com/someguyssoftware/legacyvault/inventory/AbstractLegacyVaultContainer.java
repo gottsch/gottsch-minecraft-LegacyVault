@@ -202,7 +202,7 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 				int slotNumber = /*CONTAINER_INVENTORY_FIRST_SLOT_INDEX +*/ (y * getContainerInventoryColumnCount()) + x;
 				int xpos = getContainerInventoryXPos() + x * getSlotXSpacing();
 				int ypos = getContainerInventoryYPos() + y * getSlotYSpacing();
-				addSlot(new Slot(this.legacyVaultInventory, slotNumber, xpos, ypos));
+				addSlot(new VaultSlot(this.legacyVaultInventory, slotNumber, xpos, ypos));
 			}
 		}
 	}

@@ -1,19 +1,13 @@
 package com.someguyssoftware.legacyvault.tileentity;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import javax.annotation.Nullable;
 
 import com.someguyssoftware.gottschcore.tileentity.AbstractModTileEntity;
+import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.block.VaultBlock;
-import com.someguyssoftware.legacyvault.db.DbManager;
-import com.someguyssoftware.legacyvault.db.entity.Account;
 import com.someguyssoftware.legacyvault.inventory.LegacyVaultContainers;
 import com.someguyssoftware.legacyvault.inventory.VaultContainer;
-import com.someguyssoftware.treasure2.Treasure;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -25,8 +19,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.IChestLid;
@@ -35,7 +27,10 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.INameable;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -49,6 +44,19 @@ public class VaultTileEntity extends AbstractModTileEntity implements IInventory
 
 	private String ownerUuid;
 
+	public float handleAngle;
+	public float prevHandleAngle;
+	
+	public float boltPosition = 0F;
+	public float prevBoltPosition = 0F;
+
+	public boolean isHandleOpen = false;
+	public boolean isHandleClosed = true;
+	public boolean isBoltOpen = false;
+	public boolean isBoltClosed = false;
+	public boolean isLidOpen = false;
+	public boolean isLidClosed = false;
+	
 	/*
 	 * Vanilla properties for controlling the lid
 	 */
@@ -110,7 +118,9 @@ public class VaultTileEntity extends AbstractModTileEntity implements IInventory
 		super.save(compound);
 		try {
 			compound.putInt("facing", getFacing().get3DDataValue());
-			compound.putString("ownerUuid", getOwnerUuid());
+			if (getOwnerUuid() !=null) {
+				compound.putString("ownerUuid", getOwnerUuid());
+			}
 		} catch (Exception e) {
 			LegacyVault.LOGGER.error("Error writing to NBT:", e);
 		}
@@ -135,6 +145,151 @@ public class VaultTileEntity extends AbstractModTileEntity implements IInventory
 		}
 	}
 
+	@Override
+	public void tick() {
+		updateOpenCount(++this.ticksSinceSync);
+		updateEntityState();
+	}
+
+	/**
+	 * NOTE initialize non-zero value of this.openCount is set in startOpen()
+	 * @param ticksSinceSync
+	 * @return
+	 */
+	public void updateOpenCount(int ticksSinceSync) {
+		int x = getBlockPos().getX();
+		int y = getBlockPos().getY();
+		int z = getBlockPos().getZ();
+		
+		if (WorldInfo.isServerSide(this.getLevel()) && this.openCount != 0
+				&& (this.ticksSinceSync + x + y + z) % 200 == 0) {
+			this.openCount = 0;
+			float radius = 5.0F;
+
+			for(PlayerEntity player : getLevel().getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB((double)((float)x - radius), (double)((float)y - radius), (double)((float)z - radius), 
+					(double)((float)(x + 1) + radius), (double)((float)(y + 1) + radius), (double)((float)(z + 1) + radius)))) {
+				if (player.containerMenu instanceof VaultContainer) {
+					IInventory inventory = ((VaultContainer)player.containerMenu).getContents();
+					if (inventory == this) {
+						++this.openCount;
+					}
+				}
+			}
+		}
+	}	
+	
+	/**
+	 * 
+	 */
+	public void updateEntityState() {
+
+		// save the previous positions and angles of vault components
+		this.prevLidAngle = this.lidAngle;
+		this.prevHandleAngle = this.handleAngle;
+		this.prevBoltPosition = this.boltPosition;
+
+		// opening ie. players
+		if (this.openCount > 0) {
+			// test the handle
+			if (this.handleAngle > -1.0F) {
+				isHandleOpen = false;
+				isHandleClosed = false;
+				
+				this.handleAngle -= 0.1F;
+				if (this.handleAngle <= -1.0F) {
+					this.handleAngle = -1.0F;
+					isHandleOpen = true;
+				}	
+			} else {
+				isHandleOpen = true;
+			}
+			
+			if (this.boltPosition > -2.0F) {
+				// NOTE doesn't require isBoltOpen test as it is in sync with handle (isHandleOpen)
+				this.boltPosition -= 0.2F;
+				if (this.boltPosition <= -2.0F) {
+					this.boltPosition = -2.0F;
+				}
+			}
+			
+			if (isHandleOpen) {
+				// play the opening chest sound the at the beginning of opening
+				if (this.lidAngle == 0.0F) {
+					this.playSound(SoundEvents.CHEST_OPEN);
+				}
+
+				// test the lid
+				if (this.lidAngle < 1.0F) {
+					isLidOpen = false;
+					isLidClosed = false;
+					this.lidAngle += 0.1F;
+					if (this.lidAngle >= 1.0F) {
+						this.lidAngle = 1.0F;
+						isLidOpen = true;
+					}
+				} else {
+					isLidOpen = true;
+				}
+			}
+		}
+
+		// closing ie no players
+		else {
+			float f2 = this.lidAngle;
+
+			if (this.lidAngle > 0.0F) {
+				isLidClosed = false;
+				isLidOpen = false;
+				
+				this.lidAngle -= 0.1F;
+				if (this.lidAngle <= 0.0F) {
+					this.lidAngle = 0.0F;
+					isLidClosed = true;
+				}
+			} else {
+				isLidClosed = true;
+			}
+
+			// play the closing sound
+			if (this.lidAngle < 0.06F && f2 >= 0.06F) {
+				this.playSound(SoundEvents.CHEST_CLOSE);
+			}
+
+			if (isLidClosed) {
+				if (this.handleAngle < 0.0F) {
+					isHandleClosed = false;
+					isHandleOpen = false;
+					
+					this.handleAngle += 0.1F;
+					if (this.handleAngle >= 0.0F) {
+						this.handleAngle = 0.0F;
+						isHandleClosed = true;
+					}
+					
+					if (this.boltPosition < 0F) {
+						this.boltPosition += 0.2F;
+						if (this.boltPosition >= 0F) {
+							this.boltPosition = 0F;
+						}
+					}
+				} else {
+					isHandleClosed = true;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param soundIn
+	 */
+	protected void playSound(SoundEvent soundIn) {
+		double d0 = (double)getBlockPos().getX() + 0.5D;
+		double d1 = (double)getBlockPos().getY() + 0.5D;
+		double d2 = (double)getBlockPos().getZ() + 0.5D;
+		level.playSound((PlayerEntity)null, d0, d1, d2, soundIn, SoundCategory.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+	}
+	
 	/**
 	 * @return the items
 	 */
@@ -185,13 +340,7 @@ public class VaultTileEntity extends AbstractModTileEntity implements IInventory
 	public ITextComponent getDisplayName() {
 		return this.getName();
 	}
-
-	@Override
-	public void tick() {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	@Override
 	public float getOpenNess(float partialTicks) {
 		return MathHelper.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
@@ -394,5 +543,69 @@ public class VaultTileEntity extends AbstractModTileEntity implements IInventory
 
 	public void setOwnerUuid(String ownerUuid) {
 		this.ownerUuid = ownerUuid;
+	}
+
+	public float getHandleAngle() {
+		return handleAngle;
+	}
+
+	public void setHandleAngle(float handleAngle) {
+		this.handleAngle = handleAngle;
+	}
+
+	public float getPrevHandleAngle() {
+		return prevHandleAngle;
+	}
+
+	public void setPrevHandleAngle(float prevHandleAngle) {
+		this.prevHandleAngle = prevHandleAngle;
+	}
+
+	public boolean isHandleOpen() {
+		return isHandleOpen;
+	}
+
+	public void setHandleOpen(boolean isHandleOpen) {
+		this.isHandleOpen = isHandleOpen;
+	}
+
+	public boolean isHandleClosed() {
+		return isHandleClosed;
+	}
+
+	public void setHandleClosed(boolean isHandleClosed) {
+		this.isHandleClosed = isHandleClosed;
+	}
+
+	public boolean isLidOpen() {
+		return isLidOpen;
+	}
+
+	public void setLidOpen(boolean isLidOpen) {
+		this.isLidOpen = isLidOpen;
+	}
+
+	public boolean isLidClosed() {
+		return isLidClosed;
+	}
+
+	public void setLidClosed(boolean isLidClosed) {
+		this.isLidClosed = isLidClosed;
+	}
+
+	public float getLidAngle() {
+		return lidAngle;
+	}
+
+	public void setLidAngle(float lidAngle) {
+		this.lidAngle = lidAngle;
+	}
+
+	public float getPrevLidAngle() {
+		return prevLidAngle;
+	}
+
+	public void setPrevLidAngle(float prevLidAngle) {
+		this.prevLidAngle = prevLidAngle;
 	}
 }

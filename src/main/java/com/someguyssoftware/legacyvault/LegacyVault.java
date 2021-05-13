@@ -7,7 +7,7 @@ import com.someguyssoftware.gottschcore.annotation.Credits;
 import com.someguyssoftware.gottschcore.annotation.ModInfo;
 import com.someguyssoftware.gottschcore.config.IConfig;
 import com.someguyssoftware.gottschcore.mod.IMod;
-import com.someguyssoftware.legacyvault.config.LegacyVaultConfig;
+import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.init.LegacyVaultSetup;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -50,7 +50,7 @@ public class LegacyVault implements IMod {
 	protected static final String UPDATE_JSON_URL = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-InterWorld-Bank/1.16.5-master/update.json";
 
 	public static LegacyVault instance;
-	private static LegacyVaultConfig config;
+	private static Config config;
 	public static IEventBus MOD_EVENT_BUS;
 
 	private boolean  hardCore = false;
@@ -60,19 +60,19 @@ public class LegacyVault implements IMod {
 	 */
 	public LegacyVault() {
 		LegacyVault.instance = this;
-		LegacyVault.config = new LegacyVaultConfig(this);
+		LegacyVault.config = new Config(this);
 		
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, LegacyVaultConfig.COMMON_CONFIG);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
 
 		// Register the setup method for modloading
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		eventBus.addListener(LegacyVaultSetup::common);
 
-		LegacyVaultConfig.loadConfig(LegacyVaultConfig.COMMON_CONFIG,
+		Config.loadConfig(Config.COMMON_CONFIG,
 				FMLPaths.CONFIGDIR.get().resolve("legacyvault-common.toml"));
 
 		// test accessing the logging properties
-		LegacyVaultConfig.LOGGING.filename.get();
+		Config.LOGGING.filename.get();
 
 		// needs to be registered here instead of @Mod.EventBusSubscriber because we need to pass in a constructor argument
 //		MinecraftForge.EVENT_BUS.register(new WorldEventHandler(getInstance()));

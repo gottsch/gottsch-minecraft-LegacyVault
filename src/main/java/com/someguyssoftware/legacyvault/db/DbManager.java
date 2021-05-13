@@ -29,7 +29,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.config.LegacyVaultConfig;
+import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.db.entity.Account;
 import com.someguyssoftware.legacyvault.exception.DbInitializationException;
 
@@ -63,7 +63,7 @@ public class DbManager {
 	 *
 	 * Private constructor
 	 */
-	private DbManager(LegacyVaultConfig config) throws ClassNotFoundException, SQLException {
+	private DbManager(Config config) throws ClassNotFoundException, SQLException {
 		LOGGER.info("Initializing DbManager...");
 		Connection conn = null;
 		JdbcConnectionSource connSource = null;
@@ -163,7 +163,7 @@ public class DbManager {
 	/**
 	 * @param config
 	 */
-	public static void start(LegacyVaultConfig config) throws DbInitializationException {		
+	public static void start(Config config) throws DbInitializationException {		
 		if (instance == null) {
 			LOGGER.debug("Creating new instance of DbManager");
 			try {

@@ -5,6 +5,7 @@ package com.someguyssoftware.legacyvault.gui;
 
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.block.LegacyVaultBlocks;
+import com.someguyssoftware.legacyvault.gui.render.tileentity.SteamPunkVaultTileEntityRenderer;
 import com.someguyssoftware.legacyvault.gui.render.tileentity.VaultTileEntityRenderer;
 import com.someguyssoftware.legacyvault.inventory.LegacyVaultContainers;
 import com.someguyssoftware.legacyvault.tileentity.LegacyVaultTileEntities;
@@ -36,7 +37,9 @@ public class LegacyVaultGuis {
 			RenderTypeLookup.setRenderLayer(LegacyVaultBlocks.VAULT, RenderType.cutoutMipped());
             
 			// register the custom renderer for our tile entity
-			ClientRegistry.bindTileEntityRenderer(LegacyVaultTileEntities.VAULT_TILE_ENTITY_TYPE, VaultTileEntityRenderer::new);
+//			ClientRegistry.bindTileEntityRenderer(LegacyVaultTileEntities.VAULT_TILE_ENTITY_TYPE, VaultTileEntityRenderer::new);
+			ClientRegistry.bindTileEntityRenderer(LegacyVaultTileEntities.VAULT_TILE_ENTITY_TYPE, SteamPunkVaultTileEntityRenderer::new);
+
 		}
 	}
 }

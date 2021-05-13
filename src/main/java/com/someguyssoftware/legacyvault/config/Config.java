@@ -1,10 +1,16 @@
 package com.someguyssoftware.legacyvault.config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import com.someguyssoftware.gottschcore.config.AbstractConfig;
 import com.someguyssoftware.gottschcore.mod.IMod;
 import com.someguyssoftware.legacyvault.LegacyVault;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig;
@@ -17,7 +23,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
  *
  */
 @EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class LegacyVaultConfig extends AbstractConfig {
+public class Config extends AbstractConfig {
 	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 	protected static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
 	public static ForgeConfigSpec COMMON_CONFIG;
@@ -34,26 +40,53 @@ public class LegacyVaultConfig extends AbstractConfig {
 		LOGGING = new Logging(COMMON_BUILDER);
 		GENERAL = new General(COMMON_BUILDER);
 		COMMON_CONFIG = COMMON_BUILDER.build();
+		
+		// perform any initializations on data
+		Config.init();
 	}
 	
 	/**
 	 * 
 	 * @param mod
 	 */
-	public LegacyVaultConfig(IMod mod) {
-		LegacyVaultConfig.mod = mod;
+	public Config(IMod mod) {
+		Config.mod = mod;
 	}
 	
+	/**
+	 * 
+	 * @author Mark Gottschling on May 5, 2021
+	 *
+	 */
 	public static class BlockID {
 		public static final String VAULT_ID = "vault";
 	}
 	
+	/**
+	 * 
+	 * @author Mark Gottschling on May 5, 2021
+	 *
+	 */
 	public static class TileEntityID {
 		public static final String VAULT_TE_ID = "vault_te";
 	}
 	
+	/**
+	 * 
+	 * @author Mark Gottschling on May 5, 2021
+	 *
+	 */
 	public static class General {
 		public ForgeConfigSpec.BooleanValue  enablePublicVault;
+		
+		public ConfigValue<List<? extends String>> inventoryWhiteList;
+		public ConfigValue<List<? extends String>> inventoryBlackList;
+		
+		public ConfigValue<List<? extends String>> tagsWhiteList;
+		public ConfigValue<List<? extends String>> tagsBlackList;
+		
+		public List<Pattern> inventoryWhiteListPatterns = new ArrayList<>();
+		public List<Pattern> inventoryBlackListPatterns = new ArrayList<>();
 		
 		General(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV, " General properties for Legacy Vault  mod.", CATEGORY_DIV).push("general");
@@ -63,12 +96,45 @@ public class LegacyVaultConfig extends AbstractConfig {
 							"ie. a vault block is not 'owned' to 'keyed' to a specific player only.",
 							"Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
 					.define("Enable public vault:", false);
+			
+
+			inventoryWhiteList = builder
+					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Can include wildcards.  ex. minecraft:plains, minecraft:*stairs")
+					.defineList("White list by  Item/Block name:", Arrays.asList(""), s -> s instanceof String);
+			
+			inventoryBlackList = builder
+					.comment(" Disallowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Can include wildcards.  ex. minecraft:plains, minecraft:*stairs")
+					.defineList("Black list by Item/Block name:", Arrays.asList("treasure2:*chest*", "treasure2:cardboard_box","treasure2:milk_crate"), s -> s instanceof String);
+			
+			tagsWhiteList = builder
+					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are not supported.")
+					.defineList("White list by  Tag name:", Arrays.asList(""), s -> s instanceof String);
+			
+			tagsBlackList = builder
+					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are not supported.")
+					.defineList("Black list by  Tag name:", Arrays.asList(""), s -> s instanceof String);
 		}
+		
+		/**
+		 * 
+		 */
+		public void init() {
+			for(String name : inventoryWhiteList.get()) {
+				inventoryWhiteListPatterns.add(Pattern.compile(name));
+			}
+			for(String name : inventoryBlackList.get()) {
+				inventoryBlackListPatterns.add(Pattern.compile(name));
+			}
+		}
+	}
+	
+	public static void init() {
+		Config.GENERAL.init();
 	}
 	
 	@SubscribeEvent
 	public static void onLoad(final ModConfig.Loading configEvent) {
-		LegacyVaultConfig.loadConfig(LegacyVaultConfig.COMMON_CONFIG,
+		Config.loadConfig(Config.COMMON_CONFIG,
 				FMLPaths.CONFIGDIR.get().resolve(mod.getId() + "-common.toml"));
 	}
 
@@ -78,52 +144,52 @@ public class LegacyVaultConfig extends AbstractConfig {
 
 	@Override
 	public boolean isEnableVersionChecker() {
-		return LegacyVaultConfig.MOD.enableVersionChecker.get();
+		return Config.MOD.enableVersionChecker.get();
 	}
 
 	@Override
 	public void setEnableVersionChecker(boolean enableVersionChecker) {
-		LegacyVaultConfig.MOD.enableVersionChecker.set(enableVersionChecker);
+		Config.MOD.enableVersionChecker.set(enableVersionChecker);
 	}
 
 	@Override
 	public boolean isLatestVersionReminder() {
-		return LegacyVaultConfig.MOD.latestVersionReminder.get();
+		return Config.MOD.latestVersionReminder.get();
 	}
 
 	@Override
 	public void setLatestVersionReminder(boolean latestVersionReminder) {
-		LegacyVaultConfig.MOD.latestVersionReminder.set(latestVersionReminder);
+		Config.MOD.latestVersionReminder.set(latestVersionReminder);
 	}
 
 	@Override
 	public boolean isModEnabled() {
-		return LegacyVaultConfig.MOD.enabled.get();
+		return Config.MOD.enabled.get();
 	}
 
 	@Override
 	public void setModEnabled(boolean modEnabled) {
-		LegacyVaultConfig.MOD.enabled.set(modEnabled);
+		Config.MOD.enabled.set(modEnabled);
 	}
 
 	@Override
 	public String getModsFolder() {
-		return LegacyVaultConfig.MOD.folder.get();
+		return Config.MOD.folder.get();
 	}
 
 	@Override
 	public void setModsFolder(String modsFolder) {
-		LegacyVaultConfig.MOD.folder.set(modsFolder);
+		Config.MOD.folder.set(modsFolder);
 	}
 
 	@Override
 	public String getConfigFolder() {
-		return LegacyVaultConfig.MOD.configFolder.get();
+		return Config.MOD.configFolder.get();
 	}
 
 	@Override
 	public void setConfigFolder(String configFolder) {
-		LegacyVaultConfig.MOD.configFolder.set(configFolder);
+		Config.MOD.configFolder.set(configFolder);
 	}
 
 	public static IMod getMod() {

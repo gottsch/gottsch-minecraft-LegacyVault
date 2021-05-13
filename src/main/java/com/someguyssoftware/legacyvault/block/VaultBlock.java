@@ -3,8 +3,6 @@
  */
 package com.someguyssoftware.legacyvault.block;
 
-import com.someguyssoftware.gottschcore.block.ModContainerBlock;
-import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
@@ -12,27 +10,28 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 /**
  * @author Mark Gottschling on Apr 29, 2021
  *
  */
-public class VaultBlock extends AbstractLegacyVaultBlock  implements ILegacyVaultBlock {
+public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
+	private static final VoxelShape VAULT = Block.box(1, 1, 2, 15, 16, 15);
+	private static final VoxelShape FOOT1 = Block.box(1, 0, 2, 3, 1, 4);
+	private static final VoxelShape FOOT2 = Block.box(13, 0, 2, 15, 1, 4);
+	private static final VoxelShape FOOT3 = Block.box(1, 0, 13, 3, 1, 15);
+	private static final VoxelShape FOOT4 = Block.box(13, 0, 13, 15, 1, 15);
+	
+	private static final VoxelShape AABB = VoxelShapes.or(VAULT, FOOT1, FOOT2, FOOT3, FOOT4);
 	
 	/**
 	 * 
@@ -42,6 +41,16 @@ public class VaultBlock extends AbstractLegacyVaultBlock  implements ILegacyVaul
 	 */
 	public VaultBlock(String modID, String name, Properties properties) {
 		super(modID, name, properties);
+		
+		// set the default shapes/shape
+		VoxelShape shape = AABB;
+		setBounds(
+				new VoxelShape[] {
+						shape, 	// N
+						shape,  	// E
+						shape,  	// S
+						shape		// W
+				});
 	}
 	
 	/**
@@ -120,26 +129,5 @@ public class VaultBlock extends AbstractLegacyVaultBlock  implements ILegacyVaul
 			// update the facing
 			valutTileEntity.setFacing(placer.getDirection().getOpposite());
 		}
-	}
-	
-	/**
-	 * 
-	 */
-	@Override
-	   public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
-			Hand handIn, BlockRayTraceResult hit) {
-
-		// exit if on the client
-		if (WorldInfo.isClientSide(world)) {
-			return ActionResultType.SUCCESS;
-		}
-
-		// get the container provider
-		INamedContainerProvider namedContainerProvider = this.getContainer(state, world, pos);			
-		// open the chest
-		NetworkHooks.openGui((ServerPlayerEntity)player, namedContainerProvider, (packetBuffer)->{});
-		// NOTE: (packetBuffer)->{} is just a do-nothing because we have no extra data to send
-
-		return ActionResultType.SUCCESS;
 	}
 }

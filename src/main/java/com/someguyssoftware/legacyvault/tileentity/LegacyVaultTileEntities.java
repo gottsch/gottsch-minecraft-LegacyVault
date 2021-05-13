@@ -5,7 +5,7 @@ package com.someguyssoftware.legacyvault.tileentity;
 
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.block.LegacyVaultBlocks;
-import com.someguyssoftware.legacyvault.config.LegacyVaultConfig;
+import com.someguyssoftware.legacyvault.config.Config;
 
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -34,7 +34,7 @@ public class LegacyVaultTileEntities {
 			// you probably don't need a datafixer --> null should be fine
 			VAULT_TILE_ENTITY_TYPE = TileEntityType.Builder.of(VaultTileEntity::new, LegacyVaultBlocks.VAULT)
 					.build(null);
-			VAULT_TILE_ENTITY_TYPE.setRegistryName(LegacyVaultConfig.TileEntityID.VAULT_TE_ID);
+			VAULT_TILE_ENTITY_TYPE.setRegistryName(Config.TileEntityID.VAULT_TE_ID);
 			event.getRegistry().register(VAULT_TILE_ENTITY_TYPE);
 		}
 	}
