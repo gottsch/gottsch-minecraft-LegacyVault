@@ -276,6 +276,10 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 		this.sourceInventory.stopOpen(player);
 	}
 
+	public int getInventorySize() {
+		return sourceInventory.getContainerSize();
+	}
+	
 	/**
 	 * 
 	 */

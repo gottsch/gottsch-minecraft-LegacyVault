@@ -12,7 +12,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 // TODO rename to VaultTileEntityRenderer once the other "chest" rendered is removed
 // NOTE @OnlyIn extremely important! add to all Renderers
 @OnlyIn(Dist.CLIENT)
-public class SteamPunkVaultTileEntityRenderer extends AbstractLegacyVaultTileEntityRenderer {
+public class SteamPunkVaultTileEntityRenderer extends AbstractVaultTileEntityRenderer {
 
 	public SteamPunkVaultTileEntityRenderer(TileEntityRendererDispatcher tileEntityRendererDispatcher) {
 		super(tileEntityRendererDispatcher);

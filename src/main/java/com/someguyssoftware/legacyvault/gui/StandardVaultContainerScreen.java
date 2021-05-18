@@ -15,7 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 public class StandardVaultContainerScreen extends ContainerScreen<VaultContainer> {
 
 	// this is the resource location for the background image for the GUI
-	private static final ResourceLocation texture = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault.png");
+	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault.png");
 
 	/**
 	 * 
@@ -26,7 +26,7 @@ public class StandardVaultContainerScreen extends ContainerScreen<VaultContainer
 	public StandardVaultContainerScreen(VaultContainer screenContainer, PlayerInventory playerInventory,
 			ITextComponent title) {
 		super(screenContainer, playerInventory, title);
-		// Set the width and height of the gui.  Should match the size of the texture!
+		// Set the width and height of the gui.  Should match the size of the BG_TEXTURE!
 		imageWidth = 176;
 		imageHeight = 167;
 	}
@@ -49,11 +49,11 @@ public class StandardVaultContainerScreen extends ContainerScreen<VaultContainer
 	@Override
 	protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.minecraft.getTextureManager().bind(texture);
+		this.minecraft.getTextureManager().bind(BG_TEXTURE);
 
 		// width and height are the size provided to the window when initialised after creation.
-		// xSize, ySize are the expected size of the texture-? usually seems to be left as a default.
-		// The code below is typical for vanilla containers, so I've just copied that- it appears to centre the texture within
+		// xSize, ySize are the expected size of the BG_TEXTURE-? usually seems to be left as a default.
+		// The code below is typical for vanilla containers, so I've just copied that- it appears to centre the BG_TEXTURE within
 		//  the available window
 		int edgeSpacingX = (this.width - this.imageWidth) / 2;
 		int edgeSpacingY = (this.height - this.imageHeight) / 2;

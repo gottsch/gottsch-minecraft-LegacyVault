@@ -11,7 +11,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 // NOTE @OnlyIn extremely important! add to all Renderers
 @OnlyIn(Dist.CLIENT)
-public class VaultTileEntityRenderer extends AbstractLegacyVaultTileEntityRenderer {
+public class VaultTileEntityRenderer extends AbstractVaultTileEntityRenderer {
 
 	public VaultTileEntityRenderer(TileEntityRendererDispatcher tileEntityRendererDispatcher) {
 		super(tileEntityRendererDispatcher);

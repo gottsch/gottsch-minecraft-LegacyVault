@@ -31,8 +31,9 @@ public class LegacyVaultGuis {
 		// register the factory that is used on the client to generate Screen corresponding to our Container
 		@SubscribeEvent
 		public static void onClientSetupEvent(FMLClientSetupEvent event) {
-			ScreenManager.register(LegacyVaultContainers.STANDARD_VAULT_CONTAINER_TYPE, StandardVaultContainerScreen::new);
-
+//			ScreenManager.register(LegacyVaultContainers.STANDARD_VAULT_CONTAINER_TYPE, StandardVaultContainerScreen::new);
+			ScreenManager.register(LegacyVaultContainers.STANDARD_VAULT_CONTAINER_TYPE, ScrollableVaultContainerScreen2::new);
+			
 			// tell the renderer that the base is rendered using CUTOUT_MIPPED (to match the Block Hopper)
 			RenderTypeLookup.setRenderLayer(LegacyVaultBlocks.VAULT, RenderType.cutoutMipped());
             

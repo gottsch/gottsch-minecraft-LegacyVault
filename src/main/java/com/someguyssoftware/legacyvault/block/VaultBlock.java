@@ -25,9 +25,9 @@ import net.minecraft.world.World;
  *
  */
 public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
-	private static final VoxelShape VAULT = Block.box(1, 1, 2, 15, 16, 15);
-	private static final VoxelShape FOOT1 = Block.box(1, 0, 2, 3, 1, 4);
-	private static final VoxelShape FOOT2 = Block.box(13, 0, 2, 15, 1, 4);
+	private static final VoxelShape VAULT = Block.box(1, 1, 1, 15, 16, 14);
+	private static final VoxelShape FOOT1 = Block.box(1, 0, 1, 3, 1, 3);
+	private static final VoxelShape FOOT2 = Block.box(13, 0, 1, 15, 1, 3);
 	private static final VoxelShape FOOT3 = Block.box(1, 0, 13, 3, 1, 15);
 	private static final VoxelShape FOOT4 = Block.box(13, 0, 13, 15, 1, 15);
 	

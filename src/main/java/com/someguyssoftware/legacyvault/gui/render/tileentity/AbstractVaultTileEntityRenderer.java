@@ -24,11 +24,11 @@ import net.minecraft.world.World;
  * @author Mark Gottschling on Apr 29, 2021
  *
  */
-public abstract class AbstractLegacyVaultTileEntityRenderer extends TileEntityRenderer<VaultTileEntity> {
+public abstract class AbstractVaultTileEntityRenderer extends TileEntityRenderer<VaultTileEntity> {
 	private ResourceLocation texture;
 	private IVaultModel model;
 
-	public AbstractLegacyVaultTileEntityRenderer(TileEntityRendererDispatcher tileEntityRendererDispatcher) {
+	public AbstractVaultTileEntityRenderer(TileEntityRendererDispatcher tileEntityRendererDispatcher) {
 		super(tileEntityRendererDispatcher);
 	}
 
