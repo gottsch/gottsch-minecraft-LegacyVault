@@ -7,6 +7,7 @@ import com.someguyssoftware.gottschcore.block.ModContainerBlock;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.tileentity.IVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
 import net.minecraft.block.Block;
@@ -14,7 +15,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -67,7 +67,7 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 	   public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult hit) {
 
-		VaultTileEntity tileEntity = (VaultTileEntity) world.getBlockEntity(pos);
+		IVaultTileEntity tileEntity = (IVaultTileEntity) world.getBlockEntity(pos);
 
 		// exit if on the client
 		if (WorldInfo.isClientSide(world)) {
@@ -94,7 +94,8 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 		}
 		
 		// get the container provider
-		INamedContainerProvider namedContainerProvider = this.getContainer(state, world, pos);			
+		INamedContainerProvider namedContainerProvider = this.getContainer(state, world, pos);
+		LegacyVault.LOGGER.debug("namedContainerProvider (TE) -> {}", namedContainerProvider.getClass().getSimpleName());
 		// open the chest
 		NetworkHooks.openGui((ServerPlayerEntity)player, namedContainerProvider, (packetBuffer)->{});
 		// NOTE: (packetBuffer)->{} is just a do-nothing because we have no extra data to send

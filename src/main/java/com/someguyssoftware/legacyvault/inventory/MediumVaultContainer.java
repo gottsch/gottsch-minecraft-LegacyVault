@@ -11,10 +11,9 @@ import net.minecraft.network.PacketBuffer;
  * @author Mark Gottschling on Apr 29, 2021
  *
  */
-public class VaultContainer extends AbstractLegacyVaultContainer {
-	public static VaultContainer create(int windowID, PlayerInventory playerInventory, PacketBuffer extraData) {
-		// TODO re-introduce a SlotCount enum with sizes
-		return new VaultContainer(windowID, LegacyVaultContainers.STANDARD_VAULT_CONTAINER_TYPE, playerInventory, VaultSlotSize.SMALL.getSize());
+public class MediumVaultContainer extends AbstractLegacyVaultContainer {
+	public static MediumVaultContainer create(int windowID, PlayerInventory playerInventory, PacketBuffer extraData) {
+		return new MediumVaultContainer(windowID, LegacyVaultContainers.MEDIUM_VAULT_CONTAINER_TYPE, playerInventory, VaultSlotSize.MEDIUM.getSize());
 	}
 	
 	/**
@@ -24,9 +23,8 @@ public class VaultContainer extends AbstractLegacyVaultContainer {
 	 * @param playerInventory
 	 * @param slotCount
 	 */
-	private VaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, int slotCount) {
+	private MediumVaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, int slotCount) {
 		this(windowID, containerType, playerInventory, new Inventory(slotCount));
-
 	}
 	
 	/**
@@ -35,14 +33,16 @@ public class VaultContainer extends AbstractLegacyVaultContainer {
 	 * @param playerInventory
 	 * @param inventory
 	 */
-	public VaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory) {
+	public MediumVaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory) {
 		super(windowID, containerType, playerInventory, inventory);
-        
+
 		// open the chest (rendering)
         inventory.startOpen(playerInventory.player);
         
 		// set the dimensions
         setContainerInventoryRowCount(6);
+        setPlayerInventoryYPos(138);
+        setHotbarYPos(196);
 		
 		// build the container
 		buildContainer(playerInventory, inventory);

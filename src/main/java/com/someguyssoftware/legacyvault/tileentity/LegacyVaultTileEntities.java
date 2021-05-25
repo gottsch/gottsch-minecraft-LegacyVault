@@ -25,6 +25,9 @@ public class LegacyVaultTileEntities {
 	 * restriction.
 	 */
 	public static TileEntityType<VaultTileEntity> VAULT_TILE_ENTITY_TYPE;
+	public static TileEntityType<MediumVaultTileEntity> MEDIUM_VAULT_TILE_ENTITY_TYPE;
+	public static TileEntityType<LargeVaultTileEntity> LARGE_VAULT_TILE_ENTITY_TYPE;
+	
 
 	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
 	public static class RegistrationHandler {
@@ -34,8 +37,18 @@ public class LegacyVaultTileEntities {
 			// you probably don't need a datafixer --> null should be fine
 			VAULT_TILE_ENTITY_TYPE = TileEntityType.Builder.of(VaultTileEntity::new, LegacyVaultBlocks.VAULT)
 					.build(null);
+			MEDIUM_VAULT_TILE_ENTITY_TYPE = TileEntityType.Builder.of(MediumVaultTileEntity::new, LegacyVaultBlocks.VAULT)
+					.build(null);
+			LARGE_VAULT_TILE_ENTITY_TYPE = TileEntityType.Builder.of(LargeVaultTileEntity::new, LegacyVaultBlocks.VAULT)
+					.build(null);
+			
+			// register
 			VAULT_TILE_ENTITY_TYPE.setRegistryName(Config.TileEntityID.VAULT_TE_ID);
 			event.getRegistry().register(VAULT_TILE_ENTITY_TYPE);
+			MEDIUM_VAULT_TILE_ENTITY_TYPE.setRegistryName(Config.TileEntityID.MEDIUM_VAULT_TE_ID);
+			event.getRegistry().register(MEDIUM_VAULT_TILE_ENTITY_TYPE);
+			LARGE_VAULT_TILE_ENTITY_TYPE.setRegistryName(Config.TileEntityID.LARGE_VAULT_TE_ID);
+			event.getRegistry().register(LARGE_VAULT_TILE_ENTITY_TYPE);
 		}
 	}
 }

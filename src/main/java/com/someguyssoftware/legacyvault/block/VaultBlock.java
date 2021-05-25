@@ -4,6 +4,11 @@
 package com.someguyssoftware.legacyvault.block;
 
 import com.someguyssoftware.legacyvault.LegacyVault;
+import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
+import com.someguyssoftware.legacyvault.tileentity.AbstractVaultTileEntity;
+import com.someguyssoftware.legacyvault.tileentity.LargeVaultTileEntity;
+import com.someguyssoftware.legacyvault.tileentity.MediumVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
 import net.minecraft.block.Block;
@@ -25,13 +30,22 @@ import net.minecraft.world.World;
  *
  */
 public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
-	private static final VoxelShape VAULT = Block.box(1, 1, 1, 15, 16, 14);
-	private static final VoxelShape FOOT1 = Block.box(1, 0, 1, 3, 1, 3);
-	private static final VoxelShape FOOT2 = Block.box(13, 0, 1, 15, 1, 3);
-	private static final VoxelShape FOOT3 = Block.box(1, 0, 13, 3, 1, 15);
-	private static final VoxelShape FOOT4 = Block.box(13, 0, 13, 15, 1, 15);
+	private static final VoxelShape NORTH_MAIN = Block.box(1, 1, 2, 15, 16, 15);
+	private static final VoxelShape NORTH_FOOT1 = Block.box(1, 0, 2, 3, 1, 4);
+	private static final VoxelShape NORTH_FOOT2 = Block.box(13, 0, 2, 15, 1, 4);
+	private static final VoxelShape NORTH_FOOT3 = Block.box(1, 0, 13, 3, 1, 15);
+	private static final VoxelShape NORTH_FOOT4 = Block.box(13, 0, 13, 15, 1, 15);
 	
-	private static final VoxelShape AABB = VoxelShapes.or(VAULT, FOOT1, FOOT2, FOOT3, FOOT4);
+	private static final VoxelShape SOUTH_MAIN = Block.box(1, 1, 1, 15, 16, 14);
+	private static final VoxelShape SOUTH_FOOT1 = Block.box(1, 0, 1, 3, 1, 3);
+	private static final VoxelShape SOUTH_FOOT2 = Block.box(13, 0, 1, 15, 1, 3);
+	private static final VoxelShape SOUTH_FOOT3 = Block.box(1, 0, 12, 3, 1, 14);
+	private static final VoxelShape SOUTH_FOOT4 = Block.box(13, 0, 12, 15, 1, 14);
+	
+	private static final VoxelShape EAST_MAIN = Block.box(1, 1, 1, 15, 16, 14);
+	
+	private static final VoxelShape NORTH_VAULT = VoxelShapes.or(NORTH_MAIN, NORTH_FOOT1, NORTH_FOOT2, NORTH_FOOT3, NORTH_FOOT4);	
+	private static final VoxelShape SOUTH_VAULT = VoxelShapes.or(SOUTH_MAIN, SOUTH_FOOT1, SOUTH_FOOT2, SOUTH_FOOT3, SOUTH_FOOT4);
 	
 	/**
 	 * 
@@ -43,12 +57,12 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 		super(modID, name, properties);
 		
 		// set the default shapes/shape
-		VoxelShape shape = AABB;
+		VoxelShape shape = SOUTH_VAULT;
 		setBounds(
 				new VoxelShape[] {
-						shape, 	// N
+						NORTH_VAULT, 	// N
 						shape,  	// E
-						shape,  	// S
+						SOUTH_VAULT,  	// S
 						shape		// W
 				});
 	}
@@ -58,14 +72,23 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	 */
 	@Override
 	 public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		VaultTileEntity vaultTileEntity = null;
+		TileEntity vaultTileEntity = null;
 		try {
-			vaultTileEntity = new VaultTileEntity();
+			int size = Config.GENERAL.inventorySize.get();
+			if (size <=VaultSlotSize.SMALL.getSize()) {
+				vaultTileEntity = new VaultTileEntity();
+			}
+			else if (size <= VaultSlotSize.MEDIUM.getSize()) {
+				vaultTileEntity = new MediumVaultTileEntity();
+			}
+			else {
+				vaultTileEntity = new LargeVaultTileEntity();
+			}
 		}
 		catch(Exception e) {
 			LegacyVault.LOGGER.error(e);
 		}
-
+		LegacyVault.LOGGER.debug("created tile entity -> {}", vaultTileEntity.getClass().getSimpleName());
 		return vaultTileEntity;
 	}
 	

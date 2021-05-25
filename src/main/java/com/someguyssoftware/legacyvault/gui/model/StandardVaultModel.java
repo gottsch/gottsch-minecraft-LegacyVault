@@ -2,6 +2,7 @@ package com.someguyssoftware.legacyvault.gui.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.someguyssoftware.legacyvault.tileentity.AbstractVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
 import net.minecraft.client.renderer.RenderType;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
  * @author Mark Gottschling on Jan 15, 2018
  *
  */
+@Deprecated
 public class StandardVaultModel extends AbstractVaultModel {
 
 	ModelRenderer base;
@@ -87,7 +89,7 @@ public class StandardVaultModel extends AbstractVaultModel {
 	}
 
 	@Override
-	public void renderAll(MatrixStack matrixStack, IVertexBuilder renderBuffer, int combinedLight, int combinedOverlay, VaultTileEntity te) {
+	public void renderAll(MatrixStack matrixStack, IVertexBuilder renderBuffer, int combinedLight, int combinedOverlay, AbstractVaultTileEntity te) {
 		// set the angles of the latch to same as the lid
 		Latch1.xRot = lid.xRot;
 		Latch2.xRot = lid.xRot;
@@ -132,5 +134,4 @@ public class StandardVaultModel extends AbstractVaultModel {
 	public void setLid(ModelRenderer lid) {
 		this.lid = lid;
 	}
-
 }

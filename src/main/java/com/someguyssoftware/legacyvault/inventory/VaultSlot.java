@@ -25,6 +25,8 @@ import net.minecraft.util.ResourceLocation;
  */
 public class VaultSlot extends Slot {
 
+	private boolean active;
+	
 	/**
 	 * 
 	 * @param inventory
@@ -34,6 +36,20 @@ public class VaultSlot extends Slot {
 	 */
 	public VaultSlot(IInventory inventory, int index, int xPosition, int yPosition) {
 		super(inventory, index, xPosition, yPosition);
+		this.active = true;
+	}
+	
+	/**
+	 * 
+	 * @param inventory
+	 * @param index
+	 * @param xPosition
+	 * @param yPosition
+	 * @param active
+	 */
+	public VaultSlot(IInventory inventory, int index, int xPosition, int yPosition, boolean active) {
+		super(inventory, index, xPosition, yPosition);
+		this.active = active;
 	}
 
 	@Override
@@ -102,5 +118,14 @@ public class VaultSlot extends Slot {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

@@ -67,8 +67,21 @@ public class Config extends AbstractConfig {
 	 * @author Mark Gottschling on May 5, 2021
 	 *
 	 */
-	public static class TileEntityID {
+	public static final class TileEntityID {
 		public static final String VAULT_TE_ID = "vault_te";
+		public static final String MEDIUM_VAULT_TE_ID = "medium_vault_te";
+		public static final String LARGE_VAULT_TE_ID = "large_vault_te";
+	}
+	
+	/**
+	 * 
+	 * @author Mark Gottschling on May 25, 2021
+	 *
+	 */
+	public static final class ContainerID {
+		public static final String VAULT_CONTAINER = "vault_container";
+		public static final String MEDIUM_VAULT_CONTAINER ="medium_vault_container";
+		public static final String LARGE_VAULT_CONTAINER = "large_vault_container";
 	}
 	
 	/**
@@ -87,6 +100,8 @@ public class Config extends AbstractConfig {
 		
 		public List<Pattern> inventoryWhiteListPatterns = new ArrayList<>();
 		public List<Pattern> inventoryBlackListPatterns = new ArrayList<>();
+
+		public ForgeConfigSpec.IntValue inventorySize;
 		
 		General(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV, " General properties for Legacy Vault  mod.", CATEGORY_DIV).push("general");
@@ -97,21 +112,25 @@ public class Config extends AbstractConfig {
 							"Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
 					.define("Enable public vault:", false);
 			
+			inventorySize = builder
+					.comment(" Maximum capacity of the vault inventory.", 
+							" Sizes are 27 (small/standard), 54 (medium), 80 (large).")
+					.defineInRange("Vault inventory size:", 54, 27, 80);
 
 			inventoryWhiteList = builder
-					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Can include wildcards.  ex. minecraft:plains, minecraft:*stairs")
+					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Wildcards ARE supported.  ex. minecraft:plains, minecraft:*stairs")
 					.defineList("White list by  Item/Block name:", Arrays.asList(""), s -> s instanceof String);
 			
 			inventoryBlackList = builder
-					.comment(" Disallowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Can include wildcards.  ex. minecraft:plains, minecraft:*stairs")
+					.comment(" Disallowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Wildcards ARE supported.  ex. minecraft:plains, minecraft:*stairs")
 					.defineList("Black list by Item/Block name:", Arrays.asList("treasure2:*chest*", "treasure2:cardboard_box","treasure2:milk_crate"), s -> s instanceof String);
 			
 			tagsWhiteList = builder
-					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are not supported.")
+					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are NOT supported.")
 					.defineList("White list by  Tag name:", Arrays.asList(""), s -> s instanceof String);
 			
 			tagsBlackList = builder
-					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are not supported.")
+					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are NOT supported.")
 					.defineList("Black list by  Tag name:", Arrays.asList(""), s -> s instanceof String);
 		}
 		

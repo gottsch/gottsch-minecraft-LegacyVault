@@ -2,6 +2,7 @@ package com.someguyssoftware.legacyvault.gui.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.someguyssoftware.legacyvault.tileentity.AbstractVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
 import net.minecraft.client.renderer.RenderType;
@@ -138,28 +139,24 @@ public class VaultModel extends AbstractVaultModel {
 	}
 
 	@Override
-	public void renderAll(MatrixStack matrixStack, IVertexBuilder renderBuffer, int combinedLight, int combinedOverlay, VaultTileEntity te) {
+	public void renderAll(MatrixStack matrixStack, IVertexBuilder renderBuffer, int combinedLight, int combinedOverlay, AbstractVaultTileEntity te) {
 		
-		if (te.isHandleOpen && !te.isLidClosed) {
+		if (te.isHandleOpen() && !te.isLidClosed()) {
 			handle2.yRot = doorGroup.yRot;
 			handle2.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
 			rotatingBolts.yRot = doorGroup.yRot;
 			rotatingBolts.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
 		}
-		else if (te.isLidClosed) {		
+		else if (te.isLidClosed()) {		
 			// rotate the handle
 			handle.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
 
 			slidingBolts.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
 		}
-//		topBolt.yRot = doorGroup.yRot;
-//		bottomBolt.yRot = topBolt.yRot;
 		
 		mainGroup.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
 		feet.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
 		doorGroup.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
-//		topBolt.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
-//		bottomBolt.render(matrixStack, renderBuffer, combinedLight, combinedOverlay);
 	}
 
 	public void setRotation(ModelRenderer model, float x, float y, float z) {

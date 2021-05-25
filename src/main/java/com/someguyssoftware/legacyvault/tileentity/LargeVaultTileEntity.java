@@ -1,25 +1,19 @@
 package com.someguyssoftware.legacyvault.tileentity;
 
-import javax.annotation.Nullable;
-
+import com.someguyssoftware.legacyvault.inventory.LargeVaultContainer;
 import com.someguyssoftware.legacyvault.inventory.LegacyVaultContainers;
-import com.someguyssoftware.legacyvault.inventory.VaultContainer;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 
-public class VaultTileEntity extends AbstractVaultTileEntity {
-
-
-
+public class LargeVaultTileEntity extends AbstractVaultTileEntity {
 
 	/**
 	 * 
 	 */
-	public VaultTileEntity() {
-		super(LegacyVaultTileEntities.VAULT_TILE_ENTITY_TYPE);
-		//		setCustomName(new TranslationTextComponent("display.vault.name"));
+	public LargeVaultTileEntity() {
+		super(LegacyVaultTileEntities.LARGE_VAULT_TILE_ENTITY_TYPE);
 	}
 
 	/**
@@ -27,7 +21,7 @@ public class VaultTileEntity extends AbstractVaultTileEntity {
 	 */
 	@Override
 	public int getContainerSize() {
-		return 27;
+		return 80;
 	}
 
 	/**
@@ -38,7 +32,7 @@ public class VaultTileEntity extends AbstractVaultTileEntity {
 	 * @return
 	 */
 	public Container createServerContainer(int windowID, PlayerInventory inventory, PlayerEntity player) {
-		return new VaultContainer(windowID, LegacyVaultContainers.STANDARD_VAULT_CONTAINER_TYPE, inventory, this);
+		return new LargeVaultContainer(windowID, LegacyVaultContainers.LARGE_VAULT_CONTAINER_TYPE, inventory, this);
 	}
 	
 	///////////// IInventory Methods ///////////////////////
@@ -51,10 +45,5 @@ public class VaultTileEntity extends AbstractVaultTileEntity {
 	//public boolean isItemValidForSlot(int index, ItemStack stack) {
 	//return true;
 	//}
-
-
-
-
-
 
 }

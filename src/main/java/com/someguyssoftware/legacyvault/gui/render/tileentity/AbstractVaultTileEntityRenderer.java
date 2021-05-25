@@ -5,14 +5,20 @@ package com.someguyssoftware.legacyvault.gui.render.tileentity;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.block.VaultBlock;
 import com.someguyssoftware.legacyvault.gui.model.IVaultModel;
+import com.someguyssoftware.legacyvault.gui.model.VaultModel;
+import com.someguyssoftware.legacyvault.tileentity.AbstractVaultTileEntity;
+import com.someguyssoftware.legacyvault.tileentity.IVaultTileEntity;
+import com.someguyssoftware.legacyvault.tileentity.MediumVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
@@ -24,15 +30,20 @@ import net.minecraft.world.World;
  * @author Mark Gottschling on Apr 29, 2021
  *
  */
-public abstract class AbstractVaultTileEntityRenderer extends TileEntityRenderer<VaultTileEntity> {
+public abstract class AbstractVaultTileEntityRenderer<T extends AbstractVaultTileEntity> extends TileEntityRenderer<T> {
 	private ResourceLocation texture;
 	private IVaultModel model;
 
+	/**
+	 * 
+	 * @param tileEntityRendererDispatcher
+	 */
 	public AbstractVaultTileEntityRenderer(TileEntityRendererDispatcher tileEntityRendererDispatcher) {
 		super(tileEntityRendererDispatcher);
+		setTexture(new ResourceLocation(LegacyVault.MODID + ":textures/entity/vault/vault.png"));
+		setModel(new VaultModel());
 	}
-
-
+	
 	/**
 	 * render the tile entity - called every frame while the tileentity is in view of the player
 	 *
@@ -49,10 +60,10 @@ public abstract class AbstractVaultTileEntityRenderer extends TileEntityRenderer
 	 *                        CreeperRenderer.getOverlayProgress()
 	 */
 	@Override
-	public void render(VaultTileEntity tileEntity, float partialTicks, MatrixStack matrixStack,
+	public void render(T tileEntity, float partialTicks, MatrixStack matrixStack,
 			IRenderTypeBuffer renderTypeBuffer, int combinedLight, int combinedOverlay) {
 
-		if (!(tileEntity instanceof VaultTileEntity)) {
+		if (!(tileEntity instanceof IVaultTileEntity)) {
 			return; // should never happen
 		}
 
@@ -79,7 +90,6 @@ public abstract class AbstractVaultTileEntityRenderer extends TileEntityRenderer
 		// update the lid rotation
 		updateModelRotationAngles(tileEntity, partialTicks);
 
-
 		IVertexBuilder renderBuffer = renderTypeBuffer.getBuffer(model.getChestRenderType(getTexture()));
 		model.renderAll(matrixStack, renderBuffer, combinedLight, combinedOverlay, tileEntity);
 		matrixStack.popPose();		
@@ -91,12 +101,39 @@ public abstract class AbstractVaultTileEntityRenderer extends TileEntityRenderer
 	 * @param tileEntity
 	 * @param partialTicks
 	 */
-	public void updateModelRotationAngles(VaultTileEntity tileEntity, float partialTicks) {
-		float lidRotation = tileEntity.prevLidAngle + (tileEntity.lidAngle - tileEntity.prevLidAngle) * partialTicks;
+	public void updateModelRotationAngles(T tileEntity, float partialTicks) {
+		if (tileEntity.isLidClosed()) {
+			// spin the handle on the z-axis
+			float handleRotation = tileEntity.getPrevHandleAngle() + (tileEntity.getHandleAngle() - tileEntity.getPrevHandleAngle()) * partialTicks;
+			handleRotation = 1.0F - handleRotation;
+			handleRotation = 1.0F - handleRotation * handleRotation * handleRotation;
+			// TODO the handle angle modifier may be slower/faster than lid
+			((VaultModel)getModel()).getHandle1().zRot = (handleRotation * (float)Math.PI / getAngleModifier());
+			
+			// update the model's bolt(s) position
+			// NOTE:  TE boltPosition is the total amount of movement - not the exact position
+			// therefor the x value needs to add the value of boltPosition, not replace it.
+			((VaultModel)getModel()).getBolt().x = ((VaultModel)getModel()).getBoltStartingX() + tileEntity.getBoltPosition();
+		}
+		else {
+			// render handleB rotating around y-axis (opening with rest of lid)
+		}
+		float lidRotation = tileEntity.getPrevLidAngle() + (tileEntity.getLidAngle() - tileEntity.getPrevLidAngle()) * partialTicks;
 		lidRotation = 1.0F - lidRotation;
 		lidRotation = 1.0F - lidRotation * lidRotation * lidRotation;
-		model.getLid().xRot = -(lidRotation * (float) Math.PI / getAngleModifier());
+		getModel().getLid().yRot = (lidRotation * (float)Math.PI / getAngleModifier());
 	}
+	/**
+	 * 
+	 * @param tileEntity
+	 * @param partialTicks
+	 */
+//	public void updateModelRotationAngles(T tileEntity, float partialTicks) {
+//		float lidRotation = tileEntity.getPrevLidAngle() + (tileEntity.getLidAngle() - tileEntity.getPrevLidAngle()) * partialTicks;
+//		lidRotation = 1.0F - lidRotation;
+//		lidRotation = 1.0F - lidRotation * lidRotation * lidRotation;
+//		model.getLid().xRot = -(lidRotation * (float) Math.PI / getAngleModifier());
+//	}
 
 	/**
 	 * Modifies the max angle that the lid can swing.
@@ -111,19 +148,6 @@ public abstract class AbstractVaultTileEntityRenderer extends TileEntityRenderer
 	 */
 	public float getAngleModifier() {
 		return 2.0F;
-	}
-
-	/**
-	 *  Modifies teh scale of the Lock item(s).
-	 * Ranges from 0.0F to x.xF.
-	 * Ex:
-	 * Return 1.0F = full size
-	 * Return 0.5 = half size
-	 * 
-	 * @return
-	 */
-	public float getLocksScaleModifier() {
-		return 0.5F;
 	}
 	
 	/**
