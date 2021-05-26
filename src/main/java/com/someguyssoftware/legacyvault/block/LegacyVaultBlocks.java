@@ -1,11 +1,28 @@
-/**
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
  * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package com.someguyssoftware.legacyvault.block;
 
 import com.google.common.base.Preconditions;
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.item.VaultBlockItem;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -54,7 +71,7 @@ public class LegacyVaultBlocks {
 		@SubscribeEvent
 		public static void registerItemBlocks(final RegistryEvent.Register<Item> event) {
 			final IForgeRegistry<Item> registry = event.getRegistry();
-			BlockItem itemBlock = new BlockItem(VAULT, new Item.Properties().tab(ItemGroup.TAB_MISC));
+			BlockItem itemBlock = new VaultBlockItem(VAULT, new Item.Properties().tab(ItemGroup.TAB_MISC));
 			final ResourceLocation registryName = Preconditions.checkNotNull(VAULT.getRegistryName(),
 					"Block %s has null registry name", VAULT);
 			registry.register(itemBlock.setRegistryName(registryName));

@@ -17,13 +17,13 @@ public class VaultBranchStorage implements IStorage<IVaultBranchHandler> {
 
 	@Override
 	public INBT writeNBT(Capability<IVaultBranchHandler> capability, IVaultBranchHandler instance, Direction side) {
-		return IntNBT.valueOf(instance.getSize());
+		return IntNBT.valueOf(instance.getCount());
 	}
 
 	@Override
 	public void readNBT(Capability<IVaultBranchHandler> capability, IVaultBranchHandler instance, Direction side,
 			INBT nbt) {
-		instance.setSize(((IntNBT) nbt).getAsInt());		
+		instance.setCount(((IntNBT) nbt).getAsInt());		
 	}
 
 }

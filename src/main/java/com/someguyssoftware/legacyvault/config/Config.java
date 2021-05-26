@@ -1,3 +1,22 @@
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
+ */
 package com.someguyssoftware.legacyvault.config;
 
 import java.util.ArrayList;
@@ -24,16 +43,19 @@ import net.minecraftforge.fml.loading.FMLPaths;
  */
 @EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config extends AbstractConfig {
+	
+	public static final String GENERAL_CATEGORY = "03-general";
+	public static final String CATEGORY_DIV = "##############################";
+	public static final String UNDERLINE_DIV = "------------------------------";
+	
 	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 	protected static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
 	public static ForgeConfigSpec COMMON_CONFIG;
 	
 	private static IMod mod;
 
-	public static final General GENERAL;
-	
-	public static final String CATEGORY_DIV = "##############################";
-	public static final String UNDERLINE_DIV = "------------------------------";
+	public static final General GENERAL;		
+
 	
 	static {
 		MOD = new Mod(COMMON_BUILDER);
@@ -86,6 +108,15 @@ public class Config extends AbstractConfig {
 	
 	/**
 	 * 
+	 * @author Mark Gottschling on May 25, 2021
+	 *
+	 */
+	public static final class CapabilityID {
+		public static final String PLAYER_PROVIDER = "player_cap_provider";
+	}
+	
+	/**
+	 * 
 	 * @author Mark Gottschling on May 5, 2021
 	 *
 	 */
@@ -103,19 +134,31 @@ public class Config extends AbstractConfig {
 
 		public ForgeConfigSpec.IntValue inventorySize;
 		
+		public ForgeConfigSpec.IntValue stackSize;
+		
+		public ForgeConfigSpec.IntValue vaultsPerPlayer;
+		
 		General(final ForgeConfigSpec.Builder builder) {
-			builder.comment(CATEGORY_DIV, " General properties for Legacy Vault  mod.", CATEGORY_DIV).push("general");
+			builder.comment(CATEGORY_DIV, " General properties for Legacy Vault  mod.", CATEGORY_DIV).push(GENERAL_CATEGORY);
 			
 			enablePublicVault = builder
 					.comment(" Enables a singular global public vault(s) that can be used by all players from the same location.",
-							"ie. a vault block is not 'owned' to 'keyed' to a specific player only.",
-							"Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
+							" ie. a vault block is not 'owned' to 'keyed' to a specific player only.",
+							" Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
 					.define("Enable public vault:", false);
 			
 			inventorySize = builder
 					.comment(" Maximum capacity of the vault inventory.", 
 							" Sizes are 27 (small/standard), 54 (medium), 80 (large).")
 					.defineInRange("Vault inventory size:", 54, 27, 80);
+			
+			stackSize = builder
+					.comment(" Maximum item stack size in a vault.")
+					.defineInRange("Maximum item stack size:", 64, 1, 1024);
+			
+			vaultsPerPlayer = builder
+					.comment(" The number of vault each player can place per world.", " Enable public vault' must be disabled.")
+					.defineInRange("Number of vaults per player:", 1, 3, 32000);
 
 			inventoryWhiteList = builder
 					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Wildcards ARE supported.  ex. minecraft:plains, minecraft:*stairs")

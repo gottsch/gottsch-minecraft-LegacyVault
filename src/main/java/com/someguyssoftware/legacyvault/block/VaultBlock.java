@@ -1,12 +1,27 @@
-/**
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
  * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package com.someguyssoftware.legacyvault.block;
 
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
-import com.someguyssoftware.legacyvault.tileentity.AbstractVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.LargeVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.MediumVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
@@ -14,16 +29,12 @@ import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 
 /**
  * @author Mark Gottschling on Apr 29, 2021
@@ -42,10 +53,22 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	private static final VoxelShape SOUTH_FOOT3 = Block.box(1, 0, 12, 3, 1, 14);
 	private static final VoxelShape SOUTH_FOOT4 = Block.box(13, 0, 12, 15, 1, 14);
 	
-	private static final VoxelShape EAST_MAIN = Block.box(1, 1, 1, 15, 16, 14);
+	private static final VoxelShape EAST_MAIN = Block.box(1, 1, 1, 14, 16, 15);
+	private static final VoxelShape EAST_FOOT1 = Block.box(1, 0, 13, 3, 1, 15);
+	private static final VoxelShape EAST_FOOT2 = Block.box(12, 0, 13, 14, 1, 15);
+	private static final VoxelShape EAST_FOOT3 = Block.box(1, 0, 1, 3, 1, 3);
+	private static final VoxelShape EAST_FOOT4 = Block.box(12, 0, 1, 14, 1, 3);
+	
+	private static final VoxelShape WEST_MAIN = Block.box(2, 1, 1, 15, 16, 15);
+	private static final VoxelShape WEST_FOOT1 = Block.box(13, 0, 1, 15, 1, 3);
+	private static final VoxelShape WEST_FOOT2 = Block.box(2, 0, 1, 4, 1, 3);
+	private static final VoxelShape WEST_FOOT3 = Block.box(13, 0, 13, 15, 1, 15);
+	private static final VoxelShape WEST_FOOT4 = Block.box(2, 0, 13, 4, 1, 15);
 	
 	private static final VoxelShape NORTH_VAULT = VoxelShapes.or(NORTH_MAIN, NORTH_FOOT1, NORTH_FOOT2, NORTH_FOOT3, NORTH_FOOT4);	
 	private static final VoxelShape SOUTH_VAULT = VoxelShapes.or(SOUTH_MAIN, SOUTH_FOOT1, SOUTH_FOOT2, SOUTH_FOOT3, SOUTH_FOOT4);
+	private static final VoxelShape EAST_VAULT = VoxelShapes.or(EAST_MAIN, EAST_FOOT1, EAST_FOOT2, EAST_FOOT3, EAST_FOOT4);
+	private static final VoxelShape WEST_VAULT = VoxelShapes.or(WEST_MAIN, WEST_FOOT1, WEST_FOOT2, WEST_FOOT3, WEST_FOOT4);
 	
 	/**
 	 * 
@@ -55,15 +78,13 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	 */
 	public VaultBlock(String modID, String name, Properties properties) {
 		super(modID, name, properties);
-		
-		// set the default shapes/shape
-		VoxelShape shape = SOUTH_VAULT;
+
 		setBounds(
 				new VoxelShape[] {
 						NORTH_VAULT, 	// N
-						shape,  	// E
+						EAST_VAULT,  	// E
 						SOUTH_VAULT,  	// S
-						shape		// W
+						WEST_VAULT		// W
 				});
 	}
 	
@@ -128,29 +149,4 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 		return blockState;
 	}
 	
-	/**
-	 * Called just after the player places a block.
-	 */
-	@Override
-	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-		LegacyVault.LOGGER.debug("Placing chest from item");
-
-		VaultTileEntity valutTileEntity = null;
-
-		// face the block towards the player (there isn't really a front)
-		worldIn.setBlock(pos, state.setValue(FACING, placer.getDirection().getOpposite()), 3);
-		TileEntity tileEntity = worldIn.getBlockEntity(pos);
-		if (tileEntity != null && tileEntity instanceof VaultTileEntity) {
-			// get the backing tile entity
-			valutTileEntity = (VaultTileEntity) tileEntity;
-
-			// set the name of the chest
-			if (stack.hasCustomHoverName()) {
-				valutTileEntity.setCustomName(stack.getDisplayName());
-			}
-
-			// update the facing
-			valutTileEntity.setFacing(placer.getDirection().getOpposite());
-		}
-	}
 }

@@ -8,15 +8,15 @@ package com.someguyssoftware.legacyvault.capability;
  *
  */
 public class VaultBranchHandler implements IVaultBranchHandler {
-	private int size;
+	private int count;
 
 	@Override
-	public int getSize() {
-		return size;
+	public int getCount() {
+		return count;
 	}
 
 	@Override
-	public void setSize(int size) {
-		this.size = size;
+	public void setCount(int size) {
+		this.count = size;
 	}
 }

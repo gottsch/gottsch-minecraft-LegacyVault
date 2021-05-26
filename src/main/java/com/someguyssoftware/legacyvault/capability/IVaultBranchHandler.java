@@ -9,8 +9,8 @@ package com.someguyssoftware.legacyvault.capability;
  */
 public interface IVaultBranchHandler {
 
-	int getSize();
+	int getCount();
 
-	void setSize(int size);
+	void setCount(int size);
 
 }

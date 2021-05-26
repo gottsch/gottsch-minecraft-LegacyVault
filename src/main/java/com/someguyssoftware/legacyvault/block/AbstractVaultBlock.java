@@ -1,20 +1,41 @@
-/**
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
  * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package com.someguyssoftware.legacyvault.block;
 
 import com.someguyssoftware.gottschcore.block.ModContainerBlock;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
+import com.someguyssoftware.legacyvault.capability.IVaultBranchHandler;
+import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.tileentity.IVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -102,6 +123,56 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 
 		return ActionResultType.SUCCESS;
 	}
+	
+	/**
+	 * Called just after the player places a block.
+	 */
+	@Override
+	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+		LegacyVault.LOGGER.debug("setPlacedBy() - Placing chest from item");
+
+		VaultTileEntity valutTileEntity = null;
+
+		// face the block towards the player (there isn't really a front)
+		worldIn.setBlock(pos, state.setValue(FACING, placer.getDirection().getOpposite()), 3);
+		TileEntity tileEntity = worldIn.getBlockEntity(pos);
+		if (tileEntity != null && tileEntity instanceof VaultTileEntity) {
+			// get the backing tile entity
+			valutTileEntity = (VaultTileEntity) tileEntity;
+
+			// set the name of the chest
+			if (stack.hasCustomHoverName()) {
+				valutTileEntity.setCustomName(stack.getDisplayName());
+			}
+
+			// update the facing
+			valutTileEntity.setFacing(placer.getDirection().getOpposite());
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	@Override
+	public void playerDestroy(World world, PlayerEntity player, BlockPos pos, BlockState state,
+			TileEntity tileEntity, ItemStack itemStack) {
+
+		// get  player capabilities
+		IVaultBranchHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+			return new RuntimeException("player does not have VaultBranchHandler capability.'");
+		});
+		
+		// decrement cap vault branch count
+		if (cap.getCount() > 0) {
+			// TODO increment capability size (rename to count)
+			int count = cap.getCount() - 1;
+			count = count < 0 ? 0 : count;
+			cap.setCount(count);
+		}
+		
+		super.playerDestroy(world, player, pos, state, tileEntity, itemStack);
+	}
+	
 	/**
 	 * Convenience method.
 	 * @param state
