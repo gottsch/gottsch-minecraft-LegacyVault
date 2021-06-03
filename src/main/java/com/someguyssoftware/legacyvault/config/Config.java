@@ -29,7 +29,9 @@ import com.someguyssoftware.gottschcore.mod.IMod;
 import com.someguyssoftware.legacyvault.LegacyVault;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig;
@@ -45,7 +47,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 public class Config extends AbstractConfig {
 	
 	public static final String GENERAL_CATEGORY = "03-general";
-	public static final String CATEGORY_DIV = "##############################";
 	public static final String UNDERLINE_DIV = "------------------------------";
 	
 	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
@@ -121,7 +122,7 @@ public class Config extends AbstractConfig {
 	 *
 	 */
 	public static class General {
-		public ForgeConfigSpec.BooleanValue  enablePublicVault;
+		public BooleanValue  enablePublicVault;
 		
 		public ConfigValue<List<? extends String>> inventoryWhiteList;
 		public ConfigValue<List<? extends String>> inventoryBlackList;
@@ -136,7 +137,11 @@ public class Config extends AbstractConfig {
 		
 		public ForgeConfigSpec.IntValue stackSize;
 		
-		public ForgeConfigSpec.IntValue vaultsPerPlayer;
+		public BooleanValue enableLimitedVaults;
+		
+		public IntValue vaultsPerPlayer;
+		
+		public ConfigValue<String> recipeDifficulty;
 		
 		General(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV, " General properties for Legacy Vault  mod.", CATEGORY_DIV).push(GENERAL_CATEGORY);
@@ -156,10 +161,19 @@ public class Config extends AbstractConfig {
 					.comment(" Maximum item stack size in a vault.")
 					.defineInRange("Maximum item stack size:", 64, 1, 1024);
 			
+			enableLimitedVaults = builder
+					.comment(" Enables a limited number of vaults per player per world.",
+							" Default value = true, with 3 vaults per player.")
+					.define("Enable limited vaults player:", true);
+			
 			vaultsPerPlayer = builder
-					.comment(" The number of vault each player can place per world.", " Enable public vault' must be disabled.")
-					.defineInRange("Number of vaults per player:", 1, 3, 32000);
+					.comment(" The number of vaults each player can place per world.", " Enable public vault' must be disabled.")
+					.defineInRange("Number of vaults per player:", 1, 3, 100);
 
+			recipeDifficulty = builder
+					.comment("Values are [easy | normal | hard")
+					.define("Recipe Difficulty", "normal");
+			
 			inventoryWhiteList = builder
 					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Wildcards ARE supported.  ex. minecraft:plains, minecraft:*stairs")
 					.defineList("White list by  Item/Block name:", Arrays.asList(""), s -> s instanceof String);

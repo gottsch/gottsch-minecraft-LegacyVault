@@ -10,7 +10,7 @@ import net.minecraft.util.text.ITextComponent;
 public class StandardVaultContainerScreen extends AbstractVaultContainerScreen<VaultContainer> {
 
 	// this is the resource location for the background image for the GUI
-	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault1.png");
+	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault1c.png");
 
 	/**
 	 * 

@@ -7,7 +7,7 @@ package com.someguyssoftware.legacyvault.capability;
  * @author Mark Gottschling on May 11, 2021
  *
  */
-public class VaultBranchHandler implements IVaultBranchHandler {
+public class VaultCountHandler implements IVaultCountHandler {
 	private int count;
 
 	@Override

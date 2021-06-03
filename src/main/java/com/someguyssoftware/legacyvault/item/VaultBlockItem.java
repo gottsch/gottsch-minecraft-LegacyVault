@@ -19,15 +19,29 @@
  */
 package com.someguyssoftware.legacyvault.item;
 
-import com.someguyssoftware.legacyvault.capability.IVaultBranchHandler;
+import java.util.List;
+
+import com.someguyssoftware.gottschcore.world.WorldInfo;
+import com.someguyssoftware.legacyvault.LegacyVault;
+import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
 import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.init.LegacyVaultSetup;
+import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
+import com.someguyssoftware.legacyvault.network.VaultCountMessageToClient;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 /**
  * @author Mark Gottschling on May 25, 2021
@@ -43,33 +57,61 @@ public class VaultBlockItem extends BlockItem {
 	public VaultBlockItem(Block block, Properties properties) {
 		super(block, properties);
 	}
-
+	
 	/**
 	 * 
 	 */
 	@Override
-	public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
-
-		if (!Config.GENERAL.enablePublicVault.get()) {
-			// get  player capabilities
-			IVaultBranchHandler cap = context.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-				return new RuntimeException("player does not have VaultBranchHandler capability.'");
-			});
-
-			if (cap.getCount() < Config.GENERAL.vaultsPerPlayer.get()) {
-				ActionResultType result =  super.onItemUseFirst(stack, context);
-				if (result == ActionResultType.PASS) {
-					// increment capability size
-					int count = cap.getCount() + 1;
-					count = count > Config.GENERAL.vaultsPerPlayer.get() ? Config.GENERAL.vaultsPerPlayer.get() : count;
-					cap.setCount(count);
-				}
-				return result;
+	protected boolean placeBlock(BlockItemUseContext context, BlockState state) {
+		if (WorldInfo.isServerSide(context.getLevel())) {
+			
+			/*
+			 *  Q: why add this creative check ? what is the reasoning?
+			 *  A: the Block.playerDestroy() is only called in survival mode, thus the decrement vault count calculation is not executed, 
+			 *  which will throw off the vault count. so just making Creative actions the same for placement and destroy.
+			 */
+			
+			if (context.getPlayer().isCreative()) {
+				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+			}			
+			
+			if (Config.GENERAL.enablePublicVault.get()) {
+				// TODO only admin UUIDs can place
+				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 			}
 			else {
-				return ActionResultType.FAIL;
+				if (Config.GENERAL.enableLimitedVaults.get()) {
+					// get  player capabilities
+					IVaultCountHandler cap = context.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+						return new RuntimeException("player does not have VaultCountHandler capability.'");
+					});
+					LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+	
+					if (cap != null && cap.getCount() < Config.GENERAL.vaultsPerPlayer.get()) {
+						LegacyVault.LOGGER.debug("player branch count less than config -> {}", Config.GENERAL.vaultsPerPlayer.get());
+						
+						// TODO does the increment portion belong here or in VaultBlock ? 
+						// increment capability size
+						int count = cap.getCount() + 1;
+						count = count > Config.GENERAL.vaultsPerPlayer.get() ? Config.GENERAL.vaultsPerPlayer.get() : count;
+						cap.setCount(count);
+						// send state message to client
+						VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
+						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)context.getPlayer()),message);
+						return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+					}
+					else {
+						LegacyVault.LOGGER.debug("player branch count greater than config-> {}",  Config.GENERAL.vaultsPerPlayer.get());
+					}
+				}
+				else {
+					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+				}
 			}
 		}
-		return super.onItemUseFirst(stack, context);
+		else {
+			LegacyVault.LOGGER.debug("no can do, you're on client side");
+		}
+		return false;
 	}
 }

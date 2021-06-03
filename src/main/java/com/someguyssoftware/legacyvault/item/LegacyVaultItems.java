@@ -31,7 +31,7 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(LegacyVault.MODID)
 public class LegacyVaultItems {
-
+	// for future use
 	public static Item LOGO;
 	public static Item APPLICATION;
 
@@ -42,8 +42,8 @@ public class LegacyVaultItems {
 	 */
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		LOGO = new ModItem(LegacyVault.MODID, "legeacyvault_tab", new Item.Properties());
-		APPLICATION = new ModItem(LegacyVault.MODID, "vault_application", new Item.Properties());
+		LOGO = new ModItem(LegacyVault.MODID, "legacyvault_tab", new Item.Properties());
+		APPLICATION = new ModItem(LegacyVault.MODID, "vault_application", new Item.Properties().tab(ItemGroup.TAB_MISC));
 		event.getRegistry().registerAll(
 				LOGO,
 				APPLICATION

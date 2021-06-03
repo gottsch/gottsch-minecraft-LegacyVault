@@ -1,12 +1,28 @@
-/**
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
  * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package com.someguyssoftware.legacyvault.init;
 
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IVaultBranchHandler;
-import com.someguyssoftware.legacyvault.capability.VaultBranchHandler;
-import com.someguyssoftware.legacyvault.capability.VaultBranchStorage;
+import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
+import com.someguyssoftware.legacyvault.capability.VaultCountHandler;
+import com.someguyssoftware.legacyvault.capability.VaultCountStorage;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.db.DbManager;
 import com.someguyssoftware.legacyvault.exception.DbInitializationException;
@@ -19,6 +35,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
  *
  */
 public class LegacyVaultSetup {
+	// TODO should move to new class like LegacyVaultNetworking ?
+//	public static SimpleChannel simpleChannel;    // used to transmit your network messages
+//	public static final String MESSAGE_PROTOCOL_VERSION = "1.0";
+//	public static final int VAULT_COUNT_MESSAGE_ID = 14;	
+//	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MODID, "legacy_vault_channel");
+//	
 	/**
 	 * 
 	 * @param event
@@ -37,6 +59,20 @@ public class LegacyVaultSetup {
 		}
 		
 		// attach capabilities
-		CapabilityManager.INSTANCE.register(IVaultBranchHandler.class, new VaultBranchStorage(), VaultBranchHandler::new);
+		CapabilityManager.INSTANCE.register(IVaultCountHandler.class, new VaultCountStorage(), VaultCountHandler::new);
+		
+		/*
+		 *  networking
+		 */		
+//		// register the channel
+//		simpleChannel = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> MESSAGE_PROTOCOL_VERSION,
+//	            VaultCountMessageHandlerOnClient::isThisProtocolAcceptedByClient,
+//	            VaultCountMessageHandlerOnServer::isThisProtocolAcceptedByServer);
+//		
+//		// register the message
+//		simpleChannel.registerMessage(VAULT_COUNT_MESSAGE_ID, VaultCountMessageToClient.class,
+//	            VaultCountMessageToClient::encode, VaultCountMessageToClient::decode,
+//	            VaultCountMessageHandlerOnClient::onMessageReceived,
+//	            Optional.of(PLAY_TO_CLIENT));
 	}
 }

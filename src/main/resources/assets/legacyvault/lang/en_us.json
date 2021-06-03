@@ -2,10 +2,12 @@
 	"itemGroup.legacyvault":"Legacy Vault",
 
 	"item.legacyvault.vault":"Legacy Vault",
-	
+	"item.legacyvault.vault_application":"Vault Application Form",
+		
 	"block.legacyvault.vault":"Legacy Vault",
-
+	
 	"tooltip.label.rarity":"Rarity: %s",
 
-	"display.vault.name":"Legacy Vault"
+	"display.vault.name":"Legacy Vault",
+	"display.vaults_remaining": "Vaults Remaining: %s of %s"
 }

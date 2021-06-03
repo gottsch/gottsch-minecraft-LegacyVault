@@ -62,7 +62,16 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	private int playerInventoryYPos = 84;
 	private int containerInventoryXPos = 8;
 	private int containerInventoryYPos = 18;
+	private int titleYPos = containerInventoryYPos;//8;
+	private int vaultsRemainingYPos = hotbarYPos + slotYSpacing + 2;
+	
+	@Deprecated
 	private int currentRow = 0;
+	
+	
+	// TODO add title text ypos = 8;
+	// TODO add valutremaining ypos = 19?
+	// TODO update gui screens with these values instead of inventory ypos - 10
 
 	/**
 	 * NOTE: cannot use getContainerInventory...Count() as they will be the default vaules because the child class hasn't been able to update the values yet.
@@ -546,5 +555,21 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	@Override
 	public void setVaultInventory(LegacyVaultInventory legacyVaultInventory) {
 		this.legacyVaultInventory = legacyVaultInventory;
+	}
+
+	public int getTitleYPos() {
+		return titleYPos;
+	}
+
+	public void setTitleYPos(int titleYPos) {
+		this.titleYPos = titleYPos;
+	}
+
+	public int getVaultsRemainingYPos() {
+		return vaultsRemainingYPos;
+	}
+
+	public void setVaultsRemainingYPos(int vaultsRemainingYPos) {
+		this.vaultsRemainingYPos = vaultsRemainingYPos;
 	}
 }

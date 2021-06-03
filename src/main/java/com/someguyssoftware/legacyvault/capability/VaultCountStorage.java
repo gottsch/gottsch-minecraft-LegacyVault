@@ -13,15 +13,15 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
  * @author Mark Gottschling on May 12, 2021
  *
  */
-public class VaultBranchStorage implements IStorage<IVaultBranchHandler> {
+public class VaultCountStorage implements IStorage<IVaultCountHandler> {
 
 	@Override
-	public INBT writeNBT(Capability<IVaultBranchHandler> capability, IVaultBranchHandler instance, Direction side) {
+	public INBT writeNBT(Capability<IVaultCountHandler> capability, IVaultCountHandler instance, Direction side) {
 		return IntNBT.valueOf(instance.getCount());
 	}
 
 	@Override
-	public void readNBT(Capability<IVaultBranchHandler> capability, IVaultBranchHandler instance, Direction side,
+	public void readNBT(Capability<IVaultCountHandler> capability, IVaultCountHandler instance, Direction side,
 			INBT nbt) {
 		instance.setCount(((IntNBT) nbt).getAsInt());		
 	}

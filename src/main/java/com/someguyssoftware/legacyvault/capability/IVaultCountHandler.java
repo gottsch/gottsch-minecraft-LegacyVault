@@ -7,7 +7,7 @@ package com.someguyssoftware.legacyvault.capability;
  * @author Mark Gottschling on May 11, 2021
  *
  */
-public interface IVaultBranchHandler {
+public interface IVaultCountHandler {
 
 	int getCount();
 

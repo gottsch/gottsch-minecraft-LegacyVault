@@ -28,6 +28,7 @@ import com.someguyssoftware.gottschcore.config.IConfig;
 import com.someguyssoftware.gottschcore.mod.IMod;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.init.LegacyVaultSetup;
+import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -86,6 +87,7 @@ public class LegacyVault implements IMod {
 		// Register the setup method for modloading
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		eventBus.addListener(LegacyVaultSetup::common);
+		eventBus.addListener(LegacyVaultNetworking::common);
 
 		Config.loadConfig(Config.COMMON_CONFIG,
 				FMLPaths.CONFIGDIR.get().resolve("legacyvault-common.toml"));

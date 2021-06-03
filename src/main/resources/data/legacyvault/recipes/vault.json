@@ -1,23 +1,92 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-	"IIA",
-	"ICI",
-	"III"
-  ],
-  "key": {
-    "A": {
-		"item": "legacyvault:vault_application"
-	},
-	"I": {
-		"item": "minecraft:iron_ingot"
-	},
-	"C": {
-		"item": "minecraft:chest"
-	}	
-  },
-  "result": {
-    "item": "legacyvault:vault",
-    "count": 1
-  }
+	"type": "forge:conditional",
+	"recipes": [
+		{
+			"conditions": [
+			{
+				"type": "legacyvault:vault_normal_difficulty"
+				}
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shaped",
+				"pattern": [
+					"IIA",
+					"ICI",
+					"III"
+				],
+				"key": {
+					"A": {
+						"item": "legacyvault:vault_application"
+					},
+					"I": {
+						"item": "minecraft:iron_ingot"
+					},
+					"C": {
+						"item": "minecraft:chest"
+					}
+				},
+				"result": {
+					"item": "legacyvault:vault",
+					"count": 1
+				}
+			}
+		},
+		{
+			"conditions": [
+			{
+				"type": "legacyvault:vault_easy_difficulty"
+				}
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shaped",
+				"pattern": [
+				"  A",
+				" C ",
+				"   "
+				],
+				"key": {
+					"A": {
+					"item": "legacyvault:vault_application"
+				},
+				"C": {
+					"item": "minecraft:chest"
+				}
+				},
+				"result": {
+					"item": "legacyvault:vault",
+					"count": 1
+				}
+			}
+		},
+		{
+			"conditions": [
+			{
+				"type": "legacyvault:vault_hard_difficulty"
+				}
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shaped",
+				"pattern": [
+				"IIA",
+				"ICI",
+				"III"
+				],
+				"key": {
+					"A": {
+					"item": "legacyvault:vault_application"
+				},
+				"I": {
+					"item": "minecraft:iron_block"
+				},
+				"C": {
+					"item": "minecraft:chest"
+				}
+				},
+				"result": {
+					"item": "legacyvault:vault",
+					"count": 1
+				}
+			}
+		}
+	]
 }

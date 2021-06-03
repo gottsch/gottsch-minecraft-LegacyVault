@@ -19,12 +19,17 @@
  */
 package com.someguyssoftware.legacyvault.block;
 
+import java.util.UUID;
+
 import com.someguyssoftware.gottschcore.block.ModContainerBlock;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IVaultBranchHandler;
+import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
 import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.init.LegacyVaultSetup;
+import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
+import com.someguyssoftware.legacyvault.network.VaultCountMessageToClient;
 import com.someguyssoftware.legacyvault.tileentity.IVaultTileEntity;
 import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
@@ -44,23 +49,25 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 /**
  * @author Mark Gottschling on May 1, 2021
  *
  */
 public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaultBlock {
-	
+
 	private static final VoxelShape MAIN = Block.box(1, 0, 1, 15, 16, 15);
 	// TODO latches, feet,  etc.
-	
+
 	/*
 	 * An array of VoxelShape shapes for the bounding box
 	 */
 	private VoxelShape[] bounds = new VoxelShape[4];
-	
+
 	/**
 	 * 
 	 * @param modID
@@ -80,12 +87,12 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 						shape		// W
 				});
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Override
-	   public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
+	public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult hit) {
 
 		IVaultTileEntity tileEntity = (IVaultTileEntity) world.getBlockEntity(pos);
@@ -100,20 +107,23 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 		if (world.getBlockState(blockPos).getMaterial().isSolid() || world.getBlockState(blockPos).getMaterial().isSolidBlocking()) {
 			return ActionResultType.SUCCESS;
 		}
-		
+
 		// check if the vault already has a uuid assigned
 		if (!Config.GENERAL.enablePublicVault.get()) {
 			LegacyVault.LOGGER.debug("private vault");
-			if(tileEntity.getOwnerUuid() == null || tileEntity.getOwnerUuid().isEmpty()) {
-				tileEntity.setOwnerUuid(player.getStringUUID());
-				LegacyVault.LOGGER.debug("setting vault owner -> {}", player.getStringUUID());
-			}
-			else if (!tileEntity.getOwnerUuid().equals(player.getStringUUID())) {
+			// removing so that if added during creative, the branch count isn't impacted
+//			if(tileEntity.getOwnerUuid() == null || tileEntity.getOwnerUuid().isEmpty()) {
+//				// this should not happen, as the owner is set during placement
+//				tileEntity.setOwnerUuid(player.getStringUUID());
+//				LegacyVault.LOGGER.debug("setting vault owner -> {}", player.getStringUUID());
+//			}
+//			else
+			if (!tileEntity.getOwnerUuid().equals(player.getStringUUID())) {
 				LegacyVault.LOGGER.debug("not your vault!");
 				return ActionResultType.SUCCESS;
 			}
 		}
-		
+
 		// get the container provider
 		INamedContainerProvider namedContainerProvider = this.getContainer(state, world, pos);
 		LegacyVault.LOGGER.debug("namedContainerProvider (TE) -> {}", namedContainerProvider.getClass().getSimpleName());
@@ -123,30 +133,37 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 
 		return ActionResultType.SUCCESS;
 	}
-	
+
 	/**
 	 * Called just after the player places a block.
+	 * Sets the owner of the vault and other TE related data.
 	 */
 	@Override
 	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		LegacyVault.LOGGER.debug("setPlacedBy() - Placing chest from item");
 
-		VaultTileEntity valutTileEntity = null;
+		VaultTileEntity vaultTileEntity = null;
 
 		// face the block towards the player (there isn't really a front)
 		worldIn.setBlock(pos, state.setValue(FACING, placer.getDirection().getOpposite()), 3);
 		TileEntity tileEntity = worldIn.getBlockEntity(pos);
 		if (tileEntity != null && tileEntity instanceof VaultTileEntity) {
 			// get the backing tile entity
-			valutTileEntity = (VaultTileEntity) tileEntity;
+			vaultTileEntity = (VaultTileEntity) tileEntity;
+
+			// set the owner of the chest
+			if (!Config.GENERAL.enablePublicVault.get()) {
+				vaultTileEntity.setOwnerUuid(placer.getStringUUID());
+				LegacyVault.LOGGER.debug("setting vault owner -> {}", placer.getStringUUID());
+			}
 
 			// set the name of the chest
 			if (stack.hasCustomHoverName()) {
-				valutTileEntity.setCustomName(stack.getDisplayName());
+				vaultTileEntity.setCustomName(stack.getDisplayName());
 			}
 
 			// update the facing
-			valutTileEntity.setFacing(placer.getDirection().getOpposite());
+			vaultTileEntity.setFacing(placer.getDirection().getOpposite());
 		}
 	}
 	
@@ -157,22 +174,52 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 	public void playerDestroy(World world, PlayerEntity player, BlockPos pos, BlockState state,
 			TileEntity tileEntity, ItemStack itemStack) {
 
-		// get  player capabilities
-		IVaultBranchHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-			return new RuntimeException("player does not have VaultBranchHandler capability.'");
-		});
+		// NOTE this only occurs in survival!
 		
-		// decrement cap vault branch count
-		if (cap.getCount() > 0) {
-			// TODO increment capability size (rename to count)
-			int count = cap.getCount() - 1;
-			count = count < 0 ? 0 : count;
-			cap.setCount(count);
+		LegacyVault.LOGGER.debug("player is destroying vault block");
+		if (WorldInfo.isServerSide(world) && !Config.GENERAL.enablePublicVault.get() && Config.GENERAL.enableLimitedVaults.get()) {
+			// get the vault-owning player (not the current player who is destroying block)
+			if (tileEntity != null && tileEntity instanceof VaultTileEntity) {
+				// get the backing tile entity
+				VaultTileEntity vaultTileEntity = (VaultTileEntity) tileEntity;
+
+				String playerUUID = vaultTileEntity.getOwnerUuid();
+				if (playerUUID != null && !playerUUID.isEmpty()) {
+					PlayerEntity vaultOwnerPlayer = null;
+					try {
+						vaultOwnerPlayer = world.getPlayerByUUID(UUID.fromString(playerUUID));
+					}
+					catch(Exception e) {
+						// TODO log
+					}
+					
+					if (vaultOwnerPlayer != null) {
+						// get  player capabilities
+						IVaultCountHandler cap = vaultOwnerPlayer.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+							return new RuntimeException("player does not have VaultCountHandler capability.'");
+						});
+						LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+
+						// decrement cap vault branch count
+						if (!Config.GENERAL.enablePublicVault.get() && cap != null && cap.getCount() > 0) {
+							// decrement count
+							int count = cap.getCount() - 1;
+							count = count < 0 ? 0 : count;
+							cap.setCount(count);
+							LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
+							// send state message to client
+							VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
+							LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player),message);
+						}
+					}
+				}
+			}
 		}
-		
 		super.playerDestroy(world, player, pos, state, tileEntity, itemStack);
 	}
-	
+
+
+
 	/**
 	 * Convenience method.
 	 * @param state
@@ -181,7 +228,7 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 	public static Direction getFacing(BlockState state) {
 		return state.getValue(FACING);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -199,7 +246,7 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 			return bounds[3];
 		}
 	}
-	
+
 	@Override
 	public VoxelShape[] getBounds() {
 		return bounds;

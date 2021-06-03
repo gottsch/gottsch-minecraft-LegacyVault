@@ -36,7 +36,7 @@ import net.minecraftforge.common.util.LazyOptional;
  */
 public class PlayerCapabilityProvider implements ICapabilitySerializable<IntNBT> {
 
-	private final LazyOptional<IVaultBranchHandler> handler = LazyOptional
+	private final LazyOptional<IVaultCountHandler> handler = LazyOptional
 			.of(VAULT_BRANCH::getDefaultInstance);
 
 	@Override
