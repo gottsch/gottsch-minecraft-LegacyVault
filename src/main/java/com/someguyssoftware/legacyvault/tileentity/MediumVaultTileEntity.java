@@ -2,6 +2,7 @@ package com.someguyssoftware.legacyvault.tileentity;
 
 import com.someguyssoftware.legacyvault.inventory.LegacyVaultContainers;
 import com.someguyssoftware.legacyvault.inventory.MediumVaultContainer;
+import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -21,7 +22,7 @@ public class MediumVaultTileEntity extends AbstractVaultTileEntity {
 	 */
 	@Override
 	public int getContainerSize() {
-		return 54;
+		return VaultSlotSize.MEDIUM.getSize();
 	}
 
 	/**

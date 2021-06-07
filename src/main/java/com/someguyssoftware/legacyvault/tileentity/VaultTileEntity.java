@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import com.someguyssoftware.legacyvault.inventory.LegacyVaultContainers;
 import com.someguyssoftware.legacyvault.inventory.VaultContainer;
+import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -27,7 +28,7 @@ public class VaultTileEntity extends AbstractVaultTileEntity {
 	 */
 	@Override
 	public int getContainerSize() {
-		return 27;
+		return VaultSlotSize.SMALL.getSize();
 	}
 
 	/**

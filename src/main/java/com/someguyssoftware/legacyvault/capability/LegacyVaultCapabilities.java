@@ -31,6 +31,6 @@ public class LegacyVaultCapabilities {
 	/*
 	 * NOTE Ensure to use interfaces in @CapabilityInject, the static capability and in the instance.
 	 */
-	@CapabilityInject(IVaultCountHandler.class)
-    public static Capability<IVaultCountHandler> VAULT_BRANCH = null;
+	@CapabilityInject(IPlayerVaultsHandler.class)
+    public static Capability<IPlayerVaultsHandler> VAULT_BRANCH = null;
 }

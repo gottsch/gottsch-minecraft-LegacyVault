@@ -9,6 +9,7 @@ import java.util.Date;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
 
 /**
  * @author Mark Gottschling on Apr 28, 2021
@@ -33,7 +34,7 @@ public class Account {
 	private byte[] inventory;
 	
 	@DatabaseField(canBeNull = false, columnName = "max_size", defaultValue = "27")
-	private Integer  maxSize = 27;
+	private Integer  maxSize = VaultSlotSize.SMALL.getSize();
 	
 	@DatabaseField(canBeNull = true, columnName = "locked", defaultValue = "false")
 	private Boolean locked = false;

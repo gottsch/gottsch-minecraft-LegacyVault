@@ -24,6 +24,7 @@ import static com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilitie
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -34,9 +35,9 @@ import net.minecraftforge.common.util.LazyOptional;
  * @author Mark Gottschling on May 12, 2021
  *
  */
-public class PlayerCapabilityProvider implements ICapabilitySerializable<IntNBT> {
+public class PlayerCapabilityProvider implements ICapabilitySerializable<CompoundNBT> {
 
-	private final LazyOptional<IVaultCountHandler> handler = LazyOptional
+	private final LazyOptional<IPlayerVaultsHandler> handler = LazyOptional
 			.of(VAULT_BRANCH::getDefaultInstance);
 
 	@Override
@@ -45,13 +46,13 @@ public class PlayerCapabilityProvider implements ICapabilitySerializable<IntNBT>
 	}
 
 	@Override
-	public IntNBT serializeNBT() {
-		return (IntNBT) VAULT_BRANCH.getStorage().writeNBT(VAULT_BRANCH,
+	public CompoundNBT serializeNBT() {
+		return (CompoundNBT) VAULT_BRANCH.getStorage().writeNBT(VAULT_BRANCH,
 				handler.orElseThrow(() -> new IllegalArgumentException("at serialize")), null);
 	}
 
 	@Override
-	public void deserializeNBT(IntNBT nbt) {
+	public void deserializeNBT(CompoundNBT nbt) {
 		VAULT_BRANCH.getStorage().readNBT(VAULT_BRANCH, handler.orElseThrow(() -> new IllegalArgumentException("at deserialize")), null, nbt);
 	}
 

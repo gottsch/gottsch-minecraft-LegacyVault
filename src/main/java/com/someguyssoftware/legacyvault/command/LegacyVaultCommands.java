@@ -17,25 +17,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.inventory;
+package com.someguyssoftware.legacyvault.command;
+
+import com.someguyssoftware.legacyvault.LegacyVault;
+
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 /**
- * @author Mark Gottschling on May 23, 2021
+ * @author Mark Gottschling on Jun 5, 2021
  *
  */
-public enum VaultSlotSize {
-	SMALL(27),
-	MEDIUM(54),
-	LARGE(91);
-
-	private int size;
-	
-	VaultSlotSize(int size) {
-		this.size = size;
+@Mod.EventBusSubscriber(modid = LegacyVault.MODID)
+public class LegacyVaultCommands {
+	@SubscribeEvent
+	public static void onServerStarting(RegisterCommandsEvent event) {
+		ResetVaultCountCommand.register(event.getDispatcher());
 	}
-
-	public int getSize() {
-		return size;
-	}
-	
 }

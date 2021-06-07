@@ -19,28 +19,22 @@
  */
 package com.someguyssoftware.legacyvault.item;
 
-import java.util.List;
-
+import com.someguyssoftware.gottschcore.spatial.Coords;
+import com.someguyssoftware.gottschcore.spatial.ICoords;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
+import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
 import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.init.LegacyVaultSetup;
 import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
 import com.someguyssoftware.legacyvault.network.VaultCountMessageToClient;
+import com.someguyssoftware.legacyvault.util.LegacyVaultHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 /**
@@ -75,26 +69,33 @@ public class VaultBlockItem extends BlockItem {
 				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 			}			
 			
-			if (Config.GENERAL.enablePublicVault.get()) {
-				// TODO only admin UUIDs can place
-				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+			if (Config.PUBLIC_VAULT.enablePublicVault.get()) {
+				// only those with proper access can place
+				if (LegacyVaultHelper.doesPlayerHavePulicAccess(context.getPlayer())) {
+					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+				}
 			}
 			else {
 				if (Config.GENERAL.enableLimitedVaults.get()) {
 					// get  player capabilities
-					IVaultCountHandler cap = context.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-						return new RuntimeException("player does not have VaultCountHandler capability.'");
-					});
+					IPlayerVaultsHandler cap = LegacyVaultHelper.getPlayerCapability(context.getPlayer());
+//						context.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+//						return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+//					});
 					LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 	
 					if (cap != null && cap.getCount() < Config.GENERAL.vaultsPerPlayer.get()) {
 						LegacyVault.LOGGER.debug("player branch count less than config -> {}", Config.GENERAL.vaultsPerPlayer.get());
 						
-						// TODO does the increment portion belong here or in VaultBlock ? 
+						// TODO does the updates to capability happen here or in VaultBlock ? 
 						// increment capability size
 						int count = cap.getCount() + 1;
 						count = count > Config.GENERAL.vaultsPerPlayer.get() ? Config.GENERAL.vaultsPerPlayer.get() : count;
 						cap.setCount(count);
+						
+						ICoords location = new Coords(context.getClickedPos());
+						cap.getLocations().add(location);
+						
 						// send state message to client
 						VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
 						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)context.getPlayer()),message);

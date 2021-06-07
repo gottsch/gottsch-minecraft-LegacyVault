@@ -121,6 +121,11 @@ public class VaultSlot extends Slot {
 	}
 
 	@Override
+	public int getMaxStackSize() {
+		return Config.GENERAL.stackSize.get();
+	}
+	
+	@Override
 	public boolean isActive() {
 		return active;
 	}

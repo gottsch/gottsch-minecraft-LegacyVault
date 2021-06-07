@@ -5,7 +5,7 @@ package com.someguyssoftware.legacyvault.eventhandler;
 
 import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
+import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
 import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.capability.PlayerCapabilityProvider;
 import com.someguyssoftware.legacyvault.config.Config;
@@ -45,10 +45,10 @@ public class PlayerEventHandler {
 		}
 		
 		// update client players capabilities
-		if (!Config.GENERAL.enablePublicVault.get() &&  Config.GENERAL.enableLimitedVaults.get()) {
+		if (!Config.PUBLIC_VAULT.enablePublicVault.get() &&  Config.GENERAL.enableLimitedVaults.get()) {
 			// get  player capabilities
-			IVaultCountHandler cap = event.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-				return new RuntimeException("player does not have VaultCountHandler capability.'");
+			IPlayerVaultsHandler cap = event.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 			});
 			LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 

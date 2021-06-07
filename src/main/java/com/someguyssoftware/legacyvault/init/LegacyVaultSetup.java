@@ -20,9 +20,9 @@
 package com.someguyssoftware.legacyvault.init;
 
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
-import com.someguyssoftware.legacyvault.capability.VaultCountHandler;
-import com.someguyssoftware.legacyvault.capability.VaultCountStorage;
+import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
+import com.someguyssoftware.legacyvault.capability.PlayerVaultsHandler;
+import com.someguyssoftware.legacyvault.capability.PlayerVaultsStorage;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.db.DbManager;
 import com.someguyssoftware.legacyvault.exception.DbInitializationException;
@@ -59,7 +59,7 @@ public class LegacyVaultSetup {
 		}
 		
 		// attach capabilities
-		CapabilityManager.INSTANCE.register(IVaultCountHandler.class, new VaultCountStorage(), VaultCountHandler::new);
+		CapabilityManager.INSTANCE.register(IPlayerVaultsHandler.class, new PlayerVaultsStorage(), PlayerVaultsHandler::new);
 		
 		/*
 		 *  networking

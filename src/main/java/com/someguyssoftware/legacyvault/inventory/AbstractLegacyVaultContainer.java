@@ -1,5 +1,21 @@
-/**
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
  * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package com.someguyssoftware.legacyvault.inventory;
 
@@ -63,7 +79,6 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	private int containerInventoryXPos = 8;
 	private int containerInventoryYPos = 18;
 	private int titleYPos = containerInventoryYPos;//8;
-	private int vaultsRemainingYPos = hotbarYPos + slotYSpacing + 2;
 	
 	@Deprecated
 	private int currentRow = 0;
@@ -566,10 +581,7 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	}
 
 	public int getVaultsRemainingYPos() {
-		return vaultsRemainingYPos;
+		return getHotbarYPos() + getSlotYSpacing() + 2;
 	}
 
-	public void setVaultsRemainingYPos(int vaultsRemainingYPos) {
-		this.vaultsRemainingYPos = vaultsRemainingYPos;
-	}
 }

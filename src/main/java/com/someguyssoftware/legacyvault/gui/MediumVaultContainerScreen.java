@@ -10,7 +10,7 @@ import net.minecraft.util.text.ITextComponent;
 public class MediumVaultContainerScreen extends AbstractVaultContainerScreen<MediumVaultContainer> {
 
 	// this is the resource location for the background image for the GUI
-	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault2.png");
+	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault2c.png");
 
 	/**
 	 * 
@@ -20,7 +20,7 @@ public class MediumVaultContainerScreen extends AbstractVaultContainerScreen<Med
 	 */
 	public MediumVaultContainerScreen(MediumVaultContainer screenContainer, PlayerInventory playerInventory, ITextComponent title) {
 		super(screenContainer, playerInventory, title);
-		imageHeight = 219;
+		imageHeight = 228;
 	}
 
 	public ResourceLocation getBgTexture() {

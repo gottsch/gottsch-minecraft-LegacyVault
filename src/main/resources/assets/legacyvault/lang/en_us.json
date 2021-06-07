@@ -9,5 +9,7 @@
 	"tooltip.label.rarity":"Rarity: %s",
 
 	"display.vault.name":"Legacy Vault",
-	"display.vaults_remaining": "Vaults Remaining: %s of %s"
+	"display.vaults_remaining": "Vaults Remaining: %s of %s",
+	"display.unlimited_vaults": "Vaults Remaining: Unlimited",
+	"display.public_vault": "Public Vault"
 }

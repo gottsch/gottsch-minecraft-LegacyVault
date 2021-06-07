@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
+import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
 import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 
 import net.minecraft.client.world.ClientWorld;
@@ -71,8 +71,8 @@ public class VaultCountMessageHandlerOnClient {
 			PlayerEntity player = worldClient.getPlayerByUUID(UUID.fromString(message.getPlayerUUID()));
 			if (player != null) {
 				// get  player capabilities
-				IVaultCountHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-					return new RuntimeException("player does not have VaultCountHandler capability.'");
+				IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 				});
 				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 				cap.setCount(message.getVaultCount());

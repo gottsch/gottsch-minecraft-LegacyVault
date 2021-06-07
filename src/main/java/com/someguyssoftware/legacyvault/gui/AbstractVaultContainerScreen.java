@@ -1,5 +1,21 @@
-/**
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
  * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package com.someguyssoftware.legacyvault.gui;
 
@@ -8,7 +24,7 @@ import java.awt.Color;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IVaultCountHandler;
+import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
 import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.inventory.AbstractLegacyVaultContainer;
@@ -63,29 +79,39 @@ public abstract class AbstractVaultContainerScreen<T extends AbstractLegacyVault
 				LABEL_XPOS, PLAYER_INV_LABEL_YPOS, Color.darkGray.getRGB());
 		
 		//  add Vaults Remaining
-		String vaultsRemainingValue = "";
-		if (Config.GENERAL.enablePublicVault.get()) {
-			vaultsRemainingValue = VAULTS_REMAINING.PUBLIC.getValue();
+//		String vaultsRemainingValue = "";
+		String vaultsRemaining = "";
+		if (Config.PUBLIC_VAULT.enablePublicVault.get()) {
+//			vaultsRemainingValue = VAULTS_REMAINING.PUBLIC.getValue();
+			vaultsRemaining = new TranslationTextComponent("display.public_vault").getString();
+//			this.font.draw(matrixStack, new TranslationTextComponent("display.public_vault").getString(), LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
 		}
 		else {
 			// check for unlimited
 			if (Config.GENERAL.enableLimitedVaults.get()) {
 //				LegacyVault.LOGGER.debug("player -> {}", inventory.player.getStringUUID());
-				IVaultCountHandler cap = inventory.player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-					return new RuntimeException("player does not have VaultCountHandler capability.'");
+				IPlayerVaultsHandler cap = inventory.player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 				});
 //				LegacyVault.LOGGER.debug("player vault count -> {}", cap.getCount());
-				vaultsRemainingValue = String.valueOf(Config.GENERAL.vaultsPerPlayer.get() - cap.getCount());
+//				vaultsRemainingValue = String.valueOf(Config.GENERAL.vaultsPerPlayer.get() - cap.getCount());
+				vaultsRemaining = new TranslationTextComponent("display.vaults_remaining", String.valueOf(Config.GENERAL.vaultsPerPlayer.get() - cap.getCount()), Config.GENERAL.vaultsPerPlayer.get()).getString();
+//				this.font.draw(matrixStack, new TranslationTextComponent("display.vaults_remaining", vaultsRemainingValue, Config.GENERAL.vaultsPerPlayer.get()).getString(), LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
 //				LegacyVault.LOGGER.debug("vaults remaining -> {}", vaultsRemainingValue);
 			}
 			else {
-				vaultsRemainingValue = VAULTS_REMAINING.UNLIMITED.getValue();
+//				vaultsRemainingValue = VAULTS_REMAINING.UNLIMITED.getValue();
+				vaultsRemaining = new TranslationTextComponent("display.unlimited_vaults").getString();
+//				this.font.draw(matrixStack, new TranslationTextComponent("display.unlimted_vaults").getString(), LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
 			}
 		}
-		this.font.draw(matrixStack, new TranslationTextComponent("display.vaults_remaining", vaultsRemainingValue, Config.GENERAL.vaultsPerPlayer.get()).getString(), LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
+//		LegacyVault.LOGGER.debug("{} vaults remainining ypos -> {}", getMenu().getClass().getSimpleName(), getMenu().getVaultsRemainingYPos());
+//		this.font.draw(matrixStack, new TranslationTextComponent("display.vaults_remaining", vaultsRemainingValue, Config.GENERAL.vaultsPerPlayer.get()).getString(), LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
+		this.font.draw(matrixStack, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
 	}
 	
 	// TODO move
+	@Deprecated
 	public enum VAULTS_REMAINING {
 		PUBLIC("Public Vault"),
 		UNLIMITED("Unlimited"),
