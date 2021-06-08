@@ -160,9 +160,9 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 		if (tileEntity != null && tileEntity instanceof IVaultTileEntity) {
 			// get the backing tile entity
 			vaultTileEntity = (IVaultTileEntity) tileEntity;
-LegacyVault.LOGGER.debug("got the tile entity.");
-LegacyVault.LOGGER.debug("public vault -> {}", Config.PUBLIC_VAULT.enablePublicVault.get());
-LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
+			LegacyVault.LOGGER.debug("got the tile entity.");
+			LegacyVault.LOGGER.debug("public vault -> {}", Config.PUBLIC_VAULT.enablePublicVault.get());
+			LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 			// set the owner of the chest
 			if (!Config.PUBLIC_VAULT.enablePublicVault.get()) {
 				vaultTileEntity.setOwnerUuid(placer.getStringUUID());
@@ -181,10 +181,10 @@ LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 
 	@Override
 	public void destroy(IWorld world, BlockPos pos, BlockState state) {
-//		LegacyVault.LOGGER.debug("calling destroy()");
+		//		LegacyVault.LOGGER.debug("calling destroy()");
 		super.destroy(world, pos, state);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -195,10 +195,10 @@ LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 		if((Config.PUBLIC_VAULT.enablePublicVault.get())) {
 			return 0;
 		}
-		
+
 		return super.getDestroyProgress(state, player, blockReader, blockPos);
 	}
-	
+
 	/**
 	 * NOTE this is called only in survival!
 	 */
@@ -206,69 +206,63 @@ LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 	public void playerDestroy(World world, PlayerEntity player, BlockPos pos, BlockState state,
 			TileEntity tileEntity, ItemStack itemStack) {
 
-		// 
 		LegacyVault.LOGGER.debug("player is destroying vault block");
-		if (WorldInfo.isServerSide(world)) {
-			if(Config.PUBLIC_VAULT.enablePublicVault.get()) {
-				return;
-			}
-			else {
-				
-				
-				if (	Config.GENERAL.enableLimitedVaults.get()) {
-					
+		if (WorldInfo.isClientSide(world) || Config.PUBLIC_VAULT.enablePublicVault.get()) {
+			return;
+		}
+
+		// get the vault-owning player (not the current player who is destroying block)
+		if (tileEntity != null && tileEntity instanceof IVaultTileEntity) {
+			// get the backing tile entity
+			IVaultTileEntity vaultTileEntity = (IVaultTileEntity) tileEntity;
+
+			// get the owner by uuid
+			String playerUUID = vaultTileEntity.getOwnerUuid();
+			PlayerEntity vaultOwnerPlayer = null;
+			if (playerUUID != null && !playerUUID.isEmpty()) {
+				try {
+					vaultOwnerPlayer = world.getPlayerByUUID(UUID.fromString(playerUUID));
 				}
-				// get the vault-owning player (not the current player who is destroying block)
-				if (tileEntity != null && tileEntity instanceof IVaultTileEntity) {
-					// get the backing tile entity
-					IVaultTileEntity vaultTileEntity = (IVaultTileEntity) tileEntity;
+				catch(Exception e) {
+					LegacyVault.LOGGER.error("unable to get player by uuid -> " + playerUUID, e);
+				}
+			}
 
-					String playerUUID = vaultTileEntity.getOwnerUuid();
-					if (playerUUID != null && !playerUUID.isEmpty()) {
-						PlayerEntity vaultOwnerPlayer = null;
-						try {
-							vaultOwnerPlayer = world.getPlayerByUUID(UUID.fromString(playerUUID));
-						}
-						catch(Exception e) {
-							// TODO log
-						}
+			if (vaultOwnerPlayer != null) {
+				// get  player capabilities
+				IPlayerVaultsHandler cap = vaultOwnerPlayer.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+				});
+				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 
-						if (vaultOwnerPlayer != null) {
-							// get  player capabilities
-							IPlayerVaultsHandler cap = vaultOwnerPlayer.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-								return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-							});
-							LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+				if (Config.GENERAL.enableLimitedVaults.get()) {
+					// decrement cap vault branch count
+					if (cap.getCount() > 0) {
+						// decrement count
+						int count = cap.getCount() - 1;
+						count = count < 0 ? 0 : count;
+						cap.setCount(count);
 
-							// decrement cap vault branch count
-							if (!Config.PUBLIC_VAULT.enablePublicVault.get() && cap != null && cap.getCount() > 0) {
-								// decrement count
-								int count = cap.getCount() - 1;
-								count = count < 0 ? 0 : count;
-								cap.setCount(count);
-
-								// remove location
-								ICoords vaultLocation = new Coords(pos);
-								List<ICoords> newLocations = new ArrayList<>();
-								for (ICoords location : cap.getLocations()) {
-									if (!location.equals(vaultLocation)) {
-										newLocations.add(location);
-									}
-								}
-								cap.setLocations(newLocations);
-
-								LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
-								// send state message to client
-								VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
-								ServerPlayerEntity serverPlayer = (ServerPlayerEntity)vaultOwnerPlayer;
-								LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
-							}
-						}
+						LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
+						// send state message to client
+						VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
+						ServerPlayerEntity serverPlayer = (ServerPlayerEntity)vaultOwnerPlayer;
+						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
 					}
 				}
+
+				// remove location
+				ICoords vaultLocation = new Coords(pos);
+				List<ICoords> newLocations = new ArrayList<>();
+				for (ICoords location : cap.getLocations()) {
+					if (!location.equals(vaultLocation)) {
+						newLocations.add(location);
+					}
+				}
+				cap.setLocations(newLocations);
 			}
-			
 		}
+
 		super.playerDestroy(world, player, pos, state, tileEntity, itemStack);
 	}
 
