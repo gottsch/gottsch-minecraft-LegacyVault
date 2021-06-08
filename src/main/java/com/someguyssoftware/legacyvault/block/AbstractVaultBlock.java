@@ -152,15 +152,17 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		LegacyVault.LOGGER.debug("setPlacedBy() - Placing chest from item");
 
-		VaultTileEntity vaultTileEntity = null;
+		IVaultTileEntity vaultTileEntity = null;
 
 		// face the block towards the player (there isn't really a front)
 		worldIn.setBlock(pos, state.setValue(FACING, placer.getDirection().getOpposite()), 3);
 		TileEntity tileEntity = worldIn.getBlockEntity(pos);
-		if (tileEntity != null && tileEntity instanceof VaultTileEntity) {
+		if (tileEntity != null && tileEntity instanceof IVaultTileEntity) {
 			// get the backing tile entity
-			vaultTileEntity = (VaultTileEntity) tileEntity;
-
+			vaultTileEntity = (IVaultTileEntity) tileEntity;
+LegacyVault.LOGGER.debug("got the tile entity.");
+LegacyVault.LOGGER.debug("public vault -> {}", Config.PUBLIC_VAULT.enablePublicVault.get());
+LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 			// set the owner of the chest
 			if (!Config.PUBLIC_VAULT.enablePublicVault.get()) {
 				vaultTileEntity.setOwnerUuid(placer.getStringUUID());
@@ -198,20 +200,24 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 	}
 	
 	/**
-	 * 
+	 * NOTE this is called only in survival!
 	 */
 	@Override
 	public void playerDestroy(World world, PlayerEntity player, BlockPos pos, BlockState state,
 			TileEntity tileEntity, ItemStack itemStack) {
 
-		// NOTE this only occurs in survival!
-
+		// 
 		LegacyVault.LOGGER.debug("player is destroying vault block");
 		if (WorldInfo.isServerSide(world)) {
-			if((Config.PUBLIC_VAULT.enablePublicVault.get() && !LegacyVaultHelper.doesPlayerHavePulicAccess(player))) {
+			if(Config.PUBLIC_VAULT.enablePublicVault.get()) {
 				return;
 			}
-			else if (	!Config.PUBLIC_VAULT.enablePublicVault.get() && Config.GENERAL.enableLimitedVaults.get()) {
+			else {
+				
+				
+				if (	Config.GENERAL.enableLimitedVaults.get()) {
+					
+				}
 				// get the vault-owning player (not the current player who is destroying block)
 				if (tileEntity != null && tileEntity instanceof IVaultTileEntity) {
 					// get the backing tile entity
@@ -261,6 +267,7 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 					}
 				}
 			}
+			
 		}
 		super.playerDestroy(world, player, pos, state, tileEntity, itemStack);
 	}

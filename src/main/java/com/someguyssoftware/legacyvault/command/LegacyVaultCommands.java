@@ -35,5 +35,6 @@ public class LegacyVaultCommands {
 	public static void onServerStarting(RegisterCommandsEvent event) {
 		ResetVaultCountCommand.register(event.getDispatcher());
 		GetVaultLocationsCommand.register(event.getDispatcher());
+		ClearVaultLocationsCommand.register(event.getDispatcher());
 	}
 }

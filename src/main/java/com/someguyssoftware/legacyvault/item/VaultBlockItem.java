@@ -70,20 +70,19 @@ public class VaultBlockItem extends BlockItem {
 			}			
 			
 			if (Config.PUBLIC_VAULT.enablePublicVault.get()) {
-				// only those with proper access can place
-				if (LegacyVaultHelper.doesPlayerHavePulicAccess(context.getPlayer())) {
-					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
-				}
+				return false; // TODO could change this if admin whitelist enabled.
+				// only those with proper access can place - no, access is only for rights to open
+//				if (LegacyVaultHelper.doesPlayerHavePulicAccess(context.getPlayer())) {
+//					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+//				}
 			}
 			else {
+				
+				// get  player capabilities
+				IPlayerVaultsHandler cap = LegacyVaultHelper.getPlayerCapability(context.getPlayer());
+				LegacyVault.LOGGER.debug("player vault count -> {}", cap.getCount());
+				
 				if (Config.GENERAL.enableLimitedVaults.get()) {
-					// get  player capabilities
-					IPlayerVaultsHandler cap = LegacyVaultHelper.getPlayerCapability(context.getPlayer());
-//						context.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-//						return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-//					});
-					LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
-	
 					if (cap != null && cap.getCount() < Config.GENERAL.vaultsPerPlayer.get()) {
 						LegacyVault.LOGGER.debug("player branch count less than config -> {}", Config.GENERAL.vaultsPerPlayer.get());
 						
@@ -93,21 +92,22 @@ public class VaultBlockItem extends BlockItem {
 						count = count > Config.GENERAL.vaultsPerPlayer.get() ? Config.GENERAL.vaultsPerPlayer.get() : count;
 						cap.setCount(count);
 						
-						ICoords location = new Coords(context.getClickedPos());
-						cap.getLocations().add(location);
-						
 						// send state message to client
 						VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
 						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)context.getPlayer()),message);
-						return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+//						return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 					}
 					else {
 						LegacyVault.LOGGER.debug("player branch count greater than config-> {}",  Config.GENERAL.vaultsPerPlayer.get());
+						return false;
 					}
 				}
-				else {
-					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
-				}
+					
+				// add the vault location to capabilities
+				ICoords location = new Coords(context.getClickedPos());
+				cap.getLocations().add(location);
+
+				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 			}
 		}
 		else {
