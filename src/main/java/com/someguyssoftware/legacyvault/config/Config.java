@@ -222,11 +222,13 @@ public class Config extends AbstractConfig {
 					.define("Enable public vault:", false);
 
 			playerWhiteList = builder
-					.comment(" Allowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.")
+					.comment(" Allowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
+							"If both White and Black lists are empty, then all players have access.")
 					.defineList("White list by player uuid:", Arrays.asList(""), s -> s instanceof String);
 
 			playerBlackList = builder
-					.comment(" Disallowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.")
+					.comment(" Disallowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
+							"If both White and Black lists are empty, then all players have access.")
 					.defineList("Black list by player uuid:", Arrays.asList(""), s -> s instanceof String);
 			
 			builder.pop();
