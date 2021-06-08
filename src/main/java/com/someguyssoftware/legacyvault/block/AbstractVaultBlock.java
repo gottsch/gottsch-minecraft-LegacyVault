@@ -190,7 +190,7 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 	public float getDestroyProgress(BlockState state, PlayerEntity player, IBlockReader blockReader, BlockPos blockPos) {
 
 		// prevent player from destroying vault if they don't have access
-		if((Config.PUBLIC_VAULT.enablePublicVault.get() && !LegacyVaultHelper.doesPlayerHavePulicAccess(player))) {
+		if((Config.PUBLIC_VAULT.enablePublicVault.get())) {
 			return 0;
 		}
 		
