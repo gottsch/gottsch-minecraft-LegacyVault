@@ -23,5 +23,7 @@ public interface IVaultTileEntity {
 	public ITextComponent getCustomName();
 	
 	public void setCustomName(ITextComponent name);
+	
+	public float getOpenNess(float partialTicks);
 
 }

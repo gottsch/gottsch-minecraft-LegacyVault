@@ -48,6 +48,7 @@ public class Config extends AbstractConfig {
 
 	public static final String GENERAL_CATEGORY = "03-general";
 	public static final String PUBLIC_VAULT_CATEGORY = "04-public-vault";
+	public static final String DATABASE_CATEGORY = "05-database";
 	public static final String UNDERLINE_DIV = "------------------------------";
 
 	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
@@ -58,6 +59,7 @@ public class Config extends AbstractConfig {
 
 	public static final General GENERAL;		
 	public static final PublicVault PUBLIC_VAULT;
+	public static final Db DATABASE;
 
 
 	static {
@@ -65,6 +67,7 @@ public class Config extends AbstractConfig {
 		LOGGING = new Logging(COMMON_BUILDER);
 		GENERAL = new General(COMMON_BUILDER);
 		PUBLIC_VAULT = new PublicVault(COMMON_BUILDER);
+		DATABASE = new Db(COMMON_BUILDER);
 		COMMON_CONFIG = COMMON_BUILDER.build();
 
 		// perform any initializations on data
@@ -117,6 +120,29 @@ public class Config extends AbstractConfig {
 	 */
 	public static final class CapabilityID {
 		public static final String PLAYER_PROVIDER = "player_cap_provider";
+	}
+
+	/**
+	 * 
+	 * @author Mark Gottschling on Jun 9, 2021
+	 *
+	 */
+	public static class Db {
+		public ConfigValue<String> user;
+		public ConfigValue<String> password;
+
+		Db(final ForgeConfigSpec.Builder builder) {
+			builder.comment(CATEGORY_DIV, " Database properties for Legacy Vault  mod.", CATEGORY_DIV).push(DATABASE_CATEGORY);
+			user = builder
+					.comment("User for H2 DB access.")
+					.define("User", "sa");
+
+			password = builder
+					.comment("Password for H2 DB access.")
+					.define("Password", "sa");
+
+			builder.pop();
+		}
 	}
 
 	/**
@@ -185,7 +211,7 @@ public class Config extends AbstractConfig {
 			tagsBlackList = builder
 					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are NOT supported.")
 					.defineList("Black list by  Tag name:", Arrays.asList(""), s -> s instanceof String);
-			
+
 			builder.pop();
 		}
 
@@ -214,7 +240,7 @@ public class Config extends AbstractConfig {
 
 		PublicVault(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV, " Public Vault properties for Legacy Vault  mod.", CATEGORY_DIV).push(PUBLIC_VAULT_CATEGORY);
-			
+
 			enablePublicVault = builder
 					.comment(" Enables a singular global public vault(s) that can be used by all players from the same location.",
 							" ie. a vault block is not 'owned' to 'keyed' to a specific player only.",
@@ -230,7 +256,7 @@ public class Config extends AbstractConfig {
 					.comment(" Disallowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
 							"If both White and Black lists are empty, then all players have access.")
 					.defineList("Black list by player uuid:", Arrays.asList(""), s -> s instanceof String);
-			
+
 			builder.pop();
 		}
 	}

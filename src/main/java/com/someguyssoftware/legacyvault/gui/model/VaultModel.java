@@ -1,3 +1,22 @@
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
+ */
 package com.someguyssoftware.legacyvault.gui.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -115,9 +134,9 @@ public class VaultModel extends AbstractVaultModel {
 		doorGroup.texOffs(30, 34).addBox(4.0F, -1.0F, -1.0F, 1.0F, 1.0F, 1.0F, 0.0F, false);
 
 		handle = new ModelRenderer(this);
-		handle.setPos(-1.5F, 15.5F, -8.0F);
-		handle.texOffs(20, 39).addBox(0.5F, -3.5F, 0.0F, 1.0F, 7.0F, 1.0F, 0.0F, false);
-		handle.texOffs(0, 39).addBox(-2.5F, -0.5F, 0.0F, 7.0F, 1.0F, 1.0F, 0.0F, false);
+		handle.setPos(-0.5F, 15.5F, -8.0F);
+		handle.texOffs(20, 39).addBox(-0.5F, -3.5F, 0.0F, 1.0F, 7.0F, 1.0F, 0.0F, false);
+		handle.texOffs(0, 39).addBox(-3.5F, -0.5F, 0.0F, 7.0F, 1.0F, 1.0F, 0.0F, false);
 
 		handle2 = new ModelRenderer(this);
 		handle2.setPos(-5.0F, 16.0F, -6.0F);

@@ -84,7 +84,8 @@ public class DbManager {
 		LOGGER.info("path to db folder -> {}", dbPath.toString());
 
 		// create the connection
-		String databaseUrl = "jdbc:h2:tcp://localhost:9092/" +dbPath.toString() + ";USER=sa;PASSWORD=sa;";
+		String databaseUrl = String.format("jdbc:h2:tcp://localhost:9092/%s;USER=%s;PASSWORD=%s;", dbPath.toString(), Config.DATABASE.user.get(), Config.DATABASE.password.get());
+//		String databaseUrl = "jdbc:h2:tcp://localhost:9092/" +dbPath.toString() + ";USER=sa;PASSWORD=sa;";
 		LOGGER.info("db url -> {}", databaseUrl);
 		conn = DriverManager.getConnection(databaseUrl);
 

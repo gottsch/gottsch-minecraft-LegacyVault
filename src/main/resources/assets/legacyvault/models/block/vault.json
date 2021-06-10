@@ -4,7 +4,7 @@
 	"texture_size": [64, 64],
 	"textures": {
 		"0": "legacyvault:entity/vault/vault",
-		"particle": "legacyvault:entity/vault/vault"
+		"particle": "legacyvault:block/vault-particle"
 	},
 	"elements": [
 		{

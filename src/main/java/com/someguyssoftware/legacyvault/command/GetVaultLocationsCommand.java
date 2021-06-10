@@ -64,10 +64,10 @@ public class GetVaultLocationsCommand {
 						.executes(source -> {
 							return getLocations(source.getSource(), EntityArgument.getEntities(source, "targets"));							
 						})
-					)
-			);
+						)
+				);
 	}
-	
+
 	/**
 	 * 
 	 * @param source
@@ -78,22 +78,20 @@ public class GetVaultLocationsCommand {
 	private static int getLocations(CommandSource source, Collection<? extends Entity> entities) {
 		LegacyVault.LOGGER.debug("getLocations command being called.");
 		Entity entity = entities.iterator().next();
-//	      for(Entity entity : entities) {
-	    	  LegacyVault.LOGGER.debug("entity -> {}", entity);
-	          if (entity instanceof PlayerEntity) {
-	        	  LegacyVault.LOGGER.debug("player entity -> {}", ((PlayerEntity)entity).getDisplayName());
-	        	  // get capabilities
-					IPlayerVaultsHandler cap = entity.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-						return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-					});
+		LegacyVault.LOGGER.debug("entity -> {}", entity);
+		if (entity instanceof PlayerEntity) {
+			LegacyVault.LOGGER.debug("player entity -> {}", ((PlayerEntity)entity).getDisplayName());
+			// get capabilities
+			IPlayerVaultsHandler cap = entity.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+			});
 
-					// cycle through all the locations and print to chat
-					source.sendSuccess(new StringTextComponent(((PlayerEntity)entity).getDisplayName().getString()), false);
-					for (ICoords location : cap.getLocations()) {
-						source.sendSuccess(new StringTextComponent(location.toShortString()), false);
-					}
-	          }
-//	      }
+			// cycle through all the locations and print to chat
+			source.sendSuccess(new StringTextComponent(((PlayerEntity)entity).getDisplayName().getString() + " " + "vault locations:"), false);
+			for (ICoords location : cap.getLocations()) {
+				source.sendSuccess(new StringTextComponent(location.toShortString()), false);
+			}
+		}
 		return 1;
 	}
 }

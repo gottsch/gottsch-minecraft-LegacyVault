@@ -59,7 +59,7 @@ import net.minecraft.util.text.TranslationTextComponent;
  * @author Mark Gottschling on May 23, 2021
  *
  */
-public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity implements IVaultTileEntity, IInventory, IChestLid, ITickableTileEntity, INamedContainerProvider, INameable {
+public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity implements IVaultTileEntity, IInventory, ITickableTileEntity, INamedContainerProvider, INameable {
 	/*
 	 * The FACING index value of the VaultBlock - why is this needed still?
 	 */
