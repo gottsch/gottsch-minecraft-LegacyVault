@@ -100,7 +100,7 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 	@Override
 	public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult hit) {
-
+		LegacyVault.LOGGER.debug("using vault...");
 		IVaultTileEntity tileEntity = (IVaultTileEntity) world.getBlockEntity(pos);
 
 		// exit if on the client
@@ -117,13 +117,7 @@ public class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaul
 		// check if the vault already has a uuid assigned
 		if (!Config.PUBLIC_VAULT.enablePublicVault.get()) {
 			LegacyVault.LOGGER.debug("private vault");
-			// removing so that if added during creative, the branch count isn't impacted
-			//			if(tileEntity.getOwnerUuid() == null || tileEntity.getOwnerUuid().isEmpty()) {
-			//				// this should not happen, as the owner is set during placement
-			//				tileEntity.setOwnerUuid(player.getStringUUID());
-			//				LegacyVault.LOGGER.debug("setting vault owner -> {}", player.getStringUUID());
-			//			}
-			//			else
+
 			if (tileEntity.getOwnerUuid() != null && !tileEntity.getOwnerUuid().equals(player.getStringUUID())) {
 				LegacyVault.LOGGER.debug("not your vault!");
 				return ActionResultType.SUCCESS;

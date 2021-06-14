@@ -12,3 +12,4 @@ gradle.log
 !.gitattributes
 !*.json
 !*.gradlew
+!/images/
