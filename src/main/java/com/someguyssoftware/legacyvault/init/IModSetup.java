@@ -11,6 +11,8 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
+import com.someguyssoftware.legacyvault.config.Config;
+
 /**
  * TODO move to  GottschCore
  * @author Mark Gottschling on Apr 28, 2021
@@ -55,7 +57,7 @@ public interface IModSetup {
 		AppenderRef ref = AppenderRef.createAppenderRef("File", null, null);
 		AppenderRef[] refs = new AppenderRef[] {ref};
 		
-		LoggerConfig loggerConfig = LoggerConfig.createLogger(false, Level.DEBUG, modName, "true", refs, null, config, null );
+		LoggerConfig loggerConfig = LoggerConfig.createLogger(false, Level.toLevel(Config.LOGGING.level.get(), Level.INFO), modName, "true", refs, null, config, null );
 		loggerConfig.addAppender(appender, null, null);
 		config.addLogger(modName, loggerConfig);
 		
