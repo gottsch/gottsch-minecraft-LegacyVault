@@ -7,6 +7,7 @@
     "1.16.5": {
         "1.0.0": "Initial version release.",
         "1.1.0": "Add vault-spawn command.\nUse GottschCore v1.1.0.",
-        "1.1.1": "Fixed Exception message: java.lang.NullPointerException: Cannot get config value before spec is built error (again)."
+        "1.1.1": "Fixed Exception message: java.lang.NullPointerException: Cannot get config value before spec is built error (again).",
+        "1.2.0": "Uses GottschCore v1.3.0.\nFixed logging to use config settings*.\nFixed display name in .toml"
 	}
 }
