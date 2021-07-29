@@ -57,6 +57,8 @@ public class Config extends AbstractConfig {
 
 	private static IMod mod;
 
+	public static final Mod MOD;
+	public static final Logging LOGGING;
 	public static final General GENERAL;		
 	public static final PublicVault PUBLIC_VAULT;
 	public static final Db DATABASE;

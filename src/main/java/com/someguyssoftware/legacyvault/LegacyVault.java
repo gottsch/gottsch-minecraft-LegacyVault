@@ -58,7 +58,7 @@ public class LegacyVault implements IMod {
 	// constants
 	public static final String MODID = "legacyvault";
 	protected static final String NAME = "Legacy Vault";
-	protected static final String VERSION = "1.1.0";
+	protected static final String VERSION = "1.1.1";
 	protected static final String UPDATE_JSON_URL = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-LegacyVault/1.16.5-master/update.json";
 
 	public static LegacyVault instance;
@@ -85,7 +85,7 @@ public class LegacyVault implements IMod {
 				FMLPaths.CONFIGDIR.get().resolve("legacyvault-common.toml"));
 
 		// test accessing the logging properties
-		Config.LOGGING.filename.get();
+//		Config.LOGGING.filename.get();
 
 		// needs to be registered here instead of @Mod.EventBusSubscriber because we need to pass in a constructor argument
 //		MinecraftForge.EVENT_BUS.register(new WorldEventHandler(getInstance()));
