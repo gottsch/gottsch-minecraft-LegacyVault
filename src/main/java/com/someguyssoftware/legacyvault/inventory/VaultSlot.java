@@ -83,15 +83,17 @@ public class VaultSlot extends Slot {
 				if (registryName.matches(pattern.pattern())) {
 					return true;
 				}
-			}			
+			}
+			return false;
 		}
-		else {
+		else if (!Config.GENERAL.inventoryBlackList.get().isEmpty()) {
 			// check against the item/block name black list
 			for(Pattern pattern : Config.GENERAL.inventoryBlackListPatterns) {
 				if (registryName.matches(pattern.pattern())) {
 					return false;
 				}
 			}
+			return true;
 		}
 
 		// check against the tags lists
@@ -105,8 +107,9 @@ public class VaultSlot extends Slot {
 					return true;
 				}
 			}
+			return false;
 		}
-		else {
+		else if (!Config.GENERAL.tagsBlackList.get().isEmpty()){
 			for (String tagName : Config.GENERAL.tagsBlackList.get()) {
 				ResourceLocation location = new ResourceLocation(tagName);
 				if ((BlockTags.getAllTags().getTag(location) != null &&
@@ -116,6 +119,7 @@ public class VaultSlot extends Slot {
 					return false;
 				}
 			}
+			return true;
 		}
 		return true;
 	}
