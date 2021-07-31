@@ -29,6 +29,7 @@ import com.someguyssoftware.legacyvault.exception.DbInitializationException;
 
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 
 /**
  * @author Mark Gottschling on Apr 28, 2021
@@ -41,6 +42,15 @@ public class LegacyVaultSetup {
 //	public static final int VAULT_COUNT_MESSAGE_ID = 14;	
 //	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MODID, "legacy_vault_channel");
 //	
+	public static void serverStopping(final FMLServerStoppingEvent event) {
+		LegacyVault.LOGGER.debug("server stopping event");
+		try {
+			DbManager.shutdown();
+		} catch (Exception e) {
+			LegacyVault.LOGGER.error("Error stopping database:", e);
+		}
+	}
+	
 	/**
 	 * 
 	 * @param event
