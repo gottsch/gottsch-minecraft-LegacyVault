@@ -199,20 +199,20 @@ public class Config extends AbstractConfig {
 					.define("Recipe Difficulty", "normal");
 
 			inventoryWhiteList = builder
-					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Wildcards ARE supported.  ex. minecraft:plains, minecraft:*stairs")
-					.defineList("White list by  Item/Block name:", Arrays.asList(""), s -> s instanceof String);
+					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs")
+					.defineList("White list by  Item/Block name:", new ArrayList<String>(), s -> s instanceof String);
 
 			inventoryBlackList = builder
-					.comment(" Disallowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Wildcards ARE supported.  ex. minecraft:plains, minecraft:*stairs")
-					.defineList("Black list by Item/Block name:", Arrays.asList("treasure2:*chest*", "treasure2:cardboard_box","treasure2:milk_crate"), s -> s instanceof String);
+					.comment(" Disallowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs")
+					.defineList("Black list by Item/Block name:", Arrays.asList("(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box","treasure2:milk_crate"), s -> s instanceof String);
 
 			tagsWhiteList = builder
-					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are NOT supported.")
-					.defineList("White list by  Tag name:", Arrays.asList(""), s -> s instanceof String);
+					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
+					.defineList("White list by  Tag name:", new ArrayList<String>(), s -> s instanceof String);
 
 			tagsBlackList = builder
-					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Wildcards are NOT supported.")
-					.defineList("Black list by  Tag name:", Arrays.asList(""), s -> s instanceof String);
+					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
+					.defineList("Black list by  Tag name:", new ArrayList<String>(), s -> s instanceof String);
 
 			builder.pop();
 		}
@@ -252,12 +252,12 @@ public class Config extends AbstractConfig {
 			playerWhiteList = builder
 					.comment(" Allowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
 							"If both White and Black lists are empty, then all players have access.")
-					.defineList("White list by player uuid:", Arrays.asList(""), s -> s instanceof String);
+					.defineList("White list by player uuid:", new ArrayList<String>(), s -> s instanceof String);
 
 			playerBlackList = builder
 					.comment(" Disallowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
 							"If both White and Black lists are empty, then all players have access.")
-					.defineList("Black list by player uuid:", Arrays.asList(""), s -> s instanceof String);
+					.defineList("Black list by player uuid:", new ArrayList<String>(), s -> s instanceof String);
 
 			builder.pop();
 		}
