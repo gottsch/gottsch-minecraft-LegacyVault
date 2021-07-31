@@ -30,11 +30,13 @@ import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.init.LegacyVaultSetup;
 import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -58,12 +60,11 @@ public class LegacyVault implements IMod {
 	// constants
 	public static final String MODID = "legacyvault";
 	protected static final String NAME = "Legacy Vault";
-	protected static final String VERSION = "1.2.1";
+	protected static final String VERSION = "1.2.2";
 	protected static final String UPDATE_JSON_URL = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-LegacyVault/1.16.5-master/update.json";
 
 	public static LegacyVault instance;
 	private static Config config;
-	public static IEventBus MOD_EVENT_BUS;
 
 	private boolean  hardCore = false;
 	
@@ -78,21 +79,16 @@ public class LegacyVault implements IMod {
 
 		// Register the setup method for modloading
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
 		eventBus.addListener(LegacyVaultSetup::common);
 		eventBus.addListener(LegacyVaultNetworking::common);
-
-		Config.loadConfig(Config.COMMON_CONFIG,
-				FMLPaths.CONFIGDIR.get().resolve("legacyvault-common.toml"));
-
-		// test accessing the logging properties
-//		Config.LOGGING.filename.get();
-
-		// needs to be registered here instead of @Mod.EventBusSubscriber because we need to pass in a constructor argument
-//		MinecraftForge.EVENT_BUS.register(new WorldEventHandler(getInstance()));
-//		MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
-		MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
+		MinecraftForge.EVENT_BUS.addListener(LegacyVaultSetup::serverStopping);
+		
+		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("legacyvault-common.toml"));
 
 	}
+	
+
 	
 	public static void clientOnly() {
 //		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());

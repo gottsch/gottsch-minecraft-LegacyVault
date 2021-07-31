@@ -9,6 +9,7 @@
         "1.1.0": "Add vault-spawn command.\nUse GottschCore v1.1.0.",
         "1.1.1": "Fixed Exception message: java.lang.NullPointerException: Cannot get config value before spec is built error (again).",
         "1.2.0": "Uses GottschCore v1.3.0.\nFixed logging to use config settings*.\nFixed display name in .toml",
-        "1.2.1": "Fix PublicVault white/black list config settings - needs to be empty, not blank string.\nDitto for General Item whitelist and Tag white/black lists.\nFixed regex values in whitelist.\nFix VaultSlot.mayPlace() evaluations."
+        "1.2.1": "Fix PublicVault white/black list config settings - needs to be empty, not blank string.\nDitto for General Item whitelist and Tag white/black lists.\nFixed regex values in whitelist.\nFix VaultSlot.mayPlace() evaluations.",
+        "1.2.2" :"Fixed Db preventing server shutdown."
 	}
 }

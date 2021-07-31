@@ -181,7 +181,7 @@ public class DbManager {
 	 */
 	public static void shutdown() {
 		getInstance().getConnSource().closeQuietly();
-		getInstance().getServer().shutdown();
+		getInstance().getServer().stop();
 	}
 
 	/**
