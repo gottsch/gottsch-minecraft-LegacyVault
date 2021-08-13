@@ -28,6 +28,7 @@ import org.h2.tools.Server;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.db.entity.Account;
@@ -81,12 +82,12 @@ public class DbManager {
 		// get the path to the default style sheet
 		@SuppressWarnings("static-access")
 		Path dbPath = Paths.get(config.getConfigFolder(), config.getMod().getId(), DB_FILE_NAME).toAbsolutePath();
-		LOGGER.info("path to db folder -> {}", dbPath.toString());
+		LOGGER.debug("path to db folder -> {}", dbPath.toString());
 
 		// create the connection
 		String databaseUrl = String.format("jdbc:h2:tcp://localhost:9092/%s;USER=%s;PASSWORD=%s;", dbPath.toString(), Config.DATABASE.user.get(), Config.DATABASE.password.get());
 //		String databaseUrl = "jdbc:h2:tcp://localhost:9092/" +dbPath.toString() + ";USER=sa;PASSWORD=sa;";
-		LOGGER.info("db url -> {}", databaseUrl);
+		LOGGER.debug("db url -> {}", databaseUrl);
 		conn = DriverManager.getConnection(databaseUrl);
 
 		if (conn == null) {
@@ -99,11 +100,11 @@ public class DbManager {
 
 		// look for file --> vault.mv.db
 		Path dbFilePath = Paths.get(dbPath.toString() + DB_EXTENSION);
-		LOGGER.info("path to db file -> {}", dbFilePath.toString());
+		LOGGER.debug("path to db file -> {}", dbFilePath.toString());
 		boolean pathExists =
 				Files.exists(dbFilePath,
 						new LinkOption[]{ LinkOption.NOFOLLOW_LINKS});
-		LOGGER.info("path exists -> {}", pathExists);
+		LOGGER.debug("path exists -> {}", pathExists);
 
 		// execute the script
 		LOGGER.info("executing sql scripts...");
@@ -111,7 +112,7 @@ public class DbManager {
 			// open a stream to the sql file
 			@SuppressWarnings("static-access")
 			String sqlScriptFilePath = "/" + config.getMod().getId() + ".sql";
-			LOGGER.info("script path -> {}", sqlScriptFilePath.toString());
+			LOGGER.debug("script path -> {}", sqlScriptFilePath.toString());
 			InputStream is = getClass().getResourceAsStream(sqlScriptFilePath.toString());
 
 			if (is == null) {
@@ -141,11 +142,11 @@ public class DbManager {
 		/*
 		 * open the ORM Lite connection and setup the daos
 		 */
-		connSource = new JdbcConnectionSource(databaseUrl);
+		connSource = new JdbcPooledConnectionSource(databaseUrl);
 		setConnSource(connSource);
 
 		// setup the daos;
-		accountDao = DaoManager.createDao(connSource,Account.class);
+		accountDao = DaoManager.createDao(connSource, Account.class);
 		//		containerGroupDao = DaoManager.createDao(connSource, LootContainerHasGroup.class);
 		//		groupItemDao = DaoManager.createDao(connSource, LootGroupHasItem.class);
 
@@ -182,13 +183,15 @@ public class DbManager {
 	public static void shutdown() {
 		getInstance().getConnSource().closeQuietly();
 		getInstance().getServer().stop();
+		instance = null;
+		LOGGER.info("Shut down of DbManager complete.");
 	}
 
 	/**
 	 * 
 	 * @param account
 	 */
-	public void saveAccount(Account account) {
+	public synchronized void saveAccount(Account account) {
 		try {
 			accountDao.createOrUpdate(account);
 		} catch (SQLException e) {
@@ -203,7 +206,7 @@ public class DbManager {
 	 * @param type
 	 * @return
 	 */
-	public Optional<Account> getAccount(String uuid, String version, String type) {
+	public synchronized Optional<Account> getAccount(String uuid, String version, String type) {
 		List<Account> accounts = null;
 		Optional<Account> account = Optional.empty();
 		try {

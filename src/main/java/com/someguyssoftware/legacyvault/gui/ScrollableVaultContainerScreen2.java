@@ -23,6 +23,7 @@ import net.minecraft.util.text.ITextComponent;
  * @author Mark Gottschling on May 14, 2021
  *
  */
+@Deprecated
 public class ScrollableVaultContainerScreen2 extends ContainerScreen<VaultContainer> {
 	// this is the resource location for the background image for the GUI
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault.png");

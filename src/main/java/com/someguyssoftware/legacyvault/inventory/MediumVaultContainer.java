@@ -45,7 +45,7 @@ public class MediumVaultContainer extends AbstractLegacyVaultContainer {
 	 * @param slotCount
 	 */
 	private MediumVaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, int slotCount) {
-		this(windowID, containerType, playerInventory, new Inventory(slotCount));
+		this(windowID, containerType, playerInventory, new Inventory(slotCount), new LegacyVaultInventory(slotCount), new LegacyVaultInventory(slotCount));
 	}
 	
 	/**
@@ -54,8 +54,8 @@ public class MediumVaultContainer extends AbstractLegacyVaultContainer {
 	 * @param playerInventory
 	 * @param inventory
 	 */
-	public MediumVaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory) {
-		super(windowID, containerType, playerInventory, inventory);
+	public MediumVaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory, LegacyVaultInventory vault, LegacyVaultInventory persisted) {
+		super(windowID, containerType, playerInventory, inventory, vault, persisted);
 
 		// open the chest (rendering)
         inventory.startOpen(playerInventory.player);
