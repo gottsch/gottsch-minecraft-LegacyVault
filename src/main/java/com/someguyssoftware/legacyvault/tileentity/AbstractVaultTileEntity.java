@@ -546,9 +546,12 @@ public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity imp
 	public void stopOpen(PlayerEntity player) {
 		LegacyVault.LOGGER.debug("stop Open");
 		if (!player.isSpectator()) {
-			--this.openCount;			
+			--this.openCount;
+			if (this.openCount < 0) {
+				this.openCount = 0;
+			}
 			// clear the items list
-			clearContent();			
+//			clearContent();		// is this necessary? not really	
 			onOpenOrClose();
 		}
 	}
