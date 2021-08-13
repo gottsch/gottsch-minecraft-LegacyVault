@@ -60,7 +60,7 @@ public class LegacyVault implements IMod {
 	// constants
 	public static final String MODID = "legacyvault";
 	protected static final String NAME = "Legacy Vault";
-	protected static final String VERSION = "1.2.3";
+	protected static final String VERSION = "1.3.0";
 	protected static final String UPDATE_JSON_URL = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-LegacyVault/1.16.5-master/update.json";
 
 	public static LegacyVault instance;
