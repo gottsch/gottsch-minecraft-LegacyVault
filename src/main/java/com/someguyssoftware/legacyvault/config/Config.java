@@ -53,7 +53,9 @@ public class Config extends AbstractConfig {
 
 	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 	protected static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+	protected static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
 	public static ForgeConfigSpec COMMON_CONFIG;
+	public static ForgeConfigSpec SERVER_CONFIG;
 
 	private static IMod mod;
 
@@ -67,11 +69,14 @@ public class Config extends AbstractConfig {
 	static {
 		MOD = new Mod(COMMON_BUILDER);
 		LOGGING = new Logging(COMMON_BUILDER);
-		GENERAL = new General(COMMON_BUILDER);
-		PUBLIC_VAULT = new PublicVault(COMMON_BUILDER);
-		DATABASE = new Db(COMMON_BUILDER);
+				
+		GENERAL = new General(SERVER_BUILDER);
+		PUBLIC_VAULT = new PublicVault(SERVER_BUILDER);
+		DATABASE = new Db(SERVER_BUILDER);
+		
 		COMMON_CONFIG = COMMON_BUILDER.build();
-
+		SERVER_CONFIG = SERVER_BUILDER.build();
+		
 		// perform any initializations on data
 		Config.init();
 	}
@@ -179,7 +184,7 @@ public class Config extends AbstractConfig {
 			inventorySize = builder
 					.comment(" Maximum capacity of the vault inventory.", 
 							" Sizes are 27 (small/standard), 54 (medium), 91 (large). (**91 is odd, I know, but it fits within the 256x256, without having to scroll.)")
-					.defineInRange("Vault inventory size:", 54, 27, 91);
+					.defineInRange("Vault inventory size:", 27, 27, 91);
 
 			stackSize = builder
 					.comment(" Maximum item stack size in a vault.")
@@ -271,6 +276,8 @@ public class Config extends AbstractConfig {
 	public static void onLoad(final ModConfig.Loading configEvent) {
 		Config.loadConfig(Config.COMMON_CONFIG,
 				FMLPaths.CONFIGDIR.get().resolve(mod.getId() + "-common.toml"));
+		Config.loadConfig(Config.SERVER_CONFIG,
+				FMLPaths.CONFIGDIR.get().resolve(mod.getId() + "-server.toml"));
 	}
 
 	@SubscribeEvent

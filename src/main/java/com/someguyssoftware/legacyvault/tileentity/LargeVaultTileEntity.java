@@ -33,7 +33,7 @@ public class LargeVaultTileEntity extends AbstractVaultTileEntity {
 	 * @return
 	 */
 	public Container createServerContainer(int windowID, PlayerInventory inventory, PlayerEntity player) {
-		return new LargeVaultContainer(windowID, LegacyVaultContainers.LARGE_VAULT_CONTAINER_TYPE, inventory, this);
+		return new LargeVaultContainer(windowID, LegacyVaultContainers.LARGE_VAULT_CONTAINER_TYPE, inventory, this, this.legacyVaultInventory, this.persistedInventory);
 	}
 	
 	///////////// IInventory Methods ///////////////////////

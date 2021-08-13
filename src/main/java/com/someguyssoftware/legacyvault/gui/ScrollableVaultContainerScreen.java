@@ -20,6 +20,7 @@ import net.minecraft.util.text.ITextComponent;
  * @author Mark Gottschling on May 13, 2021
  *
  */
+@Deprecated
 public class ScrollableVaultContainerScreen extends ContainerScreen<VaultContainer>{
 
 	// this is the resource location for the background image for the GUI

@@ -144,9 +144,10 @@ task deleteOldJar(type: Delete) {
 	destinations.each { destination ->
 		print 'deleting... '
 		println destination
-        delete fileTree(destination) {
-            include "**/${mod_name}-*.jar"
-        }
+        //delete fileTree(destination) {
+        //    include "**/${mod_name}-*.jar"
+        //}
+        delete "${destination}/${mod_name}-mc${mc_version}-f${forge_version}-*.jar"
     }
 }
     
@@ -162,5 +163,5 @@ task copyJar() {
     }
 }
 
-deleteOldJar
-copyJar.dependsOn minecraft
+deleteOldJar.dependsOn minecraft
+copyJar.dependsOn deleteOldJar

@@ -24,6 +24,7 @@ import net.minecraft.util.text.ITextComponent;
  * @author Mark Gottschling on May 18, 2021
  *
  */
+@Deprecated
 public class ScrollableVaultContainerScreen3 extends ContainerScreen<VaultContainer> implements IScrollableContainerScreen {
 	
 	// this is the resource location for the background image for the GUI
@@ -108,31 +109,31 @@ public class ScrollableVaultContainerScreen3 extends ContainerScreen<VaultContai
 	/**
 	 * 
 	 */
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(isScrolling()) {
-//        	LegacyVault.LOGGER.debug("mouseY -> {}, dragY -> {}", mouseY, dragY);
-        	/*
-        	 *  update button position
-        	 */
-        	// NOTE remember the button.y is (x, 0) of the slider image.
-            double pos = mouseY - mouseSliderDeltaY;
-            double top = this.getGuiTop() + getScrollbarTopOffset();
-            double bottom = top + getScrollbarDistance();
-            // ensure pos is withing the range between top and bottom
-            pos = MathHelper.clamp(pos, top, bottom);
-            buttons.get(0).y = (int) pos;
-            
-//            currentScroll = (pos-top)/(bottom-top);
-            // TODO make a convenience method to get size()
-//            int val = (int) (currentScroll * (menu.getVaultInventory().getContainerSize()) - getDisplayRowCount()); // NOTE 6 = # of gui inventory rows
-            /*
-             * update inventory container (slots display)
-             */
-            menu.updateContainerInventory(getRowIndex(pos)); // <-- in the container - this sets up the slots for display
-        }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-    }
+//    @Override
+//    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+//        if(isScrolling()) {
+////        	LegacyVault.LOGGER.debug("mouseY -> {}, dragY -> {}", mouseY, dragY);
+//        	/*
+//        	 *  update button position
+//        	 */
+//        	// NOTE remember the button.y is (x, 0) of the slider image.
+//            double pos = mouseY - mouseSliderDeltaY;
+//            double top = this.getGuiTop() + getScrollbarTopOffset();
+//            double bottom = top + getScrollbarDistance();
+//            // ensure pos is withing the range between top and bottom
+//            pos = MathHelper.clamp(pos, top, bottom);
+//            buttons.get(0).y = (int) pos;
+//            
+////            currentScroll = (pos-top)/(bottom-top);
+//            // TODO make a convenience method to get size()
+////            int val = (int) (currentScroll * (menu.getVaultInventory().getContainerSize()) - getDisplayRowCount()); // NOTE 6 = # of gui inventory rows
+//            /*
+//             * update inventory container (slots display)
+//             */
+//            menu.updateContainerInventory(getRowIndex(pos)); // <-- in the container - this sets up the slots for display
+//        }
+//        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+//    }
     
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double p_mouseScrolled_5_) {

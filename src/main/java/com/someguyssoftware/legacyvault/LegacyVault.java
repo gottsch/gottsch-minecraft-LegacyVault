@@ -27,6 +27,7 @@ import com.someguyssoftware.gottschcore.annotation.ModInfo;
 import com.someguyssoftware.gottschcore.config.IConfig;
 import com.someguyssoftware.gottschcore.mod.IMod;
 import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.eventhandler.WorldEventHandler;
 import com.someguyssoftware.legacyvault.init.LegacyVaultSetup;
 import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
 
@@ -36,7 +37,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -60,7 +60,7 @@ public class LegacyVault implements IMod {
 	// constants
 	public static final String MODID = "legacyvault";
 	protected static final String NAME = "Legacy Vault";
-	protected static final String VERSION = "1.2.2";
+	protected static final String VERSION = "1.2.3";
 	protected static final String UPDATE_JSON_URL = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-LegacyVault/1.16.5-master/update.json";
 
 	public static LegacyVault instance;
@@ -76,16 +76,18 @@ public class LegacyVault implements IMod {
 		LegacyVault.config = new Config(this);
 		
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
-
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
+		
 		// Register the setup method for modloading
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		eventBus.addListener(LegacyVaultSetup::common);
 		eventBus.addListener(LegacyVaultNetworking::common);
 		MinecraftForge.EVENT_BUS.addListener(LegacyVaultSetup::serverStopping);
+		MinecraftForge.EVENT_BUS.register(new WorldEventHandler());
 		
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("legacyvault-common.toml"));
-
+		Config.loadConfig(Config.SERVER_CONFIG, FMLPaths.CONFIGDIR.get().resolve("legacyvault-server.toml"));
 	}
 	
 
