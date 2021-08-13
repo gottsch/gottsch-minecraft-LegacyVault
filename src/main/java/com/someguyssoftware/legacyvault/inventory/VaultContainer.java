@@ -25,7 +25,7 @@ public class VaultContainer extends AbstractLegacyVaultContainer {
 	 * @param slotCount
 	 */
 	private VaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, int slotCount) {
-		this(windowID, containerType, playerInventory, new Inventory(slotCount));
+		this(windowID, containerType, playerInventory, new Inventory(slotCount), new LegacyVaultInventory(slotCount), new LegacyVaultInventory(slotCount));
 
 	}
 	
@@ -35,14 +35,14 @@ public class VaultContainer extends AbstractLegacyVaultContainer {
 	 * @param playerInventory
 	 * @param inventory
 	 */
-	public VaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory) {
-		super(windowID, containerType, playerInventory, inventory);
-        
+	public VaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory, LegacyVaultInventory vault, LegacyVaultInventory persisted) {
+		super(windowID, containerType, playerInventory, inventory, vault, persisted);
+		
 		// open the chest (rendering)
         inventory.startOpen(playerInventory.player);
         
 		// set the dimensions
-        setContainerInventoryRowCount(6);
+        setContainerInventoryRowCount(3);
 		
 		// build the container
 		buildContainer(playerInventory, inventory);

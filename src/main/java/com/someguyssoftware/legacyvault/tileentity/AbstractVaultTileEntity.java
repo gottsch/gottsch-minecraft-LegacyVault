@@ -19,6 +19,10 @@
  */
 package com.someguyssoftware.legacyvault.tileentity;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 
 import com.someguyssoftware.gottschcore.tileentity.AbstractModTileEntity;
@@ -26,7 +30,11 @@ import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.block.VaultBlock;
 import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.db.DbManager;
+import com.someguyssoftware.legacyvault.db.entity.Account;
+import com.someguyssoftware.legacyvault.enums.GameType;
 import com.someguyssoftware.legacyvault.inventory.LegacyVaultContainers;
+import com.someguyssoftware.legacyvault.inventory.LegacyVaultInventory;
 import com.someguyssoftware.legacyvault.inventory.VaultContainer;
 
 import net.minecraft.block.Block;
@@ -34,11 +42,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.IChestLid;
@@ -97,6 +107,15 @@ public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity imp
 	
 	private ITextComponent customName;
 	
+	/** a working subset of the persisted  inventory. it is the same size as the source inventory */
+	LegacyVaultInventory legacyVaultInventory;
+	/** stores a reference to the persisted inventory. the persisted inventory may have a larger size than the current source inventory */
+	LegacyVaultInventory persistedInventory;
+
+	/**
+	 * 
+	 * @param type
+	 */
 	public AbstractVaultTileEntity(TileEntityType<?> type) {
 		super(type);
 		setFacing(Direction.NORTH.get3DDataValue());
@@ -105,7 +124,7 @@ public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity imp
 	abstract public int getContainerSize();
 	
 	/**
-	 * The name is misleading; createMenu has nothing to do with creating a Screen, it is used to create the Container on the server only
+	 * The name is misleading; createMenu has nothing to do with creating a Screen, it is used to create the Container on the SERVER only
 	 * @param windowID
 	 * @param playerInventory
 	 * @param playerEntity
@@ -114,10 +133,76 @@ public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity imp
 	@Nullable
 	@Override
 	public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+		/**
+		 * The tile entity loads the inventory from the DB when the user attempts to open the container.
+		 * See AbstractLegacyVaultContainer for saving the inventory back to the DB.
+		 */
+		
+		legacyVaultInventory = new LegacyVaultInventory(this.getContainerSize()); // should equal the default size of a vault OR the size of the inventory coming in
+		persistedInventory = new LegacyVaultInventory(Config.GENERAL.inventorySize.get());
+
+		Optional<Account> account = DbManager.getInstance().getAccount(playerInventory.player.getUUID().toString(), LegacyVault.instance.getMincraftVersion(), 
+				LegacyVault.instance.isHardCore() ? GameType.HARDCORE.getValue() : GameType.NORMAL.getValue());
+		LegacyVault.LOGGER.debug("account -> {}", account);
+		
+		if (account.isPresent()) {
+			if (account.get().getInventory() != null) {
+				loadPersistedInventory(account.get(), persistedInventory);
+			}
+		}
+		
+		LegacyVault.LOGGER.info("persistedInventory -> {}", persistedInventory);
+		// init vault inventory
+		loadVaultInventory(persistedInventory, legacyVaultInventory);
+		LegacyVault.LOGGER.info("vaultInventory -> {}", legacyVaultInventory);
+		
+		// init display inventory from vault inventory
+		loadDisplayInventory(legacyVaultInventory, this);
+		
 		return createServerContainer(windowID, playerInventory, playerEntity);
 	}
 	
 	abstract public Container createServerContainer(int windowID, PlayerInventory inventory, PlayerEntity player);
+	
+	/**
+	 * 
+	 * @param persisted
+	 * @param vault
+	 */
+	protected void loadVaultInventory(IInventory persisted, IInventory vault) {
+		for (int index = 0; index < vault.getContainerSize(); index++) {
+			vault.setItem(index, persisted.getItem(index));
+		}		
+	}
+	
+	/**
+	 * 
+	 * @param vault
+	 * @param display
+	 */
+	protected void loadDisplayInventory(IInventory vault, IInventory display) {		
+		for (int index = 0; index < display.getContainerSize(); index++) {
+			if (index < display.getContainerSize() && index < vault.getContainerSize()) {
+				display.setItem(index, vault.getItem(index));
+			}
+		}
+	}
+	
+	/**
+	 * @param account
+	 * @param inventory
+	 */
+	private void loadPersistedInventory(Account account, LegacyVaultInventory inventory) {
+
+		ByteArrayInputStream bais = new ByteArrayInputStream(account.getInventory());
+		CompoundNBT  compound = null;
+		try {
+			compound =  CompressedStreamTools.readCompressed(bais);
+			ItemStackHelper.loadAllItems(compound, inventory.getItems());
+		} catch (IOException e) {
+			LegacyVault.LOGGER.error("an error occurred attempting to load vault inventory from persistence ->", e);
+		}
+	}
 	
 	/**
 	 * 
@@ -193,7 +278,6 @@ public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity imp
 	 * 
 	 */
 	public void updateEntityState() {
-
 		// save the previous positions and angles of vault components
 		this.prevLidAngle = this.lidAngle;
 		this.prevHandleAngle = this.handleAngle;
@@ -444,7 +528,7 @@ public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity imp
 	 */
 	@Override
 	public void startOpen(PlayerEntity player) {
-		LegacyVault.LOGGER.info("opening inventory -> {}", player.getName());
+		LegacyVault.LOGGER.debug("opening inventory -> {}", player.getName().getString());
 
 		if (!player.isSpectator()) {
 			if (this.openCount < 0) {
@@ -460,10 +544,14 @@ public abstract class AbstractVaultTileEntity  extends AbstractModTileEntity imp
 	 */
 	@Override
 	public void stopOpen(PlayerEntity player) {
+		LegacyVault.LOGGER.debug("stop Open");
 		if (!player.isSpectator()) {
-			--this.openCount;			
+			--this.openCount;
+			if (this.openCount < 0) {
+				this.openCount = 0;
+			}
 			// clear the items list
-			clearContent();			
+//			clearContent();		// is this necessary? not really	
 			onOpenOrClose();
 		}
 	}

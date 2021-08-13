@@ -42,6 +42,7 @@ public class LegacyVaultSetup {
 //	public static final int VAULT_COUNT_MESSAGE_ID = 14;	
 //	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MODID, "legacy_vault_channel");
 //	
+	// TODO this is stopping the world on client side, stopping the server on server side.
 	public static void serverStopping(final FMLServerStoppingEvent event) {
 		LegacyVault.LOGGER.debug("server stopping event");
 		try {
@@ -60,13 +61,15 @@ public class LegacyVaultSetup {
 		IModSetup.addRollingFileAppender(LegacyVault.instance.getName(), null);
 		
 		// start the database
-		try {
-			DbManager.start((Config) LegacyVault.instance.getConfig());
-		} catch (DbInitializationException e) {
-			LegacyVault.LOGGER.error("Unable to start database manager:", e);
-//			getConfig().setModEnabled(false);
-			// TODO create another PlayerLoggedIn Event that checks if the database failed initialization and inform player.
-		}
+		
+//		8/12/21 - move this to WorldEvent.Load event so it loads on every world load
+//		try {
+//			DbManager.start((Config) LegacyVault.instance.getConfig());
+//		} catch (DbInitializationException e) {
+//			LegacyVault.LOGGER.error("Unable to start database manager:", e);
+////			getConfig().setModEnabled(false);
+//			// TODO create another PlayerLoggedIn Event that checks if the database failed initialization and inform player.
+//		}
 		
 		// attach capabilities
 		CapabilityManager.INSTANCE.register(IPlayerVaultsHandler.class, new PlayerVaultsStorage(), PlayerVaultsHandler::new);

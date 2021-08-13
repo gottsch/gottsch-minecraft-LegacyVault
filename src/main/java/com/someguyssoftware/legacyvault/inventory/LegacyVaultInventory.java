@@ -17,6 +17,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.NonNullList;
 
 /**
+ * // TODO why not just extend Inventory and reflective get items or setup the accessors.
  * This file is part of Legacy Vault.
  * Almost a complete duplicate of vanilla Inventory except that it exposes the items list.
  * @author Mark Gottschling on May 1, 2021

@@ -39,7 +39,7 @@ public class VaultTileEntity extends AbstractVaultTileEntity {
 	 * @return
 	 */
 	public Container createServerContainer(int windowID, PlayerInventory inventory, PlayerEntity player) {
-		return new VaultContainer(windowID, LegacyVaultContainers.STANDARD_VAULT_CONTAINER_TYPE, inventory, this);
+		return new VaultContainer(windowID, LegacyVaultContainers.STANDARD_VAULT_CONTAINER_TYPE, inventory, this, this.legacyVaultInventory, this.persistedInventory);
 	}
 	
 	///////////// IInventory Methods ///////////////////////

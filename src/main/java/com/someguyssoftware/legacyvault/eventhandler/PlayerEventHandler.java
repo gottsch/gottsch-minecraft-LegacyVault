@@ -38,7 +38,7 @@ public class PlayerEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void onWorldLoad(PlayerEvent.PlayerLoggedInEvent event) {
+	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 
 		if (WorldInfo.isClientSide(event.getPlayer().level)) {
 			return;

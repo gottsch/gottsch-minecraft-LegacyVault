@@ -48,15 +48,15 @@ import net.minecraft.nbt.CompressedStreamTools;
  *
  */
 public abstract class AbstractLegacyVaultContainer extends Container implements ILegacyVaultContainer {
-	// stores a reference to the tile entity instance for later use (provides max items to scroll through)
-	protected  IInventory sourceInventory;
-	// temporary storage for items from vault inventory to display. currently, in non-scrolling screen, it should match the size of the source inventory.
+	// stores a reference to the tile entity inventory
+	protected IInventory sourceInventory;
+	// detached copy of the sourceInventory;
 	protected IInventory displayInventory;
-	// a working subset of the persisted  inventory. it is the same size as the source inventory
-	protected LegacyVaultInventory legacyVaultInventory; // TODO this needs to copy sourceInventory.size items from persisted. 
-	// stores a reference to the persisted inventory. the persisted inventory may have a larger size than the current source inventory
-	private LegacyVaultInventory persistedInventory; // TODO this is populated from load() and updated from legacyVaultInventory on save()
-
+	// detached copy of the persisted  inventory. it is the same size as the source inventory
+	protected LegacyVaultInventory legacyVaultInventory; 
+	// detached copy of the persisted inventory. the persisted inventory may have a larger size than the current source inventory
+	private LegacyVaultInventory persistedInventory;
+	
 	protected final int HOTBAR_SLOT_COUNT = 9;
 	protected final int PLAYER_INVENTORY_ROW_COUNT = 3;
 	protected final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
@@ -80,10 +80,6 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	private int containerInventoryYPos = 18;
 	private int titleYPos = containerInventoryYPos;//8;
 	
-	@Deprecated
-	private int currentRow = 0;
-	
-	
 	// TODO add title text ypos = 8;
 	// TODO add valutremaining ypos = 19?
 	// TODO update gui screens with these values instead of inventory ypos - 10
@@ -95,29 +91,38 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	 * @param playerInventory
 	 * @param inventory
 	 */
-	public AbstractLegacyVaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory) {
+	public AbstractLegacyVaultContainer(int windowID, ContainerType<?> containerType, PlayerInventory playerInventory, IInventory inventory, LegacyVaultInventory vault, LegacyVaultInventory persisted) {
 		super(containerType, windowID);
-		this.sourceInventory = inventory;		
+
+		// store the reference to the source inventory
+		this.sourceInventory = inventory;
+		
+		/* create new instances of the inventories to detach/de-reference them from the tile entity providing them */
+		this.displayInventory = new Inventory(inventory.getContainerSize());
+		copyInventory(inventory, displayInventory);
+		
+		this.legacyVaultInventory = new LegacyVaultInventory(vault.getContainerSize());
+		copyInventory(vault, legacyVaultInventory);
+		
+		this.persistedInventory = new LegacyVaultInventory(persisted.getContainerSize());
+		copyInventory(persisted, persistedInventory);
+		
 		// NOTE the parent class then calls buildContainer() in it's constructor
 	}
 
 	/**
-	 * TODO this will have to be refactored if the size of the legacy vault > the tile entity size
-	 * @param account
-	 * @param inventory
+	 * TODO this can be a helper somewhere and can replace saveVaultInventory()
+	 * @param source
+	 * @param dest
 	 */
-	private void loadPersistedInventory(Account account, LegacyVaultInventory inventory) {
-
-		ByteArrayInputStream bais = new ByteArrayInputStream(account.getInventory());
-		CompoundNBT  compound = null;
-		try {
-			compound =  CompressedStreamTools.readCompressed(bais);
-			ItemStackHelper.loadAllItems(compound, inventory.getItems());
-		} catch (IOException e) {
-			LegacyVault.LOGGER.error("an error occurred attempting to load vault inventory from persistence ->", e);
-		}
+	private void copyInventory(IInventory source, IInventory dest) {
+		for (int index = 0; index < source.getContainerSize(); index++) {
+			if (index < dest.getContainerSize()) {
+				dest.setItem(index, source.getItem(index));
+			}
+		}	
 	}
-
+	
 	/**
 	 * TODO this will have to be refactored if the size of the legacy valut > the tile entity size. as it stands this will only read in x items from vault, and then save those x items back to the vault
 	 * overriding the current vault items, but the vault could have had a x*n size, and so those items are lost.
@@ -127,8 +132,9 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	private void savePersistedInventory(Account account, LegacyVaultInventory inventory) {
 		CompoundNBT compound = new CompoundNBT();
 		try {
+			LegacyVault.LOGGER.debug("saving inventory items -> {}", inventory.getItems());
 			ItemStackHelper.saveAllItems(compound, inventory.getItems());
-			LegacyVault.LOGGER.info("saving list -> {}", compound.getList("Items", 10));
+			LegacyVault.LOGGER.debug("saving compound items -> {}", compound.getList("Items", 10));
 
 		} catch (Exception e) {
 			LegacyVault.LOGGER.error("error writing inventory to NBT ->", e);
@@ -148,21 +154,15 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 		account.setInventory(baos.toByteArray());
 		DbManager.getInstance().saveAccount(account);
 	}
-	
-	/**
-	 * 
-	 */
-	private void loadVaultInventory() {
-		for (int index = 0; index < legacyVaultInventory.getContainerSize(); index++) {
-			legacyVaultInventory.setItem(index, persistedInventory.getItem(index));
-		}		
-	}
 
 	/**
 	 * 
 	 */
 	private void saveVaultInventory() {
 		for (int index = 0; index < legacyVaultInventory.getContainerSize(); index++) {
+//			if (legacyVaultInventory.getItem(index) != ItemStack.EMPTY) {
+//			LegacyVault.LOGGER.debug("copying item -> {} from vault  inventory to persisted  inventory", legacyVaultInventory.getItem(index).getItem().getRegistryName().toString());
+//			}
 			persistedInventory.setItem(index, legacyVaultInventory.getItem(index));
 		}	
 	}
@@ -171,76 +171,31 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	 * 
 	 * @param row
 	 */
-	private void loadDisplayInventory(int row) {		
-		if (row != this.currentRow) {
-			LegacyVault.LOGGER.debug("saving display inventory first.");
-			saveDisplayInventory();
-		}
-		
-		// copy from vault inventory to display inventory
-		int fromVaultIndex =  row * getContainerInventoryColumnCount(); // TODO this could potentially be wrong if called from constructor
-//		LegacyVault.LOGGER.debug("fromVaultIndex -> {}", fromVaultIndex);
-//		LegacyVault.LOGGER.debug("display container size -> {}, legacy container size -> {}", this.displayInventory.getContainerSize(), legacyVaultInventory.getContainerSize());
-		for (int index = 0; index < displayInventory.getContainerSize(); index++) {
-			if (index < this.displayInventory.getContainerSize() && index < legacyVaultInventory.getContainerSize()) {
-				this.displayInventory.setItem(index, legacyVaultInventory.getItem(fromVaultIndex + index));
-			}
-		}
-		
-		// need to save the current row to properly update the vault inventory at the right positions (either an index or row)
-		this.currentRow = row; // TODO is this the right place to save current row ?
-	}
-	
-	/**
-	 * 
-	 * @param row
-	 */
 	private void saveDisplayInventory() {
-		int toVaultIndex =  this.currentRow * getContainerInventoryColumnCount();
 //		LegacyVault.LOGGER.debug("save display inventory: currentRow ->{}, toVaultIndex -> {}", currentRow, toVaultIndex);
+
 		// first need to sync what is currently in display inventory back into vault inventory
 		for (int index = 0; index < getContainerInventorySlotCount(); index++) {
 			if (index < displayInventory.getContainerSize() && index < legacyVaultInventory.getContainerSize()) {
-				legacyVaultInventory.setItem(toVaultIndex + index, displayInventory.getItem(index));
+//				if (legacyVaultInventory.getItem(index) != ItemStack.EMPTY) {
+//					LegacyVault.LOGGER.debug("copying item -> {} from display inventory to vault inventory", displayInventory.getItem(index).getItem().getRegistryName().toString());
+//				}
+				legacyVaultInventory.setItem(index, displayInventory.getItem(index));
 			}
 		}
 	}
 
+	@Override
+	public void broadcastChanges() {
+		// do nothing - don't want to update the underlying tile entity or inform other players of changes
+	}
+	
 	/**
 	 * 
 	 * @param playerInventory
 	 * @param inventory
 	 */
 	public void buildContainer(PlayerInventory playerInventory, IInventory inventory) {
-		// setup container
-		this.displayInventory = new Inventory(inventory.getContainerSize());
-//		LegacyVault.LOGGER.info("container -> {}", this.getClass().getSimpleName());
-//		LegacyVault.LOGGER.debug("column count ->  {}, row count -> {}", getContainerInventoryColumnCount(), getContainerInventoryRowCount());
-//		LegacyVault.LOGGER.debug("inventory slot count (this should be 27 (default)) -> {}", getContainerInventorySlotCount());
-//		LegacyVault.LOGGER.info("sourceInventory -> {}, size -> {}", sourceInventory.getClass().getSimpleName(), inventory.getContainerSize());
-//		LegacyVault.LOGGER.info("displayInventory -> {}, size -> {}", displayInventory.getClass().getSimpleName(), displayInventory.getContainerSize());
-		this.legacyVaultInventory = new LegacyVaultInventory(sourceInventory.getContainerSize()); // should equal the default size of a vault OR the size of the inventory coming in
-		this.persistedInventory = new LegacyVaultInventory(Config.GENERAL.inventorySize.get());
-//		LegacyVault.LOGGER.info("vaultInventory -> {}, size -> {}", legacyVaultInventory.getClass().getSimpleName(), legacyVaultInventory.getContainerSize());
-//		LegacyVault.LOGGER.info("persistedInventory -> {}, size -> {}", persistedInventory.getClass().getSimpleName(), persistedInventory.getContainerSize());
-		
-		Optional<Account> account = DbManager.getInstance().getAccount(playerInventory.player.getUUID().toString(), LegacyVault.instance.getMincraftVersion(), 
-				LegacyVault.instance.isHardCore() ? GameType.HARDCORE.getValue() : GameType.NORMAL.getValue());
-//		LegacyVault.LOGGER.info("account -> {}", account);
-
-		if (account.isPresent()) {
-			if (account.get().getInventory() != null) {
-				loadPersistedInventory(account.get(), persistedInventory);
-			}
-		}
-//		LegacyVault.LOGGER.info("persistedInventory -> {}", persistedInventory);
-		// init vault inventory
-		loadVaultInventory();
-//		LegacyVault.LOGGER.info("vaultInventory -> {}", legacyVaultInventory);
-		
-		// init display inventory from vault inventory
-		loadDisplayInventory(this.currentRow);
-		
 		// build inventories
 		buildHotbar(playerInventory);
 		buildPlayerInventory(playerInventory);
@@ -284,7 +239,7 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 		 *  Add the tile inventory container to the gui
 		 */
 		if (legacyVaultInventory != null ) {
-			LegacyVault.LOGGER.info("legacyVaultInventory ->{}", legacyVaultInventory.getContainerSize());
+//			LegacyVault.LOGGER.info("legacyVaultInventory ->{}", legacyVaultInventory.getContainerSize());
 		}
 		else {
 			LegacyVault.LOGGER.info("legacyVaultInventory is null");
@@ -301,16 +256,6 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 //				LegacyVault.LOGGER.debug("building slot -> {}, y -> {}, x-> {}, displayInventory.size -> {}", slotNumber, y, x, this.displayInventory.getContainerSize());
 				addSlot(new VaultSlot(this.displayInventory, slotNumber, xpos, ypos));
 			}
-		}
-	}
-	   
-	/**
-	 * 
-	 * @param row
-	 */
-	public void updateContainerInventory(int row) {
-		if (row != currentRow) {
-			loadDisplayInventory(row);
 		}
 	}
 
@@ -334,7 +279,7 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 			 *  This is a vanilla container slot so merge the stack into the tile inventory
 			 */
 			// first ensure that the sourcStack is a valid item for the container
-			if (!sourceInventory.canPlaceItem(sourceSlotIndex, sourceStack)) {
+			if (!displayInventory.canPlaceItem(sourceSlotIndex, sourceStack)) {
 				return ItemStack.EMPTY;
 			}
 
@@ -370,13 +315,13 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	 */
 	@Override
 	public void removed(PlayerEntity player) {
-		// TODO first need to sync what is currently in display inventory back into vault inventory
-		
+
 		if (!player.level.isClientSide) {
+			LegacyVault.LOGGER.debug("closing the inventory -> save");
 			// copy from display inventory to vault inventory
 			saveDisplayInventory();
 			
-			// TODO copy from vault inventory to persisted inventory
+			// copy from vault inventory to persisted inventory
 			saveVaultInventory();
 			
 			// fetch the players account from persistence
@@ -389,11 +334,12 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 			}
 		}
 		super.removed(player);
+		// tell the source tile entity to close
 		this.sourceInventory.stopOpen(player);
 	}
 
 	public int getInventorySize() {
-		return sourceInventory.getContainerSize();
+		return displayInventory.getContainerSize();
 	}
 
 	/**
@@ -401,7 +347,7 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 	 */
 	@Override
 	public boolean stillValid(PlayerEntity player) {
-		return sourceInventory.stillValid(player);
+		return displayInventory.stillValid(player);
 	}
 
 	/**
@@ -554,12 +500,12 @@ public abstract class AbstractLegacyVaultContainer extends Container implements 
 
 	@Override
 	public IInventory getContents() {
-		return sourceInventory;
+		return displayInventory;
 	}
 
 	@Override
 	public void setContents(IInventory contents) {
-		this.sourceInventory = contents;
+		this.displayInventory = contents;
 	}
 
 	@Override
