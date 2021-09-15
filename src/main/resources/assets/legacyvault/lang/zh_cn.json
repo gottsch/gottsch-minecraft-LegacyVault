@@ -1,0 +1,15 @@
+{
+	"itemGroup.legacyvault":"遗产保险库",
+
+	"item.legacyvault.vault":"遗产保险库",
+	"item.legacyvault.vault_application":"保险库申请表",
+		
+	"block.legacyvault.vault":"遗产保险库",
+	
+	"tooltip.label.rarity":"稀有度: %s",
+
+	"display.vault.name":"遗产保险库",
+	"display.vaults_remaining": "保险库余量: %s / %s",
+	"display.unlimited_vaults": "保险库余量: 无限",
+	"display.public_vault": "公共保险库"
+}
