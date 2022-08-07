@@ -6,16 +6,16 @@ package com.someguyssoftware.legacyvault.item;
 import java.util.function.Supplier;
 
 import com.someguyssoftware.gottschcore.item.ModItem;
-import com.someguyssoftware.legacyvault.LegacyVault;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -43,7 +43,7 @@ public class LegacyVaultItems {
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		LOGO = new ModItem(LegacyVault.MODID, "legacyvault_tab", new Item.Properties());
-		APPLICATION = new ModItem(LegacyVault.MODID, "vault_application", new Item.Properties().tab(ItemGroup.TAB_MISC));
+		APPLICATION = new ModItem(LegacyVault.MODID, "vault_application", new Item.Properties().tab(CreativeModeTab.TAB_MISC));
 		event.getRegistry().registerAll(
 				LOGO,
 				APPLICATION
@@ -62,7 +62,7 @@ public class LegacyVaultItems {
 		final ItemColors itemColors = event.getItemColors();
 
 		// Use the Block's colour handler for an ItemBlock
-		final IItemColor itemBlockColourHandler = (stack, tintIndex) -> {
+		final ItemColor itemBlockColourHandler = (stack, tintIndex) -> {
 			final BlockState state = ((BlockItem) stack.getItem()).getBlock().defaultBlockState();
 			return blockColors.getColor(state, null, null, tintIndex);
 		};
@@ -75,7 +75,7 @@ public class LegacyVaultItems {
 	 * @author Mark Gottschling on Aug 12, 2020
 	 *
 	 */
-	public static class ModItemGroup extends ItemGroup {
+	public static class ModItemGroup extends CreativeModeTab {
 		private final Supplier<ItemStack> iconSupplier;
 
 		public ModItemGroup(final String name, final Supplier<ItemStack> iconSupplier) {

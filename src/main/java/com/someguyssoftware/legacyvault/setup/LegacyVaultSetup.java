@@ -17,19 +17,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.init;
+package com.someguyssoftware.legacyvault.setup;
 
-import com.someguyssoftware.legacyvault.LegacyVault;
-import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
-import com.someguyssoftware.legacyvault.capability.PlayerVaultsHandler;
-import com.someguyssoftware.legacyvault.capability.PlayerVaultsStorage;
-import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.db.DbManager;
-import com.someguyssoftware.legacyvault.exception.DbInitializationException;
 
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 
 /**
  * @author Mark Gottschling on Apr 28, 2021
@@ -43,7 +37,7 @@ public class LegacyVaultSetup {
 //	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MODID, "legacy_vault_channel");
 //	
 	// TODO this is stopping the world on client side, stopping the server on server side.
-	public static void serverStopping(final FMLServerStoppingEvent event) {
+	public static void serverStopping(final ServerStoppingEvent event) {
 		LegacyVault.LOGGER.debug("server stopping event");
 		try {
 			DbManager.shutdown();
@@ -58,7 +52,7 @@ public class LegacyVaultSetup {
 	 */
 	public static void common(final FMLCommonSetupEvent event) {
 		// add mod specific logging
-		IModSetup.addRollingFileAppender(LegacyVault.instance.getName(), null);
+		IModSetup.addRollingFileAppender(LegacyVault.MODID, null);
 		
 		// start the database
 		
@@ -72,7 +66,7 @@ public class LegacyVaultSetup {
 //		}
 		
 		// attach capabilities
-		CapabilityManager.INSTANCE.register(IPlayerVaultsHandler.class, new PlayerVaultsStorage(), PlayerVaultsHandler::new);
+//		CapabilityManager.INSTANCE.register(IPlayerVaultsHandler.class, new PlayerVaultsStorage(), PlayerVaultsHandler::new);
 		
 		/*
 		 *  networking

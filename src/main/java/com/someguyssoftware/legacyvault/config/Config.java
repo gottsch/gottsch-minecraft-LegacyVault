@@ -22,21 +22,17 @@ package com.someguyssoftware.legacyvault.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import com.someguyssoftware.gottschcore.config.AbstractConfig;
-import com.someguyssoftware.gottschcore.mod.IMod;
-import com.someguyssoftware.legacyvault.LegacyVault;
-
+import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.config.ModConfig.Reloading;
-import net.minecraftforge.fml.loading.FMLPaths;
 
 /**
  * 
@@ -44,49 +40,42 @@ import net.minecraftforge.fml.loading.FMLPaths;
  *
  */
 @EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class Config extends AbstractConfig {
+public class Config {
 
 	public static final String GENERAL_CATEGORY = "03-general";
 	public static final String PUBLIC_VAULT_CATEGORY = "04-public-vault";
 	public static final String DATABASE_CATEGORY = "05-database";
+	public static final String CATEGORY_DIV = "##############################";
 	public static final String UNDERLINE_DIV = "------------------------------";
 
-	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
-	protected static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
-	protected static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
-	public static ForgeConfigSpec COMMON_CONFIG;
-	public static ForgeConfigSpec SERVER_CONFIG;
+//	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+//	protected static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+//	protected static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
+//	public static ForgeConfigSpec COMMON_CONFIG;
+//	public static ForgeConfigSpec SERVER_CONFIG;
 
-	private static IMod mod;
-
-	public static final Mod MOD;
-	public static final Logging LOGGING;
-	public static final General GENERAL;		
-	public static final PublicVault PUBLIC_VAULT;
-	public static final Db DATABASE;
-
-
-	static {
-		MOD = new Mod(COMMON_BUILDER);
-		LOGGING = new Logging(COMMON_BUILDER);
-				
-		GENERAL = new General(SERVER_BUILDER);
-		PUBLIC_VAULT = new PublicVault(SERVER_BUILDER);
-		DATABASE = new Db(SERVER_BUILDER);
-		
-		COMMON_CONFIG = COMMON_BUILDER.build();
-		SERVER_CONFIG = SERVER_BUILDER.build();
-		
-		// perform any initializations on data
-		Config.init();
-	}
+	public static General GENERAL;		
+	public static PublicVault PUBLIC_VAULT;
+	public static Db DATABASE;
 
 	/**
 	 * 
-	 * @param mod
 	 */
-	public Config(IMod mod) {
-		Config.mod = mod;
+	public static void register() {
+		registerServerConfigs();
+	}
+	
+	/**
+	 * 
+	 */
+	private static void registerServerConfigs() {
+		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+		GENERAL = new General(COMMON_BUILDER);
+		PUBLIC_VAULT = new PublicVault(COMMON_BUILDER);
+		DATABASE = new Db(COMMON_BUILDER);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
+		// perform any initializations on data
+		Config.init();
 	}
 
 	/**
@@ -169,16 +158,14 @@ public class Config extends AbstractConfig {
 		public List<Pattern> inventoryBlackListPatterns = new ArrayList<>();
 
 		public ForgeConfigSpec.IntValue inventorySize;
-
 		public ForgeConfigSpec.IntValue stackSize;
-
 		public BooleanValue enableLimitedVaults;
-
 		public IntValue vaultsPerPlayer;
-
 		public ConfigValue<String> recipeDifficulty;
+		
+		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
 
-		General(final ForgeConfigSpec.Builder builder) {
+		public General(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV, " General properties for Legacy Vault  mod.", CATEGORY_DIV).push(GENERAL_CATEGORY);
 
 			inventorySize = builder
@@ -205,19 +192,19 @@ public class Config extends AbstractConfig {
 
 			inventoryWhiteList = builder
 					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs")
-					.defineList("White list by  Item/Block name:", new ArrayList<String>(), s -> s instanceof String);
+					.defineList("White list by  Item/Block name:", new ArrayList<String>(), STRING_PREDICATE);
 
 			inventoryBlackList = builder
 					.comment(" Disallowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs")
-					.defineList("Black list by Item/Block name:", Arrays.asList("(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box","treasure2:milk_crate"), s -> s instanceof String);
+					.defineList("Black list by Item/Block name:", Arrays.asList("(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box","treasure2:milk_crate"), STRING_PREDICATE);
 
 			tagsWhiteList = builder
 					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
-					.defineList("White list by  Tag name:", new ArrayList<String>(), s -> s instanceof String);
+					.defineList("White list by  Tag name:", new ArrayList<String>(), STRING_PREDICATE);
 
 			tagsBlackList = builder
 					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
-					.defineList("Black list by  Tag name:", new ArrayList<String>(), s -> s instanceof String);
+					.defineList("Black list by  Tag name:", new ArrayList<String>(), STRING_PREDICATE);
 
 			builder.pop();
 		}
@@ -270,71 +257,5 @@ public class Config extends AbstractConfig {
 
 	public static void init() {
 		Config.GENERAL.init();
-	}
-
-	@SubscribeEvent
-	public static void onLoad(final ModConfig.Loading configEvent) {
-		Config.loadConfig(Config.COMMON_CONFIG,
-				FMLPaths.CONFIGDIR.get().resolve(mod.getId() + "-common.toml"));
-		Config.loadConfig(Config.SERVER_CONFIG,
-				FMLPaths.CONFIGDIR.get().resolve(mod.getId() + "-server.toml"));
-	}
-
-	@SubscribeEvent
-	public static void onReload(final Reloading configEvent) {
-	}
-
-	@Override
-	public boolean isEnableVersionChecker() {
-		return Config.MOD.enableVersionChecker.get();
-	}
-
-	@Override
-	public void setEnableVersionChecker(boolean enableVersionChecker) {
-		Config.MOD.enableVersionChecker.set(enableVersionChecker);
-	}
-
-	@Override
-	public boolean isLatestVersionReminder() {
-		return Config.MOD.latestVersionReminder.get();
-	}
-
-	@Override
-	public void setLatestVersionReminder(boolean latestVersionReminder) {
-		Config.MOD.latestVersionReminder.set(latestVersionReminder);
-	}
-
-	@Override
-	public boolean isModEnabled() {
-		return Config.MOD.enabled.get();
-	}
-
-	@Override
-	public void setModEnabled(boolean modEnabled) {
-		Config.MOD.enabled.set(modEnabled);
-	}
-
-	@Override
-	public String getModsFolder() {
-		return Config.MOD.folder.get();
-	}
-
-	@Override
-	public void setModsFolder(String modsFolder) {
-		Config.MOD.folder.set(modsFolder);
-	}
-
-	@Override
-	public String getConfigFolder() {
-		return Config.MOD.configFolder.get();
-	}
-
-	@Override
-	public void setConfigFolder(String configFolder) {
-		Config.MOD.configFolder.set(configFolder);
-	}
-
-	public static IMod getMod() {
-		return mod;
 	}
 }

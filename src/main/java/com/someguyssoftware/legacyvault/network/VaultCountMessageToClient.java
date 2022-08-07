@@ -3,9 +3,8 @@
  */
 package com.someguyssoftware.legacyvault.network;
 
-import com.someguyssoftware.legacyvault.LegacyVault;
-
-import net.minecraft.network.PacketBuffer;
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * @author Mark Gottschling on Jun 2, 2021
@@ -32,7 +31,7 @@ public class VaultCountMessageToClient {
 	 * @param buf
 	 * @return
 	 */
-	public static VaultCountMessageToClient decode(PacketBuffer buf) {
+	public static VaultCountMessageToClient decode(FriendlyByteBuf buf) {
 		VaultCountMessageToClient message = new VaultCountMessageToClient();
 		try {
 			message.playerUUID = buf.readUtf();
@@ -50,7 +49,7 @@ public class VaultCountMessageToClient {
 	 * 
 	 * @param buf
 	 */
-	public void encode(PacketBuffer buf) {
+	public void encode(FriendlyByteBuf buf) {
 		if (!messageIsValid) {
 			return;
 		}

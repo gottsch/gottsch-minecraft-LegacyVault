@@ -1,5 +1,21 @@
-/**
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2022, Mark Gottschling (gottsch)
  * 
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package com.someguyssoftware.legacyvault.util;
 
@@ -9,8 +25,9 @@ import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
 import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.config.Config;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+
 
 /**
  * @author Mark Gottschling on Jun 6, 2021
@@ -18,27 +35,11 @@ import net.minecraft.world.World;
  */
 public class LegacyVaultHelper {
 
-	public static IPlayerVaultsHandler getPlayerCapability(PlayerEntity player) {
-		IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-			return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-		});
-		return cap;
-	}
-
-	/**
-	 * 
-	 * @param world
-	 * @param playerUUID
-	 * @return
-	 */
-	public static IPlayerVaultsHandler getPlayerCapability(World world, String playerUUID) {
-		PlayerEntity player = world.getPlayerByUUID(UUID.fromString(playerUUID));
-		if (player != null) {
-			IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-			});
-			return cap;
-		}
+	public static IPlayerVaultsHandler getPlayerCapability(Player player) {
+//		IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+//			return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+//		});
+//		return cap;
 		return null;
 	}
 
@@ -48,8 +49,25 @@ public class LegacyVaultHelper {
 	 * @param playerUUID
 	 * @return
 	 */
-	public static boolean doesPlayerHavePulicAccess(World world, String playerUUID) {
-		PlayerEntity player = world.getPlayerByUUID(UUID.fromString(playerUUID));
+	public static IPlayerVaultsHandler getPlayerCapability(Level world, String playerUUID) {
+		Player player = world.getPlayerByUUID(UUID.fromString(playerUUID));
+//		if (player != null) {
+//			IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
+//				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+//			});
+//			return cap;
+//		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param world
+	 * @param playerUUID
+	 * @return
+	 */
+	public static boolean doesPlayerHavePulicAccess(Level world, String playerUUID) {
+		Player player = world.getPlayerByUUID(UUID.fromString(playerUUID));
 		return doesPlayerHavePulicAccess(player);
 	}
 	
@@ -58,7 +76,7 @@ public class LegacyVaultHelper {
 	 * @param player
 	 * @return
 	 */
-	public static boolean doesPlayerHavePulicAccess(PlayerEntity player) {
+	public static boolean doesPlayerHavePulicAccess(Player player) {
 		if (player == null) {
 			return false;
 		}

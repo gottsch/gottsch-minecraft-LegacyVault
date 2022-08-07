@@ -22,20 +22,19 @@ package com.someguyssoftware.legacyvault.item;
 import com.someguyssoftware.gottschcore.spatial.Coords;
 import com.someguyssoftware.gottschcore.spatial.ICoords;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
-import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
-import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
 import com.someguyssoftware.legacyvault.network.VaultCountMessageToClient;
 import com.someguyssoftware.legacyvault.util.LegacyVaultHelper;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraftforge.fml.network.PacketDistributor;
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * @author Mark Gottschling on May 25, 2021
@@ -56,7 +55,7 @@ public class VaultBlockItem extends BlockItem {
 	 * 
 	 */
 	@Override
-	protected boolean placeBlock(BlockItemUseContext context, BlockState state) {
+	protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
 		if (WorldInfo.isServerSide(context.getLevel())) {
 			
 			/*
@@ -94,7 +93,7 @@ public class VaultBlockItem extends BlockItem {
 						
 						// send state message to client
 						VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
-						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)context.getPlayer()),message);
+						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)context.getPlayer()),message);
 //						return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 					}
 					else {

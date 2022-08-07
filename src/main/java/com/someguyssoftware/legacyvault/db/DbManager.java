@@ -29,10 +29,12 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
-import com.someguyssoftware.legacyvault.LegacyVault;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.db.entity.Account;
 import com.someguyssoftware.legacyvault.exception.DbInitializationException;
+
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 /**
  * @author Mark Gottschling on Apr 28, 2021
@@ -41,7 +43,7 @@ import com.someguyssoftware.legacyvault.exception.DbInitializationException;
 public class DbManager {
 
 	// LOGGER
-	public static Logger LOGGER = LogManager.getLogger(LegacyVault.instance.getName());
+	public static Logger LOGGER = LogManager.getLogger(LegacyVault.MODID);
 
 	public static final String DB_FILE_NAME = "vault";
 	public static final String DB_EXTENSION = ".mv.db";
@@ -64,7 +66,7 @@ public class DbManager {
 	 *
 	 * Private constructor
 	 */
-	private DbManager(Config config) throws ClassNotFoundException, SQLException {
+	private DbManager() throws ClassNotFoundException, SQLException {
 		LOGGER.info("Initializing DbManager...");
 		Connection conn = null;
 		JdbcConnectionSource connSource = null;
@@ -81,7 +83,7 @@ public class DbManager {
 
 		// get the path to the default style sheet
 		@SuppressWarnings("static-access")
-		Path dbPath = Paths.get(config.getConfigFolder(), config.getMod().getId(), DB_FILE_NAME).toAbsolutePath();
+		Path dbPath = Paths.get(FMLPaths.CONFIGDIR.get().toString(), LegacyVault.MODID, DB_FILE_NAME).toAbsolutePath();
 		LOGGER.debug("path to db folder -> {}", dbPath.toString());
 
 		// create the connection
@@ -111,7 +113,7 @@ public class DbManager {
 		try {
 			// open a stream to the sql file
 			@SuppressWarnings("static-access")
-			String sqlScriptFilePath = "/" + config.getMod().getId() + ".sql";
+			String sqlScriptFilePath = "/" + LegacyVault.MODID + ".sql";
 			LOGGER.debug("script path -> {}", sqlScriptFilePath.toString());
 			InputStream is = getClass().getResourceAsStream(sqlScriptFilePath.toString());
 
@@ -165,11 +167,11 @@ public class DbManager {
 	/**
 	 * @param config
 	 */
-	public static void start(Config config) throws DbInitializationException {		
+	public static void start() throws DbInitializationException {		
 		if (instance == null) {
 			LOGGER.debug("Creating new instance of DbManager");
 			try {
-				instance = new DbManager(config);
+				instance = new DbManager();
 			} catch (ClassNotFoundException | SQLException e) {
 				LegacyVault.LOGGER.error("An error occurred during initialization ->", e);
 				throw new DbInitializationException("Unable to create an instance of DbManager.");

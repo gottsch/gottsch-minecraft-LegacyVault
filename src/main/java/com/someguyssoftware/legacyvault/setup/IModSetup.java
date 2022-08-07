@@ -1,4 +1,4 @@
-package com.someguyssoftware.legacyvault.init;
+package com.someguyssoftware.legacyvault.setup;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -57,9 +57,10 @@ public interface IModSetup {
 		AppenderRef ref = AppenderRef.createAppenderRef("File", null, null);
 		AppenderRef[] refs = new AppenderRef[] {ref};
 		
-		LoggerConfig loggerConfig = LoggerConfig.createLogger(false, Level.toLevel(Config.LOGGING.level.get(), Level.INFO), modName, "true", refs, null, config, null );
-		loggerConfig.addAppender(appender, null, null);
-		config.addLogger(modName, loggerConfig);
+//		TODO re-activate this code
+//		LoggerConfig loggerConfig = LoggerConfig.createLogger(false, Level.toLevel(Config.LOGGING.level.get(), Level.INFO), modName, "true", refs, null, config, null );
+//		loggerConfig.addAppender(appender, null, null);
+//		config.addLogger(modName, loggerConfig);
 		
 		// update logger with new appenders
 		ctx.updateLoggers();

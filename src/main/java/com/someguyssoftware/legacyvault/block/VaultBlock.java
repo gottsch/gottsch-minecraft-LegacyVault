@@ -19,22 +19,26 @@
  */
 package com.someguyssoftware.legacyvault.block;
 
-import com.someguyssoftware.legacyvault.LegacyVault;
+import javax.annotation.Nullable;
+
+import com.someguyssoftware.legacyvault.block.entity.VaultBlockEntity;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
-import com.someguyssoftware.legacyvault.tileentity.LargeVaultTileEntity;
-import com.someguyssoftware.legacyvault.tileentity.MediumVaultTileEntity;
-import com.someguyssoftware.legacyvault.tileentity.VaultTileEntity;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
 
 /**
  * @author Mark Gottschling on Apr 29, 2021
@@ -46,29 +50,37 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	private static final VoxelShape NORTH_FOOT2 = Block.box(13, 0, 2, 15, 1, 4);
 	private static final VoxelShape NORTH_FOOT3 = Block.box(1, 0, 13, 3, 1, 15);
 	private static final VoxelShape NORTH_FOOT4 = Block.box(13, 0, 13, 15, 1, 15);
-	
+
 	private static final VoxelShape SOUTH_MAIN = Block.box(1, 1, 1, 15, 16, 14);
 	private static final VoxelShape SOUTH_FOOT1 = Block.box(1, 0, 1, 3, 1, 3);
 	private static final VoxelShape SOUTH_FOOT2 = Block.box(13, 0, 1, 15, 1, 3);
 	private static final VoxelShape SOUTH_FOOT3 = Block.box(1, 0, 12, 3, 1, 14);
 	private static final VoxelShape SOUTH_FOOT4 = Block.box(13, 0, 12, 15, 1, 14);
-	
+
 	private static final VoxelShape EAST_MAIN = Block.box(1, 1, 1, 14, 16, 15);
 	private static final VoxelShape EAST_FOOT1 = Block.box(1, 0, 13, 3, 1, 15);
 	private static final VoxelShape EAST_FOOT2 = Block.box(12, 0, 13, 14, 1, 15);
 	private static final VoxelShape EAST_FOOT3 = Block.box(1, 0, 1, 3, 1, 3);
 	private static final VoxelShape EAST_FOOT4 = Block.box(12, 0, 1, 14, 1, 3);
-	
+
 	private static final VoxelShape WEST_MAIN = Block.box(2, 1, 1, 15, 16, 15);
 	private static final VoxelShape WEST_FOOT1 = Block.box(13, 0, 1, 15, 1, 3);
 	private static final VoxelShape WEST_FOOT2 = Block.box(2, 0, 1, 4, 1, 3);
 	private static final VoxelShape WEST_FOOT3 = Block.box(13, 0, 13, 15, 1, 15);
 	private static final VoxelShape WEST_FOOT4 = Block.box(2, 0, 13, 4, 1, 15);
-	
-	private static final VoxelShape NORTH_VAULT = VoxelShapes.or(NORTH_MAIN, NORTH_FOOT1, NORTH_FOOT2, NORTH_FOOT3, NORTH_FOOT4);	
-	private static final VoxelShape SOUTH_VAULT = VoxelShapes.or(SOUTH_MAIN, SOUTH_FOOT1, SOUTH_FOOT2, SOUTH_FOOT3, SOUTH_FOOT4);
-	private static final VoxelShape EAST_VAULT = VoxelShapes.or(EAST_MAIN, EAST_FOOT1, EAST_FOOT2, EAST_FOOT3, EAST_FOOT4);
-	private static final VoxelShape WEST_VAULT = VoxelShapes.or(WEST_MAIN, WEST_FOOT1, WEST_FOOT2, WEST_FOOT3, WEST_FOOT4);
+
+	private static final VoxelShape NORTH_VAULT = Shapes.or(NORTH_MAIN, NORTH_FOOT1, NORTH_FOOT2, NORTH_FOOT3, NORTH_FOOT4);	
+	private static final VoxelShape SOUTH_VAULT = Shapes.or(SOUTH_MAIN, SOUTH_FOOT1, SOUTH_FOOT2, SOUTH_FOOT3, SOUTH_FOOT4);
+	private static final VoxelShape EAST_VAULT = Shapes.or(EAST_MAIN, EAST_FOOT1, EAST_FOOT2, EAST_FOOT3, EAST_FOOT4);
+	private static final VoxelShape WEST_VAULT = Shapes.or(WEST_MAIN, WEST_FOOT1, WEST_FOOT2, WEST_FOOT3, WEST_FOOT4);
+
+	/**
+	 * 
+	 * @param properties
+	 */
+	public VaultBlock(Properties properties) {
+		super(properties);
+	}
 	
 	/**
 	 * 
@@ -76,6 +88,7 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	 * @param name
 	 * @param properties
 	 */
+	@Deprecated
 	public VaultBlock(String modID, String name, Properties properties) {
 		super(modID, name, properties);
 
@@ -87,66 +100,69 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 						WEST_VAULT		// W
 				});
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Override
-	 public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		TileEntity vaultTileEntity = null;
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		BlockEntity vaultBlockEntity = null;
 		try {
 			int size = Config.GENERAL.inventorySize.get();
 			if (size <=VaultSlotSize.SMALL.getSize()) {
-				vaultTileEntity = new VaultTileEntity();
+				vaultBlockEntity = new VaultBlockEntity(pos, state);
 			}
-			else if (size <= VaultSlotSize.MEDIUM.getSize()) {
-				vaultTileEntity = new MediumVaultTileEntity();
-			}
-			else {
-				vaultTileEntity = new LargeVaultTileEntity();
-			}
+//			else if (size <= VaultSlotSize.MEDIUM.getSize()) {
+//				vaultBlockEntity = new MediumVaultTileEntity();
+//			}
+//			else {
+//				vaultBlockEntity = new LargeVaultTileEntity();
+//			}
 		}
 		catch(Exception e) {
 			LegacyVault.LOGGER.error(e);
 		}
-		LegacyVault.LOGGER.debug("created tile entity -> {}", vaultTileEntity.getClass().getSimpleName());
-		return vaultTileEntity;
+		LegacyVault.LOGGER.debug("created tile entity -> {}", vaultBlockEntity.getClass().getSimpleName());
+		return vaultBlockEntity;
 	}
+
+	@Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide()) {
+            return null;
+        }
+        return (lvl, pos, blockState, t) -> {
+            if (t instanceof VaultBlockEntity entity) { // test and cast
+                entity.tickServer();
+            }
+        };
+    }
 	
 	/**
 	 * 
-	 * @param state
-	 * @return
 	 */
 	@Override
-	public boolean hasTileEntity(BlockState state) {
-		return true;
-	}
-	
-	/**
-	 * 
-	 */
-	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Override
-	   public BlockRenderType getRenderShape(BlockState state) {
-	      return BlockRenderType.ENTITYBLOCK_ANIMATED;
-	   }
-	
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+
 	/**
 	 * 
 	 */
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockState blockState = this.defaultBlockState().setValue(FACING,
 				context.getHorizontalDirection().getOpposite());
 		return blockState;
 	}
-	
+
 }

@@ -19,16 +19,16 @@
  */
 package com.someguyssoftware.legacyvault.network;
 
-import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_CLIENT;
+import static net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT;
 
 import java.util.Optional;
 
-import com.someguyssoftware.legacyvault.LegacyVault;
-
-import net.minecraft.util.ResourceLocation;
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+
 
 /**
  * @author Mark Gottschling on Jun 3, 2021

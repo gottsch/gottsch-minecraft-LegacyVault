@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2022, Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -17,25 +17,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.command;
+package com.someguyssoftware.legacyvault.block.entity;
 
-import com.someguyssoftware.legacyvault.LegacyVault;
-
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 
 /**
- * @author Mark Gottschling on Jun 5, 2021
+ * @author Mark Gottschling on May 24, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MODID)
-public class LegacyVaultCommands {
-	@SubscribeEvent
-	public static void onServerStarting(RegisterCommandsEvent event) {
-		ResetVaultCountCommand.register(event.getDispatcher());
-		GetVaultLocationsCommand.register(event.getDispatcher());
-		ClearVaultLocationsCommand.register(event.getDispatcher());
-		SpawnVaultCommand.register(event.getDispatcher()	);
-	}
+public interface IVaultBlockEntity {
+
+	String getOwnerUuid();
+
+	void setOwnerUuid(String ownerUuid);
+
+	void setFacing(Direction facing);
+
+	void setFacing(int facingIndex);
+	
+	public Component getCustomName();
+	
+	public void setCustomName(Component name);
+	
+	public float getOpenNess(float partialTicks);
+
 }

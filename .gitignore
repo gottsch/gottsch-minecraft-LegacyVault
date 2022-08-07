@@ -1,8 +1,8 @@
 /*
 gradle.log
+!.classpath
 !/src/
 !.gitignore
-!.classpath
 !gradlew*
 !/gradle/
 !/LICENSE.txt
@@ -12,4 +12,4 @@ gradle.log
 !.gitattributes
 !*.json
 !*.gradlew
-!/images/
+!/models/
