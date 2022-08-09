@@ -24,7 +24,7 @@ public class WorldEventHandler {
 //	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
 //	public static class RegistrationHandler {
 		
-//		@SubscribeEvent(priority = EventPriority.HIGH)
+		@SubscribeEvent(priority = EventPriority.HIGH)
 		public void onWorldLoad(WorldEvent.Load event) {
 			/*
 			 * On load of dimension 0 (overworld), initialize the loot table's context and other static loot tables
@@ -41,8 +41,7 @@ public class WorldEventHandler {
 					}
 					
 					if (world.getServer().isHardcore()) {
-//						LegacyVault.instance.setHardCore(true);
-						// TODO - set a config property
+						LegacyVault.instance.setHardCore(true);
 					}
 				}
 			}

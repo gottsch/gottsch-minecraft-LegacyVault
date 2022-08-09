@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import com.someguyssoftware.gottschcore.config.AbstractConfig;
+
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -40,7 +42,7 @@ import net.minecraftforge.fml.config.ModConfig;
  *
  */
 @EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class Config {
+public class Config extends AbstractConfig {
 
 	public static final String GENERAL_CATEGORY = "03-general";
 	public static final String PUBLIC_VAULT_CATEGORY = "04-public-vault";
@@ -54,10 +56,16 @@ public class Config {
 //	public static ForgeConfigSpec COMMON_CONFIG;
 //	public static ForgeConfigSpec SERVER_CONFIG;
 
+	public static Mod MOD;
+	public static Logging LOGGING;
 	public static General GENERAL;		
 	public static PublicVault PUBLIC_VAULT;
 	public static Db DATABASE;
 
+	public static Config instance = new Config();
+	
+	private Config() {}
+	
 	/**
 	 * 
 	 */
@@ -70,6 +78,8 @@ public class Config {
 	 */
 	private static void registerServerConfigs() {
 		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+		MOD = new Mod(COMMON_BUILDER);
+		LOGGING = new Logging(COMMON_BUILDER);
 		GENERAL = new General(COMMON_BUILDER);
 		PUBLIC_VAULT = new PublicVault(COMMON_BUILDER);
 		DATABASE = new Db(COMMON_BUILDER);
@@ -92,7 +102,7 @@ public class Config {
 	 * @author Mark Gottschling on May 5, 2021
 	 *
 	 */
-	public static final class TileEntityID {
+	public static final class BlockEntityID {
 		public static final String VAULT_TE_ID = "vault_te";
 		public static final String MEDIUM_VAULT_TE_ID = "medium_vault_te";
 		public static final String LARGE_VAULT_TE_ID = "large_vault_te";
@@ -147,7 +157,8 @@ public class Config {
 	 *
 	 */
 	public static class General {
-
+		public static final int MAX_INVENTORY_SIZE = 91;
+		
 		public ConfigValue<List<? extends String>> inventoryWhiteList;
 		public ConfigValue<List<? extends String>> inventoryBlackList;
 
@@ -237,7 +248,7 @@ public class Config {
 
 			enablePublicVault = builder
 					.comment(" Enables a singular global public vault(s) that can be used by all players from the same location.",
-							" ie. a vault block is not 'owned' to 'keyed' to a specific player only.",
+							" ie. a vault block is not 'owned' or 'keyed' to a specific player only.",
 							" Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
 					.define("Enable public vault:", false);
 
@@ -257,5 +268,45 @@ public class Config {
 
 	public static void init() {
 		Config.GENERAL.init();
+	}
+
+	@Override
+	public boolean isLatestVersionReminder() {
+		return Config.MOD.latestVersionReminder.get();
+	}
+
+	@Override
+	public void setLatestVersionReminder(boolean latestVersionReminder) {
+		Config.MOD.latestVersionReminder.set(latestVersionReminder);
+	}
+
+	@Override
+	public boolean isModEnabled() {
+		return Config.MOD.enabled.get();
+	}
+
+	@Override
+	public void setModEnabled(boolean modEnabled) {
+		Config.MOD.enabled.set(modEnabled);
+	}
+
+	@Override
+	public String getModsFolder() {
+		return Config.MOD.folder.get();
+	}
+
+	@Override
+	public void setModsFolder(String modsFolder) {
+		Config.MOD.folder.set(modsFolder);
+	}
+
+	@Override
+	public String getConfigFolder() {
+		return Config.MOD.configFolder.get();
+	}
+
+	@Override
+	public void setConfigFolder(String configFolder) {
+		Config.MOD.configFolder.set(configFolder);
 	}
 }

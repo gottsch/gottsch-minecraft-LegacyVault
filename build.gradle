@@ -8,12 +8,11 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-plugins {
-    id 'eclipse'
-    id 'maven-publish'
-}
+
 apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 version = "mc${mc_version}-f${forge_version}-${mod_version_type}${mod_version}"
 group = "${package_group}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -22,7 +21,7 @@ archivesBaseName = "${mod_name}"
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     // The mappings can be changed at any time and must be in the following format.
     // Channel:   Version:
@@ -139,42 +138,32 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 println "maven dir -> $projectDir"
 println "maven project dir -> $project.projectDir"
 repositories {
-	// if using maven, DO NOT have the jar in the flatDir dir.
     maven {
         url "${project.projectDir}/../maven"
     }
     maven {
-        name = "Maven"
-        url = "https://mvnrepository.com/"
+        name = "CurseMaven"
+        url = "https://www.cursemaven.com"
     }
     
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
-    // flatDir {
-    //     dir 'libs'
-    // }
+     //flatDir {
+     //    dir 'libs'
+     //}
 }
-
-def minimap_path="/libs/Xaeros_Minimap_22.3.0_Forge_1.18.jar"
 
 dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
-
-	//compileOnly files('../ModCommonLibs/libs/h2-1.4.187.jar')
-	compileOnly fg.deobf("com.h2database:h2:1.4.187")
-	compileOnly fg.deobf("com.j256.ormlite:ormlite-core:5.0")
-	compileOnly fg.deobf("com.j256.ormlite:ormlite-jdbc:5.0")
-	//compileOnly files('../ModCommonLibs/libs/ormlite-core-5.0.jar')
-	//compileOnly files('../ModCommonLibs/libs/ormlite-jdbc-5.0.jar')
 	
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
-	compileOnly fg.deobf("someguyssoftware.gottschcore:GottschCore:mc1.18.2-f40.1.0-v1.7.0")
-
+	compileOnly fg.deobf("someguyssoftware.gottschcore:GottschCore:mc1.18.2-f40.1.0-v1.8.0")
+	compileOnly fg.deobf("someguyssoftware.gottschjar:GottschJar:mc1.18.2-f40.1.0-v1.0.0")
 }
 
 jar {
@@ -189,6 +178,17 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+    
+    	// for PROD only
+	from (zipTree('../ModCommonLibs/libs/h2-1.4.187.jar')) {
+		exclude 'META-INF/**'
+	}
+	from (zipTree('../ModCommonLibs/libs/ormlite-core-5.0.jar')) {
+		exclude 'META-INF/**'
+	}
+	from (zipTree('../ModCommonLibs/libs/ormlite-jdbc-5.0.jar')) {
+		exclude 'META-INF/**'
+	}
 }
 
 // Example configuration to allow publishing using the maven-publish plugin
@@ -210,8 +210,4 @@ publishing {
             url "file://${project.projectDir}/mcmodsrepo"
         }
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

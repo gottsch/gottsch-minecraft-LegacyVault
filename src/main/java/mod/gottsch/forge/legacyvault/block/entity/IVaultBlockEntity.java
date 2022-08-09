@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.block.entity;
+package mod.gottsch.forge.legacyvault.block.entity;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;

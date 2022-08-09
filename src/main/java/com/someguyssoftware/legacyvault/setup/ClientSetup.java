@@ -31,14 +31,19 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
+/**
+ * 
+ * @author Mark Gottschling
+ *
+ */
 @Mod.EventBusSubscriber(modid = LegacyVault.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
 	
     public static void init(final FMLClientSetupEvent event) {
-//        event.enqueueWork(() -> {
-//            MenuScreens.register(Registration.VAULT_CONTAINER.get(), VaultScreen::new);           // attach our container to the screen
-//            ItemBlockRenderTypes.setRenderLayer(Registration.VAULT.get(), RenderType.cutoutMipped());
-//        });
+        event.enqueueWork(() -> {
+            MenuScreens.register(Registration.VAULT_CONTAINER.get(), VaultScreen::new);           // attach our container to the screen
+            ItemBlockRenderTypes.setRenderLayer(Registration.VAULT.get(), RenderType.cutoutMipped());
+        });
     }
     
 	/**

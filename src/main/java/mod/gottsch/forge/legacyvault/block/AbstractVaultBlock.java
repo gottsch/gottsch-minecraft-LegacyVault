@@ -17,18 +17,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.block;
+package mod.gottsch.forge.legacyvault.block;
 
 import java.util.UUID;
 
 import com.someguyssoftware.gottschcore.block.ModContainerBlock;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
-import com.someguyssoftware.legacyvault.block.entity.IVaultBlockEntity;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.inventory.VaultContainerMenu;
 import com.someguyssoftware.legacyvault.util.LegacyVaultHelper;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.block.entity.IVaultBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -136,14 +136,6 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 		}
 
 		// get the container provider
-//		MenuProvider menuProvider = this.getMenuProvider(state, world, pos);
-//		LegacyVault.LOGGER.debug("namedContainerProvider (TE) -> {}", menuProvider.getClass().getSimpleName());
-//		// open the chest
-//		if (menuProvider != null) {
-////			player.openMenu(menuProvider);
-//			NetworkHooks.openGui((ServerPlayer)player, menuProvider, (packetBuffer)->{});
-//		// NOTE: (packetBuffer)->{} is just a do-nothing because we have no extra data to send
-//		}
 		MenuProvider containerProvider = new MenuProvider() {
             @Override
             public Component getDisplayName() {
@@ -156,8 +148,7 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
             }
         };
         NetworkHooks.openGui((ServerPlayer) player, containerProvider, blockEntity.getBlockPos());
-		
-//		return InteractionResult.CONSUME;
+
 		return InteractionResult.SUCCESS;
 	}
 

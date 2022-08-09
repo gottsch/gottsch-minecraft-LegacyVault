@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.block;
+package mod.gottsch.forge.legacyvault.block;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;

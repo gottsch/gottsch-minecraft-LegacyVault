@@ -23,7 +23,9 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.inventory.VaultContainerMenu;
+import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraft.client.Minecraft;
@@ -38,14 +40,37 @@ import net.minecraft.world.entity.player.Inventory;
  *
  */
 public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
-	// this is the resource location for the background image for the GUI
+	// the resource locations for the background images of the GUI
 	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault1c.png");
+	private static final ResourceLocation MEDIUM_BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault2c.png");
+	private static final ResourceLocation LARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault3c.png");
 
+	private ResourceLocation bgTexture;
+	
+	/**
+	 * 
+	 * @param containerMenu
+	 * @param inventory
+	 * @param name
+	 */
 	public VaultScreen(VaultContainerMenu containerMenu, Inventory inventory, Component name) {
 		super(containerMenu, inventory, name);
-		// TODO move to abstract super
-		imageWidth = 176;
-		imageHeight = 174;//167;
+
+		if (Config.GENERAL.inventorySize.get() <= VaultSlotSize.SMALL.getSize()) {
+			imageWidth = 176;
+			imageHeight = 174;//167;
+			bgTexture = BG_TEXTURE;
+		}
+		else if (Config.GENERAL.inventorySize.get() <= VaultSlotSize.MEDIUM.getSize()) {
+			imageWidth = 176;
+			imageHeight = 228;
+			bgTexture = MEDIUM_BG_TEXTURE;
+		}
+		else {
+			imageWidth = 247;
+			imageHeight = 246;
+			bgTexture = LARGE_BG_TEXTURE;
+		}
 	}
 
     @Override
@@ -73,8 +98,7 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
         this.blit(matrixStack, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
     }
 
-
-	public ResourceLocation getBgTexture() {
-		return BG_TEXTURE;
+	private ResourceLocation getBgTexture() {
+		return bgTexture;
 	}
 }

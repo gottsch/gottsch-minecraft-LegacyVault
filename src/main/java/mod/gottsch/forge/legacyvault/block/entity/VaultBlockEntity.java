@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.block.entity;
+package mod.gottsch.forge.legacyvault.block.entity;
 
 import com.someguyssoftware.legacyvault.setup.Registration;
 
@@ -25,6 +25,7 @@ import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -33,12 +34,13 @@ import net.minecraft.world.level.block.state.BlockState;
  * @author Mark Gottschling on Jun 18, 2022
  *
  */
-public class VaultBlockEntity extends BlockEntity {
+public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
+	
 	private static final String FACING_TAG ="facing";
 	private static final String OWNER_UUID_TAG = "ownerUuid";
 	
 	/*
-	 * The Vault block entity does NOT contain an ItemStackHandler as it will never hold
+	 * The Vault block entity does NOT contain an IItemHandler as it will never hold
 	 * any real inventory. The inventory is pulled from the database on per user basis and
 	 * the changes in the client container screen do not need to be reflected to the
 	 * back end entity.
@@ -63,9 +65,6 @@ public class VaultBlockEntity extends BlockEntity {
 	@Override
     public void setRemoved() {
         super.setRemoved();
-        // TODO call capabilities invalidate()
-//        handler.invalidate();
-//        energy.invalidate();
     }
 	
 	/**
@@ -104,7 +103,9 @@ public class VaultBlockEntity extends BlockEntity {
 	public void saveAdditional(CompoundTag compound) {
 		super.saveAdditional(compound);
 		try {
-			compound.putInt(FACING_TAG, getFacing().get3DDataValue());
+			if (getFacing() != null) {
+				compound.putInt(FACING_TAG, getFacing().get3DDataValue());
+			}
 			if (getOwnerUuid() !=null) {
 				compound.putString(OWNER_UUID_TAG, getOwnerUuid());
 			}
@@ -132,5 +133,23 @@ public class VaultBlockEntity extends BlockEntity {
 
 	public void setOwnerUuid(String ownerUuid) {
 		this.ownerUuid = ownerUuid;
+	}
+
+	@Override
+	public Component getCustomName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCustomName(Component name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public float getOpenNess(float partialTicks) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

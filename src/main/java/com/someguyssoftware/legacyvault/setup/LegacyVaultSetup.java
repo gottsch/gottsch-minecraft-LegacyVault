@@ -19,6 +19,7 @@
  */
 package com.someguyssoftware.legacyvault.setup;
 
+import com.someguyssoftware.gottschcore.config.IModSetup;
 import com.someguyssoftware.legacyvault.db.DbManager;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
@@ -51,9 +52,6 @@ public class LegacyVaultSetup {
 	 * @param event
 	 */
 	public static void common(final FMLCommonSetupEvent event) {
-		// add mod specific logging
-		IModSetup.addRollingFileAppender(LegacyVault.MODID, null);
-		
 		// start the database
 		
 //		8/12/21 - move this to WorldEvent.Load event so it loads on every world load

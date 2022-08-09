@@ -69,11 +69,8 @@ public class VaultBlockItem extends BlockItem {
 			}			
 			
 			if (Config.PUBLIC_VAULT.enablePublicVault.get()) {
-				return false; // TODO could change this if admin whitelist enabled.
-				// only those with proper access can place - no, access is only for rights to open
-//				if (LegacyVaultHelper.doesPlayerHavePulicAccess(context.getPlayer())) {
-//					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
-//				}
+				return false;
+				// TODO how does Admin place then?
 			}
 			else {
 				
@@ -94,7 +91,6 @@ public class VaultBlockItem extends BlockItem {
 						// send state message to client
 						VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
 						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)context.getPlayer()),message);
-//						return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 					}
 					else {
 						LegacyVault.LOGGER.debug("player branch count greater than config-> {}",  Config.GENERAL.vaultsPerPlayer.get());

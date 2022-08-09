@@ -46,7 +46,7 @@ public class LegacyVaultNetworking {
 	 * 
 	 * @param event
 	 */
-	public static void common(final FMLCommonSetupEvent event) {
+	public static void register() {
 		// register the channel
 		simpleChannel = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> MESSAGE_PROTOCOL_VERSION,
 	            VaultCountMessageHandlerOnClient::isThisProtocolAcceptedByClient,

@@ -19,6 +19,8 @@
  */
 package com.someguyssoftware.legacyvault.setup;
 
+import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
+
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -33,6 +35,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 public class CommonSetup {
 	
 	public static void init(final FMLCommonSetupEvent event) {
+		LegacyVaultNetworking.register();
 	}
 	
 	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)

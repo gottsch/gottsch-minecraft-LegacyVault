@@ -19,14 +19,50 @@
  */
 package com.someguyssoftware.legacyvault.capability;
 
+
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+
 /**
  * @author Mark Gottschling on May 11, 2021
  *
  */
+@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = Bus.MOD)
 public class LegacyVaultCapabilities {
-	/*
-	 * NOTE Ensure to use interfaces in @CapabilityInject, the static capability and in the instance.
+	public static Capability<IPlayerVaultsHandler> PLAYER_VAULTS_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {	});
+	
+	/**
+	 * 
 	 */
-//	@CapabilityInject(IPlayerVaultsHandler.class)
-//    public static Capability<IPlayerVaultsHandler> VAULT_BRANCH = null;
+	@SubscribeEvent
+	public static void register(final RegisterCapabilitiesEvent event) {
+		PlayerVaultsCapability.register(event);
+	}
+	
+	/**
+	 * Forge Bus Event Subscriber class
+	 */
+	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)
+	public static class ForgeBusSubscriber {
+		/*
+		 * NOTE called before entity is spawned in world
+		 */
+		@SubscribeEvent
+		public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+			if (!(event.getObject() instanceof Player)) {
+				return;
+			}
+			event.addCapability(PlayerVaultsCapability.ID, new PlayerVaultsCapability());
+		}
+	}
 }

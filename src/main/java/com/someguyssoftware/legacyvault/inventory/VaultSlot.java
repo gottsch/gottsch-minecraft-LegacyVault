@@ -21,9 +21,9 @@ package com.someguyssoftware.legacyvault.inventory;
 
 import java.util.regex.Pattern;
 
-import com.someguyssoftware.legacyvault.block.ILegacyVaultBlock;
 import com.someguyssoftware.legacyvault.config.Config;
 
+import mod.gottsch.forge.legacyvault.block.ILegacyVaultBlock;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -35,13 +35,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * @author Mark Gottschling on May 4, 2021
  *
  */
-public class VaultSlot extends Slot {
+public class VaultSlot extends SlotItemHandler {
 
 	private boolean active;
 	
@@ -52,8 +54,8 @@ public class VaultSlot extends Slot {
 	 * @param xPosition
 	 * @param yPosition
 	 */
-	public VaultSlot(Inventory inventory, int index, int xPosition, int yPosition) {
-		super(inventory, index, xPosition, yPosition);
+	public VaultSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+		super(itemHandler, index, xPosition, yPosition);
 		this.active = true;
 	}
 	
@@ -65,13 +67,17 @@ public class VaultSlot extends Slot {
 	 * @param yPosition
 	 * @param active
 	 */
-	public VaultSlot(Inventory inventory, int index, int xPosition, int yPosition, boolean active) {
-		super(inventory, index, xPosition, yPosition);
+	public VaultSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition, boolean active) {
+		super(itemHandler, index, xPosition, yPosition);
 		this.active = active;
 	}
 
 	@Override
 	public boolean mayPlace(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return false;
+        }
+		
 		Item item = itemStack.getItem();
 		Block block = Block.byItem(item);
 

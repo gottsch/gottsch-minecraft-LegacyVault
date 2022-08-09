@@ -17,15 +17,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.block;
+package mod.gottsch.forge.legacyvault.block;
 
 import javax.annotation.Nullable;
 
-import com.someguyssoftware.legacyvault.block.entity.VaultBlockEntity;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -80,6 +80,14 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	 */
 	public VaultBlock(Properties properties) {
 		super(properties);
+		
+		setBounds(
+				new VoxelShape[] {
+						NORTH_VAULT, 	// N
+						EAST_VAULT,  	// E
+						SOUTH_VAULT,  	// S
+						WEST_VAULT		// W
+				});
 	}
 	
 	/**
@@ -108,16 +116,7 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		BlockEntity vaultBlockEntity = null;
 		try {
-			int size = Config.GENERAL.inventorySize.get();
-			if (size <=VaultSlotSize.SMALL.getSize()) {
-				vaultBlockEntity = new VaultBlockEntity(pos, state);
-			}
-//			else if (size <= VaultSlotSize.MEDIUM.getSize()) {
-//				vaultBlockEntity = new MediumVaultTileEntity();
-//			}
-//			else {
-//				vaultBlockEntity = new LargeVaultTileEntity();
-//			}
+			vaultBlockEntity = new VaultBlockEntity(pos, state);
 		}
 		catch(Exception e) {
 			LegacyVault.LOGGER.error(e);

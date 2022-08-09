@@ -20,8 +20,14 @@
 package com.someguyssoftware.legacyvault.eventhandler;
 
 import com.someguyssoftware.gottschcore.world.WorldInfo;
+import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
+import com.someguyssoftware.legacyvault.capability.LegacyVaultCapabilities;
+import com.someguyssoftware.legacyvault.config.Config;
+import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
+import com.someguyssoftware.legacyvault.network.VaultCountMessageToClient;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -29,6 +35,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * @author Mark Gottschling on May 12, 2021
@@ -38,13 +45,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class PlayerEventHandler {
 
 	@SubscribeEvent
-	public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-		if (!(event.getObject() instanceof Player)) return;
-
-//		event.addCapability(new ResourceLocation(LegacyVault.MODID, Config.CapabilityID.PLAYER_PROVIDER), new PlayerCapabilityProvider());
-	}
-
-	@SubscribeEvent
 	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 
 		if (WorldInfo.isClientSide(event.getPlayer().level)) {
@@ -52,20 +52,18 @@ public class PlayerEventHandler {
 		}
 		
 		// update client players capabilities
-//		if (!Config.PUBLIC_VAULT.enablePublicVault.get() &&  Config.GENERAL.enableLimitedVaults.get()) {
-//			// get  player capabilities
-//			IPlayerVaultsHandler cap = event.getPlayer().getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-//				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-//			});
-//			LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
-//
-//			if (cap != null) {
-//				// send state message to client
-//				VaultCountMessageToClient message = new VaultCountMessageToClient(event.getPlayer().getStringUUID(), cap.getCount());
-//				LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getPlayer()),message);
-//			}
-//		}
-		
-	}
+		if (!Config.PUBLIC_VAULT.enablePublicVault.get() &&  Config.GENERAL.enableLimitedVaults.get()) {
+			// get  player capabilities
+			IPlayerVaultsHandler cap = event.getPlayer().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
+				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+			});
+			LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 
+			if (cap != null) {
+				// send state message to client
+				VaultCountMessageToClient message = new VaultCountMessageToClient(event.getPlayer().getStringUUID(), cap.getCount());
+				LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getPlayer()),message);
+			}
+		}		
+	}
 }
