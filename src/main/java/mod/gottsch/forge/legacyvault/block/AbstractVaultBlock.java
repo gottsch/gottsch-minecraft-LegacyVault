@@ -25,10 +25,10 @@ import com.someguyssoftware.gottschcore.block.ModContainerBlock;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
 import com.someguyssoftware.legacyvault.config.Config;
 import com.someguyssoftware.legacyvault.inventory.VaultContainerMenu;
-import com.someguyssoftware.legacyvault.util.LegacyVaultHelper;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.entity.IVaultBlockEntity;
+import mod.gottsch.forge.legacyvault.util.LegacyVaultHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;

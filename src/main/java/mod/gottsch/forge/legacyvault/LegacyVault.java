@@ -27,12 +27,12 @@ import com.someguyssoftware.gottschcore.config.IConfig;
 import com.someguyssoftware.gottschcore.config.IModSetup;
 import com.someguyssoftware.gottschcore.mod.IMod;
 import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.eventhandler.WorldEventHandler;
-import com.someguyssoftware.legacyvault.setup.ClientSetup;
-import com.someguyssoftware.legacyvault.setup.CommonSetup;
-import com.someguyssoftware.legacyvault.setup.LegacyVaultSetup;
-import com.someguyssoftware.legacyvault.setup.Registration;
 
+import mod.gottsch.forge.legacyvault.eventhandler.WorldEventHandler;
+import mod.gottsch.forge.legacyvault.setup.ClientSetup;
+import mod.gottsch.forge.legacyvault.setup.CommonSetup;
+import mod.gottsch.forge.legacyvault.setup.LegacyVaultSetup;
+import mod.gottsch.forge.legacyvault.setup.Registration;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -56,7 +56,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 		updateJsonUrl = LegacyVault.UPDATE_JSON_URL)
 public class LegacyVault implements IMod {
 	// logger
-	public static final Logger LOGGER = LogManager.getLogger(LegacyVault.NAME);
+	public static final Logger LOGGER = LogManager.getLogger(/*LegacyVault.NAME*/);
 
 	public static final String MODID = "legacyvault";
 	protected static final String NAME = "Legacy Vault";

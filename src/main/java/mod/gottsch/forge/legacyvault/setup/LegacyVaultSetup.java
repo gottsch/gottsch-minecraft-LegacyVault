@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2022, Mark Gottschling (gottsch)
+ * Copyright (c) 2021, Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -17,27 +17,26 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package mod.gottsch.forge.legacyvault.block.entity;
+package mod.gottsch.forge.legacyvault.setup;
 
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.db.DbManager;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 
 /**
- * @author Mark Gottschling on May 24, 2021
+ * Legacy class. Move this code somewhere else
+ * @author Mark Gottschling on Apr 28, 2021
  *
  */
-public interface IVaultBlockEntity {
+public class LegacyVaultSetup {
 
-	String getOwnerUuid();
-
-	void setOwnerUuid(String ownerUuid);
-
-	void setFacing(Direction facing);
-
-	void setFacing(int facingIndex);
-	
-	public Component getCustomName();
-	
-	public void setCustomName(Component name);
-
+	// TODO this is stopping the world on client side, stopping the server on server side.
+	public static void serverStopping(final ServerStoppingEvent event) {
+		LegacyVault.LOGGER.debug("server stopping event");
+		try {
+			DbManager.shutdown();
+		} catch (Exception e) {
+			LegacyVault.LOGGER.error("Error stopping database:", e);
+		}
+	}
 }

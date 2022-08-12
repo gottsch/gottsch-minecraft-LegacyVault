@@ -25,13 +25,13 @@ import java.io.IOException;
 import java.util.Optional;
 
 import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.config.Config.General;
-import com.someguyssoftware.legacyvault.db.DbManager;
-import com.someguyssoftware.legacyvault.db.entity.Account;
-import com.someguyssoftware.legacyvault.enums.GameType;
-import com.someguyssoftware.legacyvault.setup.Registration;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
+import mod.gottsch.forge.legacyvault.db.DbManager;
+import mod.gottsch.forge.legacyvault.db.entity.Account;
+import mod.gottsch.forge.legacyvault.enums.GameType;
+import mod.gottsch.forge.legacyvault.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -44,7 +44,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -56,7 +55,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
  */
 public class VaultContainerMenu extends AbstractContainerMenu {
 	// the backing block entity
-	private BlockEntity blockEntity;
+	private VaultBlockEntity blockEntity;
 	// the player opening the vault
 	private Player playerEntity;
 	// the player's inventory
@@ -106,6 +105,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 		this.vaultInventory = new InvWrapper(new SimpleContainer(Config.GENERAL.inventorySize.get()));
 				
 		// load from the DB
+		if (!player.level.isClientSide) {
 		Optional<Account> account = DbManager.getInstance().getAccount(playerInventory.player.getUUID().toString(), LegacyVault.MC_VERSION, 
 				LegacyVault.instance.isHardCore() ? GameType.HARDCORE.getValue() : GameType.NORMAL.getValue());
 		LegacyVault.LOGGER.debug("account -> {}", account);
@@ -118,9 +118,11 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 				copyInventoryTo(vaultInventory);
 			}
 		}
+		}
 		
 		// get the block entity
-		blockEntity = player.getCommandSenderWorld().getBlockEntity(pos);
+		blockEntity = (VaultBlockEntity)player.getCommandSenderWorld().getBlockEntity(pos);
+		blockEntity.openCount++;
 		// load the inventory from the block entity to the screen
 //		if (blockEntity != null) {
 //			blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
@@ -138,9 +140,9 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 			setMenuInventoryColumnCount(13);
 	        setMenuInventoryRowCount(7);
 	        setPlayerInventoryXPos(45);
-	        setPlayerInventoryYPos(156);
+	        setPlayerInventoryYPos(155);
 	        setHotbarXPos(45);
-	        setHotbarYPos(213);
+	        setHotbarYPos(214);
 		}
 		
 		buildContainer(this.playerInventory);
@@ -300,6 +302,13 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 
 	@Override
 	public void removed(Player player) {
+
+		// update the open count
+		blockEntity.openCount--;
+		if (blockEntity.openCount < 0) {
+			blockEntity.openCount = 0; 
+		}
+		
 		// fetch the players account from persistence
 		Optional<Account> account = DbManager.getInstance().getAccount(player.getUUID().toString(), LegacyVault.MC_VERSION, 
 				LegacyVault.instance.isHardCore() ? GameType.HARDCORE.getValue() : GameType.NORMAL.getValue());

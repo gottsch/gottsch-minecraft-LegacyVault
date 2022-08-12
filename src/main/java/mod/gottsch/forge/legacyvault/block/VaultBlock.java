@@ -129,7 +129,12 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
-            return null;
+//            return null;
+        	return (lvl, pos, blockState, t) -> {
+                if (t instanceof VaultBlockEntity entity) { // test and cast
+                    entity.tickClient();
+                }
+            };
         }
         return (lvl, pos, blockState, t) -> {
             if (t instanceof VaultBlockEntity entity) { // test and cast

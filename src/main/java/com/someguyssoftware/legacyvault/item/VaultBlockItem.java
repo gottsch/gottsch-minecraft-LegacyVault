@@ -22,13 +22,13 @@ package com.someguyssoftware.legacyvault.item;
 import com.someguyssoftware.gottschcore.spatial.Coords;
 import com.someguyssoftware.gottschcore.spatial.ICoords;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
-import com.someguyssoftware.legacyvault.capability.IPlayerVaultsHandler;
 import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.network.LegacyVaultNetworking;
-import com.someguyssoftware.legacyvault.network.VaultCountMessageToClient;
-import com.someguyssoftware.legacyvault.util.LegacyVaultHelper;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
+import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
+import mod.gottsch.forge.legacyvault.network.VaultCountMessageToClient;
+import mod.gottsch.forge.legacyvault.util.LegacyVaultHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
