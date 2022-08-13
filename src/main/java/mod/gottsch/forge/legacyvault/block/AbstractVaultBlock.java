@@ -19,15 +19,24 @@
  */
 package mod.gottsch.forge.legacyvault.block;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.someguyssoftware.gottschcore.block.ModContainerBlock;
+import com.someguyssoftware.gottschcore.spatial.Coords;
+import com.someguyssoftware.gottschcore.spatial.ICoords;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
-import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.inventory.VaultContainerMenu;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.entity.IVaultBlockEntity;
+import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
+import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
+import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
+import mod.gottsch.forge.legacyvault.inventory.VaultContainerMenu;
+import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
+import mod.gottsch.forge.legacyvault.network.VaultCountMessageToClient;
 import mod.gottsch.forge.legacyvault.util.LegacyVaultHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,6 +61,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PacketDistributor;
 
 
 
@@ -60,9 +70,6 @@ import net.minecraftforge.network.NetworkHooks;
  *
  */
 public abstract class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaultBlock {
-
-	private static final VoxelShape MAIN = Block.box(1, 0, 1, 15, 16, 15);
-
 	/*
 	 * An array of VoxelShape shapes for the bounding box
 	 */
@@ -75,27 +82,6 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 	public AbstractVaultBlock(Properties properties) {
 		super(properties);
 	}
-	
-	/**
-	 * 
-	 * @param modID
-	 * @param name
-	 * @param properties
-	 */
-	@Deprecated
-	public AbstractVaultBlock(String modID, String name, Properties properties) {
-		super(modID, name, properties);
-
-		// set the default shapes/shape
-		VoxelShape shape = MAIN;
-		setBounds(
-				new VoxelShape[] {
-						shape, 	// N
-						shape,  	// E
-						shape,  	// S
-						shape		// W
-				});
-	}
 
 	/**
 	 * 
@@ -105,11 +91,8 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 		InteractionHand hand, BlockHitResult result) {
 
 		LegacyVault.LOGGER.debug("using vault...");
-//		TODO reinstate and modify
-//		IVaultBlockEntity tileEntity = (IVaultBlockEntity) world.getBlockEntity(pos);
-		BlockEntity blockEntity = world.getBlockEntity(pos);
-		
-		// exit if on the client
+		VaultBlockEntity blockEntity = (VaultBlockEntity) world.getBlockEntity(pos);
+
 		if (WorldInfo.isClientSide(world)) {
 			return InteractionResult.SUCCESS;
 		}
@@ -121,14 +104,13 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 		}
 
 		// check if the vault already has a uuid assigned
-		if (!Config.PUBLIC_VAULT.enablePublicVault.get()) {
+		if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
 			LegacyVault.LOGGER.debug("private vault");
 
-			// TODO reinstate
-//			if (blockEntity.getOwnerUuid() != null && !blockEntity.getOwnerUuid().equals(player.getStringUUID())) {
-//				LegacyVault.LOGGER.debug("not your vault!");
-//				return InteractionResult.SUCCESS;
-//			}
+			if (blockEntity.getOwnerUuid() != null && !blockEntity.getOwnerUuid().equals(player.getStringUUID())) {
+				LegacyVault.LOGGER.debug("not your vault!");
+				return InteractionResult.SUCCESS;
+			}
 		}
 		else if (!LegacyVaultHelper.doesPlayerHavePulicAccess(player)) {
 			LegacyVault.LOGGER.debug("player does not have access!");
@@ -139,7 +121,7 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 		MenuProvider containerProvider = new MenuProvider() {
             @Override
             public Component getDisplayName() {
-                return new TranslatableComponent(""); // TODO
+                return new TranslatableComponent("display.vault.name");
             }
 
             @Override
@@ -158,38 +140,35 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 	 */
 	@Override
 	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-		LegacyVault.LOGGER.debug("setPlacedBy() - Placing chest from item");
+		LegacyVault.LOGGER.debug("setPlacedBy() - placing vault from item");
 
-		IVaultBlockEntity vaultTileEntity = null;
+		IVaultBlockEntity vaultBlockEntity = null;
 
 		// face the block towards the player (there isn't really a front)
 		worldIn.setBlock(pos, state.setValue(FACING, placer.getDirection().getOpposite()), 3);
-		BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-		if (tileEntity != null && tileEntity instanceof IVaultBlockEntity) {
-			// get the backing tile entity
-			vaultTileEntity = (IVaultBlockEntity) tileEntity;
-			LegacyVault.LOGGER.debug("got the tile entity.");
-			LegacyVault.LOGGER.debug("public vault -> {}", Config.PUBLIC_VAULT.enablePublicVault.get());
+		BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+		if (blockEntity != null && blockEntity instanceof IVaultBlockEntity) {
+			vaultBlockEntity = (IVaultBlockEntity) blockEntity;
+			LegacyVault.LOGGER.debug("public vault -> {}", ServerConfig.PUBLIC_VAULT.enablePublicVault.get());
 			LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 			// set the owner of the chest
-			if (!Config.PUBLIC_VAULT.enablePublicVault.get()) {
-				vaultTileEntity.setOwnerUuid(placer.getStringUUID());
+			if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
+				vaultBlockEntity.setOwnerUuid(placer.getStringUUID());
 				LegacyVault.LOGGER.debug("setting vault owner -> {}", placer.getStringUUID());
 			}
 
 			// set the name of the chest
 			if (stack.hasCustomHoverName()) {
-				vaultTileEntity.setCustomName(stack.getDisplayName());
+				vaultBlockEntity.setCustomName(stack.getDisplayName());
 			}
 
 			// update the facing
-			vaultTileEntity.setFacing(placer.getDirection().getOpposite());
+			vaultBlockEntity.setFacing(placer.getDirection().getOpposite());
 		}
 	}
 
 	@Override
 	public void destroy(LevelAccessor world, BlockPos pos, BlockState state) {
-		//		LegacyVault.LOGGER.debug("calling destroy()");
 		super.destroy(world, pos, state);
 	}
 
@@ -200,7 +179,7 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 	public float getDestroyProgress(BlockState state, Player player, BlockGetter blockReader, BlockPos blockPos) {
 
 		// prevent player from destroying vault if they don't have access
-		if((Config.PUBLIC_VAULT.enablePublicVault.get())) {
+		if((ServerConfig.PUBLIC_VAULT.enablePublicVault.get())) {
 			return 0;
 		}
 
@@ -212,20 +191,19 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 	 */
 	@Override
 	public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state,
-			BlockEntity tileEntity, ItemStack itemStack) {
+			BlockEntity blockEntity, ItemStack itemStack) {
 
 		LegacyVault.LOGGER.debug("player is destroying vault block");
-		if (WorldInfo.isClientSide(world) || Config.PUBLIC_VAULT.enablePublicVault.get()) {
+		if (WorldInfo.isClientSide(world) || ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
 			return;
 		}
 
 		// get the vault-owning player (not the current player who is destroying block)
-		if (tileEntity != null && tileEntity instanceof IVaultBlockEntity) {
-			// get the backing tile entity
-			IVaultBlockEntity vaultTileEntity = (IVaultBlockEntity) tileEntity;
+		if (blockEntity != null && blockEntity instanceof IVaultBlockEntity) {
+			IVaultBlockEntity vaultBlockEntity = (IVaultBlockEntity) blockEntity;
 
 			// get the owner by uuid
-			String playerUUID = vaultTileEntity.getOwnerUuid();
+			String playerUUID = vaultBlockEntity.getOwnerUuid();
 			Player vaultOwnerPlayer = null;
 			if (playerUUID != null && !playerUUID.isEmpty()) {
 				try {
@@ -236,42 +214,42 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 				}
 			}
 
-//			if (vaultOwnerPlayer != null) {
-//				// get  player capabilities
-//				IPlayerVaultsHandler cap = vaultOwnerPlayer.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-//					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-//				});
-//				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
-//
-//				if (Config.GENERAL.enableLimitedVaults.get()) {
-//					// decrement cap vault branch count
-//					if (cap.getCount() > 0) {
-//						// decrement count
-//						int count = cap.getCount() - 1;
-//						count = count < 0 ? 0 : count;
-//						cap.setCount(count);
-//
-//						LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
-//						// send state message to client
-//						VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
-//						ServerPlayer serverPlayer = (ServerPlayer)vaultOwnerPlayer;
-//						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
-//					}
-//				}
-//
-//				// remove location
-//				ICoords vaultLocation = new Coords(pos);
-//				List<ICoords> newLocations = new ArrayList<>();
-//				for (ICoords location : cap.getLocations()) {
-//					if (!location.equals(vaultLocation)) {
-//						newLocations.add(location);
-//					}
-//				}
-//				cap.setLocations(newLocations);
-//			}
+			if (vaultOwnerPlayer != null) {
+				// get  player capabilities
+				IPlayerVaultsHandler cap = vaultOwnerPlayer.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
+					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+				});
+				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+
+				if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
+					// decrement cap vault branch count
+					if (cap.getCount() > 0) {
+						// decrement count
+						int count = cap.getCount() - 1;
+						count = count < 0 ? 0 : count;
+						cap.setCount(count);
+
+						LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
+						// send state message to client
+						VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
+						ServerPlayer serverPlayer = (ServerPlayer)vaultOwnerPlayer;
+						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
+					}
+				}
+
+				// remove location
+				ICoords vaultLocation = new Coords(pos);
+				List<ICoords> newLocations = new ArrayList<>();
+				for (ICoords location : cap.getLocations()) {
+					if (!location.equals(vaultLocation)) {
+						newLocations.add(location);
+					}
+				}
+				cap.setLocations(newLocations);
+			}
 		}
 
-		super.playerDestroy(world, player, pos, state, tileEntity, itemStack);
+		super.playerDestroy(world, player, pos, state, blockEntity, itemStack);
 	}
 
 	/**

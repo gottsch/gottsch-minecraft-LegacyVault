@@ -17,15 +17,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.item;
+package mod.gottsch.forge.legacyvault.item;
 
 import com.someguyssoftware.gottschcore.spatial.Coords;
 import com.someguyssoftware.gottschcore.spatial.ICoords;
 import com.someguyssoftware.gottschcore.world.WorldInfo;
-import com.someguyssoftware.legacyvault.config.Config;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.network.VaultCountMessageToClient;
 import mod.gottsch.forge.legacyvault.util.LegacyVaultHelper;
@@ -68,7 +68,7 @@ public class VaultBlockItem extends BlockItem {
 				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 			}			
 			
-			if (Config.PUBLIC_VAULT.enablePublicVault.get()) {
+			if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
 				return false;
 				// TODO how does Admin place then?
 			}
@@ -78,14 +78,13 @@ public class VaultBlockItem extends BlockItem {
 				IPlayerVaultsHandler cap = LegacyVaultHelper.getPlayerCapability(context.getPlayer());
 				LegacyVault.LOGGER.debug("player vault count -> {}", cap.getCount());
 				
-				if (Config.GENERAL.enableLimitedVaults.get()) {
-					if (cap != null && cap.getCount() < Config.GENERAL.vaultsPerPlayer.get()) {
-						LegacyVault.LOGGER.debug("player branch count less than config -> {}", Config.GENERAL.vaultsPerPlayer.get());
-						
-						// TODO does the updates to capability happen here or in VaultBlock ? 
+				if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
+					if (cap != null && cap.getCount() < ServerConfig.GENERAL.vaultsPerPlayer.get()) {
+						LegacyVault.LOGGER.debug("player branch count less than config -> {}", ServerConfig.GENERAL.vaultsPerPlayer.get());
+
 						// increment capability size
 						int count = cap.getCount() + 1;
-						count = count > Config.GENERAL.vaultsPerPlayer.get() ? Config.GENERAL.vaultsPerPlayer.get() : count;
+						count = count > ServerConfig.GENERAL.vaultsPerPlayer.get() ?ServerConfig.GENERAL.vaultsPerPlayer.get() : count;
 						cap.setCount(count);
 						
 						// send state message to client
@@ -93,7 +92,7 @@ public class VaultBlockItem extends BlockItem {
 						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)context.getPlayer()),message);
 					}
 					else {
-						LegacyVault.LOGGER.debug("player branch count greater than config-> {}",  Config.GENERAL.vaultsPerPlayer.get());
+						LegacyVault.LOGGER.debug("player branch count greater than config-> {}", ServerConfig.GENERAL.vaultsPerPlayer.get());
 						return false;
 					}
 				}

@@ -21,9 +21,6 @@ package mod.gottsch.forge.legacyvault.block;
 
 import javax.annotation.Nullable;
 
-import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
-
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -89,25 +86,6 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 						WEST_VAULT		// W
 				});
 	}
-	
-	/**
-	 * 
-	 * @param modID
-	 * @param name
-	 * @param properties
-	 */
-	@Deprecated
-	public VaultBlock(String modID, String name, Properties properties) {
-		super(modID, name, properties);
-
-		setBounds(
-				new VoxelShape[] {
-						NORTH_VAULT, 	// N
-						EAST_VAULT,  	// E
-						SOUTH_VAULT,  	// S
-						WEST_VAULT		// W
-				});
-	}
 
 	/**
 	 * 
@@ -121,7 +99,7 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 		catch(Exception e) {
 			LegacyVault.LOGGER.error(e);
 		}
-		LegacyVault.LOGGER.debug("created tile entity -> {}", vaultBlockEntity.getClass().getSimpleName());
+		LegacyVault.LOGGER.debug("created block entity -> {}", vaultBlockEntity.getClass().getSimpleName());
 		return vaultBlockEntity;
 	}
 
@@ -129,18 +107,18 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
-//            return null;
         	return (lvl, pos, blockState, t) -> {
                 if (t instanceof VaultBlockEntity entity) { // test and cast
                     entity.tickClient();
                 }
             };
         }
-        return (lvl, pos, blockState, t) -> {
-            if (t instanceof VaultBlockEntity entity) { // test and cast
-                entity.tickServer();
-            }
-        };
+        return null;
+//        return (lvl, pos, blockState, t) -> {
+//            if (t instanceof VaultBlockEntity entity) { // test and cast
+//                entity.tickServer();
+//            }
+//        };
     }
 	
 	/**

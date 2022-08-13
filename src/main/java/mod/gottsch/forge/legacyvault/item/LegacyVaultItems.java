@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.someguyssoftware.legacyvault.item;
+package mod.gottsch.forge.legacyvault.item;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraftforge.fml.common.Mod;

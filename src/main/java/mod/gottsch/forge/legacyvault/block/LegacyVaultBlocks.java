@@ -20,10 +20,10 @@
 package mod.gottsch.forge.legacyvault.block;
 
 import com.google.common.base.Preconditions;
-import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.item.VaultBlockItem;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.config.Config;
+import mod.gottsch.forge.legacyvault.item.VaultBlockItem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;

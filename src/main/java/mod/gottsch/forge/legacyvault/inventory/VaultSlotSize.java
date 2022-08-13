@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.inventory;
+package mod.gottsch.forge.legacyvault.inventory;
 
 /**
  * @author Mark Gottschling on May 23, 2021

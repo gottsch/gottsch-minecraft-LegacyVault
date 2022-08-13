@@ -1,12 +1,11 @@
 package mod.gottsch.forge.legacyvault.setup;
 
-import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.inventory.VaultContainerMenu;
-import com.someguyssoftware.legacyvault.item.VaultBlockItem;
-
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.VaultBlock;
 import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
+import mod.gottsch.forge.legacyvault.config.Config;
+import mod.gottsch.forge.legacyvault.inventory.VaultContainerMenu;
+import mod.gottsch.forge.legacyvault.item.VaultBlockItem;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
@@ -46,7 +45,7 @@ public class Registration {
 	public static final Item.Properties ITEM_PROPERTIES = new Item.Properties().tab(CreativeModeTab.TAB_MISC);
 
 	// blocks
-	public static final RegistryObject<VaultBlock> VAULT = BLOCKS.register(Config.BlockID.VAULT_ID, () -> new VaultBlock(Block.Properties.of(Material.METAL, MaterialColor.WOOD).strength(2.5F)));
+	public static final RegistryObject<VaultBlock> VAULT = Registration.BLOCKS.register(Config.BlockID.VAULT_ID, () -> new VaultBlock(Block.Properties.of(Material.METAL, MaterialColor.WOOD).strength(2.5F)));
 	
 	// items
 	public static final RegistryObject<Item> VAULT_ITEM = fromBlock(VAULT);
@@ -81,6 +80,6 @@ public class Registration {
      *  conveniance method: take a RegistryObject<Block> and make a corresponding RegistryObject<Item> from it
      */
     public static <B extends Block> RegistryObject<Item> fromBlock(RegistryObject<B> block) {
-        return ITEMS.register(block.getId().getPath(), () -> new VaultBlockItem(block.get(), ITEM_PROPERTIES));
+        return Registration.ITEMS.register(block.getId().getPath(), () -> new VaultBlockItem(block.get(), ITEM_PROPERTIES));
     }
 }

@@ -70,7 +70,7 @@ public class ClearVaultLocationsCommand {
 
 		LegacyVault.LOGGER.debug("entity -> {}", entity);
 		if (entity instanceof Player) {
-			LegacyVault.LOGGER.debug("player entity -> {}", ((Player)entity).getDisplayName());
+			LegacyVault.LOGGER.debug("player entity -> {}", ((Player)entity).getDisplayName().getString());
 			// get capabilities
 			IPlayerVaultsHandler cap = entity.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");

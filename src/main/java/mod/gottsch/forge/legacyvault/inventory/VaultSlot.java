@@ -17,20 +17,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.inventory;
+package mod.gottsch.forge.legacyvault.inventory;
 
 import java.util.regex.Pattern;
 
-import com.someguyssoftware.legacyvault.config.Config;
-
 import mod.gottsch.forge.legacyvault.block.ILegacyVaultBlock;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -101,18 +96,18 @@ public class VaultSlot extends SlotItemHandler {
 		String registryName = item.getRegistryName().toString();
 
 		// determine if using white lists or black lists
-		if (!Config.GENERAL.inventoryWhiteList.get().isEmpty()) {
+		if (!ServerConfig.GENERAL.inventoryWhiteList.get().isEmpty()) {
 			// check against the item/block name white list
-			for(Pattern pattern : Config.GENERAL.inventoryWhiteListPatterns) {
+			for(Pattern pattern : ServerConfig.GENERAL.inventoryWhiteListPatterns) {
 				if (registryName.matches(pattern.pattern())) {
 					return true;
 				}
 			}
 			return false;
 		}
-		else if (!Config.GENERAL.inventoryBlackList.get().isEmpty()) {
+		else if (!ServerConfig.GENERAL.inventoryBlackList.get().isEmpty()) {
 			// check against the item/block name black list
-			for(Pattern pattern : Config.GENERAL.inventoryBlackListPatterns) {
+			for(Pattern pattern : ServerConfig.GENERAL.inventoryBlackListPatterns) {
 				if (registryName.matches(pattern.pattern())) {
 					return false;
 				}
@@ -121,8 +116,8 @@ public class VaultSlot extends SlotItemHandler {
 		}
 
 		// check against the tags lists
-		if (!Config.GENERAL.tagsWhiteList.get().isEmpty()) {
-			for (String tagName : Config.GENERAL.tagsWhiteList.get()) {
+		if (!ServerConfig.GENERAL.tagsWhiteList.get().isEmpty()) {
+			for (String tagName : ServerConfig.GENERAL.tagsWhiteList.get()) {
 				ResourceLocation location = new ResourceLocation(tagName);
 				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
 				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
@@ -136,8 +131,8 @@ public class VaultSlot extends SlotItemHandler {
 			}
 			return false;
 		}
-		else if (!Config.GENERAL.tagsBlackList.get().isEmpty()){
-			for (String tagName : Config.GENERAL.tagsBlackList.get()) {				
+		else if (!ServerConfig.GENERAL.tagsBlackList.get().isEmpty()){
+			for (String tagName : ServerConfig.GENERAL.tagsBlackList.get()) {				
 				ResourceLocation location = new ResourceLocation(tagName);
 				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
 				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
@@ -155,7 +150,7 @@ public class VaultSlot extends SlotItemHandler {
 
 	@Override
 	public int getMaxStackSize() {
-		return Config.GENERAL.stackSize.get();
+		return ServerConfig.GENERAL.stackSize.get();
 	}
 	
 	@Override

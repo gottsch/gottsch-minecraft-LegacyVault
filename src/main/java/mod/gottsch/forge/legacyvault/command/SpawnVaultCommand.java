@@ -27,7 +27,6 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.someguyssoftware.gottschcore.spatial.Coords;
 import com.someguyssoftware.gottschcore.spatial.Heading;
 import com.someguyssoftware.gottschcore.spatial.ICoords;
-import com.someguyssoftware.legacyvault.config.Config;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.ILegacyVaultBlock;
@@ -35,11 +34,12 @@ import mod.gottsch.forge.legacyvault.block.LegacyVaultBlocks;
 import mod.gottsch.forge.legacyvault.block.entity.IVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.network.VaultCountMessageToClient;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
@@ -114,8 +114,8 @@ public class SpawnVaultCommand {
 			// place vault
 			ServerLevel world = source.getLevel();
 			world.setBlockAndUpdate(pos, LegacyVaultBlocks.VAULT.defaultBlockState().setValue(ILegacyVaultBlock.FACING, direction));
-			IVaultBlockEntity tileEntity = (IVaultBlockEntity) world.getBlockEntity(pos);
-			if (tileEntity == null) {
+			IVaultBlockEntity blockEntity = (IVaultBlockEntity) world.getBlockEntity(pos);
+			if (blockEntity == null) {
 				// remove block
 				world.removeBlock(pos, false);
 				// TODO log
@@ -123,13 +123,13 @@ public class SpawnVaultCommand {
 			}
 			
 			// set the owner of the chest
-			if (!Config.PUBLIC_VAULT.enablePublicVault.get()) {
-				tileEntity.setOwnerUuid(player.getStringUUID());
+			if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
+				blockEntity.setOwnerUuid(player.getStringUUID());
 				LegacyVault.LOGGER.debug("setting vault owner -> {}", player.getStringUUID());
 			}
 
 			// update the facing
-			tileEntity.setFacing(direction);
+			blockEntity.setFacing(direction);
 
 			// get capabilities
 			IPlayerVaultsHandler cap = entity.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
@@ -137,9 +137,9 @@ public class SpawnVaultCommand {
 			});
 			
 			// increment capability size
-			if (Config.GENERAL.enableLimitedVaults.get()) {
+			if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
 				int count = cap.getCount() + 1;
-				count = count > Config.GENERAL.vaultsPerPlayer.get() ? Config.GENERAL.vaultsPerPlayer.get() : count;
+				count = count > ServerConfig.GENERAL.vaultsPerPlayer.get() ? ServerConfig.GENERAL.vaultsPerPlayer.get() : count;
 				cap.setCount(count);
 			
 				LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());

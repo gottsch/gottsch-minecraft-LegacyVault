@@ -29,11 +29,12 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
-import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.exception.DbInitializationException;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.config.Config;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.db.entity.Account;
+import mod.gottsch.forge.legacyvault.exception.DbInitializationException;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 /**
@@ -43,7 +44,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 public class DbManager {
 
 	// LOGGER
-	public static Logger LOGGER = LogManager.getLogger(LegacyVault.MODID);
+	public static Logger LOGGER = LogManager.getLogger(LegacyVault.instance.getName());
 
 	public static final String DB_FILE_NAME = "vault";
 	public static final String DB_EXTENSION = ".mv.db";
@@ -87,7 +88,7 @@ public class DbManager {
 		LOGGER.debug("path to db folder -> {}", dbPath.toString());
 
 		// create the connection
-		String databaseUrl = String.format("jdbc:h2:tcp://localhost:9092/%s;USER=%s;PASSWORD=%s;", dbPath.toString(), Config.DATABASE.user.get(), Config.DATABASE.password.get());
+		String databaseUrl = String.format("jdbc:h2:tcp://localhost:9092/%s;USER=%s;PASSWORD=%s;", dbPath.toString(), ServerConfig.DATABASE.user.get(), ServerConfig.DATABASE.password.get());
 //		String databaseUrl = "jdbc:h2:tcp://localhost:9092/" +dbPath.toString() + ";USER=sa;PASSWORD=sa;";
 		LOGGER.debug("db url -> {}", databaseUrl);
 		conn = DriverManager.getConnection(databaseUrl);

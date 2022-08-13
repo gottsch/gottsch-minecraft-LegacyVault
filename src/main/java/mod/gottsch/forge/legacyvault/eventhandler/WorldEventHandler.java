@@ -4,11 +4,11 @@
 package mod.gottsch.forge.legacyvault.eventhandler;
 
 import com.someguyssoftware.gottschcore.world.WorldInfo;
-import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.exception.DbInitializationException;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.config.Config;
 import mod.gottsch.forge.legacyvault.db.DbManager;
+import mod.gottsch.forge.legacyvault.exception.DbInitializationException;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.event.world.WorldEvent;

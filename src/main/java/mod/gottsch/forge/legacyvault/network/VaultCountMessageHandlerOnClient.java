@@ -68,15 +68,15 @@ public class VaultCountMessageHandlerOnClient {
 	private static void processMessage(Level worldClient, VaultCountMessageToClient message) {
 		try {
 			Player player = worldClient.getPlayerByUUID(UUID.fromString(message.getPlayerUUID()));
-//			if (player != null) {
-//				// get  player capabilities
-//				IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.VAULT_BRANCH).orElseThrow(() -> {
-//					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-//				});
-//				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
-//				cap.setCount(message.getVaultCount());
-//				LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
-//			}
+			if (player != null) {
+				// get  player capabilities
+				IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
+					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+				});
+				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+				cap.setCount(message.getVaultCount());
+				LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
+			}
 		}
 		catch(Exception e) {
 			LegacyVault.LOGGER.error("Unexpected error -> ", e);

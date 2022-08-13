@@ -20,8 +20,8 @@
 package mod.gottsch.forge.legacyvault.recipe.condition;
 
 import com.google.gson.JsonObject;
-import com.someguyssoftware.legacyvault.config.Config;
 
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
@@ -41,7 +41,7 @@ public class VaultNormalDifficultyCondition implements ICondition {
 
 	@Override
 	public boolean test() {
-		return !Config.PUBLIC_VAULT.enablePublicVault.get() && Config.GENERAL.recipeDifficulty.get().equalsIgnoreCase("normal");
+		return !ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && ServerConfig.GENERAL.recipeDifficulty.get().equalsIgnoreCase("normal");
 	}
 
     @Override

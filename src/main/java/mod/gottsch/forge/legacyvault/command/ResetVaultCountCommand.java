@@ -23,11 +23,11 @@ import java.util.Collection;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.someguyssoftware.legacyvault.config.Config;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.network.VaultCountMessageToClient;
 import net.minecraft.commands.CommandSourceStack;
@@ -56,7 +56,7 @@ public class ResetVaultCountCommand {
 				})			
 				.then(Commands.argument("targets", EntityArgument.entities())
 						.executes(source -> {
-							return reset(source.getSource(), EntityArgument.getEntities(source, "targets"), Config.GENERAL.vaultsPerPlayer.get());							
+							return reset(source.getSource(), EntityArgument.getEntities(source, "targets"), ServerConfig.GENERAL.vaultsPerPlayer.get());							
 						})
 						.then(Commands.argument("count", IntegerArgumentType.integer())
 								.executes(source -> { 
@@ -79,7 +79,7 @@ public class ResetVaultCountCommand {
 	      for(Entity entity : entities) {
 	    	  LegacyVault.LOGGER.debug("entity -> {}", entity);
 	          if (entity instanceof Player) {
-	        	  LegacyVault.LOGGER.debug("player entity -> {}", ((Player)entity).getDisplayName());
+	        	  LegacyVault.LOGGER.debug("player entity -> {}", ((Player)entity).getDisplayName().getString());
 	        	  // get capabilities
 					IPlayerVaultsHandler cap = entity.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 						return new RuntimeException("player does not have PlayerVaultsHandler capability.'");

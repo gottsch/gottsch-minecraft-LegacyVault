@@ -102,9 +102,6 @@ public class _VaultRenderer_for_EntityModel implements BlockEntityRenderer<Vault
 		poseStack.scale(-1, -1, 1);
 		float f = getHorizontalAngle(facing);
 		poseStack.mulPose(Vector3f.YP.rotationDegrees(-f));
-		
-		// update the lid rotation - animation
-//		updateModelRotationAngles(tileEntity, partialTicks);
 
 		VertexConsumer renderBuffer = material.buffer(bufferSource, RenderType::entitySolid);		
         vaultModel.render(poseStack, renderBuffer, combinedLight, combinedOverlay);		

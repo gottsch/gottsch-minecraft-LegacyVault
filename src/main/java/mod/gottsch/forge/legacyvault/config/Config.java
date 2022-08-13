@@ -17,13 +17,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.config;
+package mod.gottsch.forge.legacyvault.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.someguyssoftware.gottschcore.config.AbstractConfig;
 
@@ -50,20 +52,22 @@ public class Config extends AbstractConfig {
 	public static final String CATEGORY_DIV = "##############################";
 	public static final String UNDERLINE_DIV = "------------------------------";
 
-//	protected static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
-//	protected static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
-//	protected static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
-//	public static ForgeConfigSpec COMMON_CONFIG;
-//	public static ForgeConfigSpec SERVER_CONFIG;
-
-	public static Mod MOD;
-	public static Logging LOGGING;
-	public static General GENERAL;		
-	public static PublicVault PUBLIC_VAULT;
-	public static Db DATABASE;
-
 	public static Config instance = new Config();
 	
+	public static class ServerConfig {
+		public static Mod MOD;
+		public static General GENERAL;
+		public static PublicVault PUBLIC_VAULT;
+		public static Db DATABASE;
+	}
+	
+	public static class CommonConfig {
+		public static Logging LOGGING;
+	}
+	
+	/**
+	 * 
+	 */
 	private Config() {}
 	
 	/**
@@ -71,23 +75,30 @@ public class Config extends AbstractConfig {
 	 */
 	public static void register() {
 		registerServerConfigs();
+		registerCommonConfigs();
+		// perform any initializations on data
+		Config.init();
 	}
 	
 	/**
 	 * 
 	 */
 	private static void registerServerConfigs() {
-		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
-		MOD = new Mod(COMMON_BUILDER);
-		LOGGING = new Logging(COMMON_BUILDER);
-		GENERAL = new General(COMMON_BUILDER);
-		PUBLIC_VAULT = new PublicVault(COMMON_BUILDER);
-		DATABASE = new Db(COMMON_BUILDER);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
-		// perform any initializations on data
-		Config.init();
+		ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
+		ServerConfig.MOD = new Mod(SERVER_BUILDER);
+		ServerConfig.GENERAL = new General(SERVER_BUILDER);
+		ServerConfig.PUBLIC_VAULT = new PublicVault(SERVER_BUILDER);
+		ServerConfig.DATABASE = new Db(SERVER_BUILDER);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
 	}
 
+	private static void registerCommonConfigs() {
+		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+		CommonConfig.LOGGING = new Logging(COMMON_BUILDER);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
+
+	}
+	
 	/**
 	 * 
 	 * @author Mark Gottschling on May 5, 2021
@@ -267,46 +278,46 @@ public class Config extends AbstractConfig {
 	}
 
 	public static void init() {
-		Config.GENERAL.init();
+		Config.ServerConfig.GENERAL.init();
 	}
 
 	@Override
 	public boolean isLatestVersionReminder() {
-		return Config.MOD.latestVersionReminder.get();
+		return Config.ServerConfig.MOD.latestVersionReminder.get();
 	}
 
 	@Override
 	public void setLatestVersionReminder(boolean latestVersionReminder) {
-		Config.MOD.latestVersionReminder.set(latestVersionReminder);
+		Config.ServerConfig.MOD.latestVersionReminder.set(latestVersionReminder);
 	}
 
 	@Override
 	public boolean isModEnabled() {
-		return Config.MOD.enabled.get();
+		return Config.ServerConfig.MOD.enabled.get();
 	}
 
 	@Override
 	public void setModEnabled(boolean modEnabled) {
-		Config.MOD.enabled.set(modEnabled);
+		Config.ServerConfig.MOD.enabled.set(modEnabled);
 	}
 
 	@Override
 	public String getModsFolder() {
-		return Config.MOD.folder.get();
+		return Config.ServerConfig.MOD.folder.get();
 	}
 
 	@Override
 	public void setModsFolder(String modsFolder) {
-		Config.MOD.folder.set(modsFolder);
+		Config.ServerConfig.MOD.folder.set(modsFolder);
 	}
 
 	@Override
 	public String getConfigFolder() {
-		return Config.MOD.configFolder.get();
+		return Config.ServerConfig.MOD.configFolder.get();
 	}
 
 	@Override
 	public void setConfigFolder(String configFolder) {
-		Config.MOD.configFolder.set(configFolder);
+		Config.ServerConfig.MOD.configFolder.set(configFolder);
 	}
 }

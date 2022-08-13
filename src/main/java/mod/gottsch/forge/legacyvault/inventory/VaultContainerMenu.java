@@ -17,17 +17,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package com.someguyssoftware.legacyvault.inventory;
+package mod.gottsch.forge.legacyvault.inventory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
-import com.someguyssoftware.legacyvault.config.Config;
-
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
+import mod.gottsch.forge.legacyvault.config.Config;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.db.DbManager;
 import mod.gottsch.forge.legacyvault.db.entity.Account;
 import mod.gottsch.forge.legacyvault.enums.GameType;
@@ -43,7 +43,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -102,7 +101,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 
 		this.playerEntity =  player;
 		this.playerInventory = new InvWrapper(playerInventory);
-		this.vaultInventory = new InvWrapper(new SimpleContainer(Config.GENERAL.inventorySize.get()));
+		this.vaultInventory = new InvWrapper(new SimpleContainer(ServerConfig.GENERAL.inventorySize.get()));
 				
 		// load from the DB
 		if (!player.level.isClientSide) {
@@ -123,20 +122,18 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 		// get the block entity
 		blockEntity = (VaultBlockEntity)player.getCommandSenderWorld().getBlockEntity(pos);
 		blockEntity.openCount++;
-		// load the inventory from the block entity to the screen
-//		if (blockEntity != null) {
-//			blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
-//				addSlot(new SlotItemHandler(itemHandler, 0, 64, 24)); // TODO this is the layout of the vault, 0 = index, 64 = xpos, 24 = ypos
-//			});
-//		}
 		
+		// TODO really need to change property to text value -> SMALL, MEDIUM, LARGE
 		// setup the internal properties dependant on the size
-		if (Config.GENERAL.inventorySize.get() <= VaultSlotSize.MEDIUM.getSize()) {
+		if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.SMALL.getSize()) {
+			// default
+		}
+		else if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.MEDIUM.getSize()) {
 	        setMenuInventoryRowCount(6);
 	        setPlayerInventoryYPos(138);
 	        setHotbarYPos(196);
 		}
-		else if (Config.GENERAL.inventorySize.get() <= VaultSlotSize.LARGE.getSize()) {
+		else if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.LARGE.getSize()) {
 			setMenuInventoryColumnCount(13);
 	        setMenuInventoryRowCount(7);
 	        setPlayerInventoryXPos(45);
@@ -165,7 +162,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	}
 	
 	/**
-	 * TODO this will have to be refactored if the size of the legacy valut > the tile entity size. as it stands this will only read in x items from vault, and then save those x items back to the vault
+	 * TODO this will have to be refactored if the size of the legacy valut > the block entity size. as it stands this will only read in x items from vault, and then save those x items back to the vault
 	 * overriding the current vault items, but the vault could have had a x*n size, and so those items are lost.
 	 * @param account
 	 * @param legacyVaultInventory2
@@ -405,5 +402,9 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 
 	public void setMenuInventoryYPos(int menuInventoryYPos) {
 		this.menuInventoryYPos = menuInventoryYPos;
+	}
+	
+	public int getVaultsRemainingYPos() {
+		return getHotbarYPos() + getSlotYSpacing() + 2;
 	}
 }

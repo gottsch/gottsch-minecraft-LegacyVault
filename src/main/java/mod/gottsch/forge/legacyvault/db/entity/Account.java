@@ -9,7 +9,8 @@ import java.util.Date;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
+
+import mod.gottsch.forge.legacyvault.inventory.VaultSlotSize;
 
 /**
  * @author Mark Gottschling on Apr 28, 2021

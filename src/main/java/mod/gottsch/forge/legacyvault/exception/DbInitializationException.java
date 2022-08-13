@@ -1,4 +1,4 @@
-package com.someguyssoftware.legacyvault.exception;
+package mod.gottsch.forge.legacyvault.exception;
 
 
 /**

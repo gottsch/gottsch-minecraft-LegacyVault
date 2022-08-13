@@ -23,14 +23,17 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.someguyssoftware.legacyvault.config.Config;
-import com.someguyssoftware.legacyvault.inventory.VaultContainerMenu;
-import com.someguyssoftware.legacyvault.inventory.VaultSlotSize;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
+import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
+import mod.gottsch.forge.legacyvault.inventory.VaultContainerMenu;
+import mod.gottsch.forge.legacyvault.inventory.VaultSlotSize;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -46,7 +49,7 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 	private static final ResourceLocation LARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault3c.png");
 
 	private ResourceLocation bgTexture;
-	
+	private Inventory inventory;
 	/**
 	 * 
 	 * @param containerMenu
@@ -56,12 +59,14 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 	public VaultScreen(VaultContainerMenu containerMenu, Inventory inventory, Component name) {
 		super(containerMenu, inventory, name);
 
-		if (Config.GENERAL.inventorySize.get() <= VaultSlotSize.SMALL.getSize()) {
+		this.inventory = inventory;
+		
+		if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.SMALL.getSize()) {
 			imageWidth = 176;
 			imageHeight = 174;//167;
 			bgTexture = BG_TEXTURE;
 		}
-		else if (Config.GENERAL.inventorySize.get() <= VaultSlotSize.MEDIUM.getSize()) {
+		else if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.MEDIUM.getSize()) {
 			imageWidth = 176;
 			imageHeight = 228;
 			bgTexture = MEDIUM_BG_TEXTURE;
@@ -83,11 +88,28 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
 		final int LABEL_XPOS = 5;
-		final int FONT_Y_SPACING = 10;
+		final int FONT_Y_SPACING = 12;
 		final int CHEST_LABEL_YPOS = getMenu().getTitleYPos() - FONT_Y_SPACING;
-        drawString(matrixStack, Minecraft.getInstance().font, this.getTitle().getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.darkGray.getRGB());
+        drawString(matrixStack, Minecraft.getInstance().font, new TranslatableComponent("display.vault.name").getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
 
-        // TODO add other titles
+		String vaultsRemaining = "";
+		if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
+			vaultsRemaining = new TranslatableComponent("display.public_vault").getString();
+		}
+		else {
+			// check for unlimited
+			if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
+				IPlayerVaultsHandler cap = inventory.player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
+					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+				});
+				vaultsRemaining = new TranslatableComponent("display.vaults_remaining", String.valueOf(ServerConfig.GENERAL.vaultsPerPlayer.get() - cap.getCount()), ServerConfig.GENERAL.vaultsPerPlayer.get()).getString();
+			}
+			else {
+				vaultsRemaining = new TranslatableComponent("display.unlimited_vaults").getString();
+			}
+		}
+		this.font.draw(matrixStack, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
+
     }
 
     @Override

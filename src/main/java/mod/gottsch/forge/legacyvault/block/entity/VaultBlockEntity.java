@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.setup.Registration;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -135,7 +136,7 @@ public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
 			if (isHandleOpen) {
 				// play the opening chest sound the at the beginning of opening
 				if (this.lidAngle == 0.0F) {
-					this.playSound(SoundEvents.CHEST_OPEN);
+						this.playSound(SoundEvents.CHEST_OPEN);
 				}
 
 				// test the lid
@@ -170,7 +171,7 @@ public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
 			}
 
 			// play the closing sound
-			if (this.lidAngle < 0.06F && f2 >= 0.06F) {
+			if (this.lidAngle < 0.7F && f2 >= 0.7F) {
 				this.playSound(SoundEvents.CHEST_CLOSE);
 			}
 
@@ -206,17 +207,14 @@ public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
 		double d0 = (double)getBlockPos().getX() + 0.5D;
 		double d1 = (double)getBlockPos().getY() + 0.5D;
 		double d2 = (double)getBlockPos().getZ() + 0.5D;
-		level.playSound((Player)null, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+//		level.playSound(player, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+        level.playLocalSound(d0, d1, d2, sound, SoundSource.BLOCKS, 1.0F, 1.0F, false);
 	}
 
 	/**
 	 * What happens per tick in this entity on the server
 	 */
 	public void tickServer() {
-		// TODO see VaultTileEntity
-		//		updateOpenCount(++this.ticksSinceSync);
-		//		updateEntityState();
-		//    	LegacyVault.LOGGER.info("ticking from client or server? -> {}", this.level.isClientSide);
 	}
 
 	/**

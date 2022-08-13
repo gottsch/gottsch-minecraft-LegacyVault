@@ -20,17 +20,14 @@
 package mod.gottsch.forge.legacyvault.eventhandler;
 
 import com.someguyssoftware.gottschcore.world.WorldInfo;
-import com.someguyssoftware.legacyvault.config.Config;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.network.VaultCountMessageToClient;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -52,7 +49,7 @@ public class PlayerEventHandler {
 		}
 		
 		// update client players capabilities
-		if (!Config.PUBLIC_VAULT.enablePublicVault.get() &&  Config.GENERAL.enableLimitedVaults.get()) {
+		if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && ServerConfig.GENERAL.enableLimitedVaults.get()) {
 			// get  player capabilities
 			IPlayerVaultsHandler cap = event.getPlayer().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");

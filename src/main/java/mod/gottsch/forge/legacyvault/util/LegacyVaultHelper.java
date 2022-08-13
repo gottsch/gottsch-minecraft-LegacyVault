@@ -21,10 +21,9 @@ package mod.gottsch.forge.legacyvault.util;
 
 import java.util.UUID;
 
-import com.someguyssoftware.legacyvault.config.Config;
-
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -80,18 +79,18 @@ public class LegacyVaultHelper {
 			return false;
 		}
 
-		if (Config.PUBLIC_VAULT.enablePublicVault.get()) {
-			if (!Config.PUBLIC_VAULT.playerWhiteList.get().isEmpty()) {
+		if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
+			if (!ServerConfig.PUBLIC_VAULT.playerWhiteList.get().isEmpty()) {
 				// check that player is part of white list
-				for (String whiteListedUUID : Config.PUBLIC_VAULT.playerWhiteList.get()) {
+				for (String whiteListedUUID : ServerConfig.PUBLIC_VAULT.playerWhiteList.get()) {
 					if (whiteListedUUID.equalsIgnoreCase(player.getStringUUID())) {
 						return true;
 					}
 				}
 			}
-			else if (!Config.PUBLIC_VAULT.playerBlackList.get().isEmpty()) {
+			else if (!ServerConfig.PUBLIC_VAULT.playerBlackList.get().isEmpty()) {
 				// check that player is not part of black list
-				for (String blackListedUUID : Config.PUBLIC_VAULT.playerWhiteList.get()) {
+				for (String blackListedUUID : ServerConfig.PUBLIC_VAULT.playerWhiteList.get()) {
 					if (blackListedUUID.equalsIgnoreCase(player.getStringUUID())) {
 						return false;
 					}
