@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2022, Mark Gottschling (gottsch)
+ * Copyright (c) 2022 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -33,7 +33,6 @@ import mod.gottsch.forge.legacyvault.inventory.VaultSlotSize;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -90,11 +89,11 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 		final int LABEL_XPOS = 5;
 		final int FONT_Y_SPACING = 12;
 		final int CHEST_LABEL_YPOS = getMenu().getTitleYPos() - FONT_Y_SPACING;
-        drawString(matrixStack, Minecraft.getInstance().font, new TranslatableComponent("display.vault.name").getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
+        drawString(matrixStack, Minecraft.getInstance().font, Component.translatable("display.vault.name").getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
 
 		String vaultsRemaining = "";
 		if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-			vaultsRemaining = new TranslatableComponent("display.public_vault").getString();
+			vaultsRemaining = Component.translatable("display.public_vault").getString();
 		}
 		else {
 			// check for unlimited
@@ -102,10 +101,10 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 				IPlayerVaultsHandler cap = inventory.player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 				});
-				vaultsRemaining = new TranslatableComponent("display.vaults_remaining", String.valueOf(ServerConfig.GENERAL.vaultsPerPlayer.get() - cap.getCount()), ServerConfig.GENERAL.vaultsPerPlayer.get()).getString();
+				vaultsRemaining = Component.translatable("display.vaults_remaining", String.valueOf(ServerConfig.GENERAL.vaultsPerPlayer.get() - cap.getCount()), ServerConfig.GENERAL.vaultsPerPlayer.get()).getString();
 			}
 			else {
-				vaultsRemaining = new TranslatableComponent("display.unlimited_vaults").getString();
+				vaultsRemaining = Component.translatable("display.unlimited_vaults").getString();
 			}
 		}
 		this.font.draw(matrixStack, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());

@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2022, Mark Gottschling (gottsch)
+ * Copyright (c) 2022 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -20,10 +20,17 @@
 package mod.gottsch.forge.legacyvault.setup;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.config.Config;
+import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
+import mod.gottsch.forge.legacyvault.recipe.condition.VaultEasyDifficultyCondition;
+import mod.gottsch.forge.legacyvault.recipe.condition.VaultHardDifficultyCondition;
+import mod.gottsch.forge.legacyvault.recipe.condition.VaultNormalDifficultyCondition;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * 
@@ -34,12 +41,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 public class CommonSetup {
 	
 	public static void init(final FMLCommonSetupEvent event) {
+		Config.instance.addRollingFileAppender(LegacyVault.MODID);
 		LegacyVaultNetworking.register();
 	}
 	
 	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)
 	public static class ForgeBusSubscriber {
-		
+
 	}
-	
 }

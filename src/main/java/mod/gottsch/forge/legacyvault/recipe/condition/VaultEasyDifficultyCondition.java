@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -19,10 +19,16 @@
  */
 package mod.gottsch.forge.legacyvault.recipe.condition;
 
+import java.util.Collection;
+import java.util.function.Predicate;
+
 import com.google.gson.JsonObject;
 
 import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
+import mod.gottsch.forge.legacyvault.tags.LegacyVaultTags;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
@@ -33,17 +39,19 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 public class VaultEasyDifficultyCondition implements ICondition {
 	public static final VaultEasyDifficultyCondition INSTANCE = new VaultEasyDifficultyCondition();
     private static final ResourceLocation NAME = new ResourceLocation("legacyvault", "vault_easy_difficulty");
-    
+
+
 	@Override
 	public ResourceLocation getID() {
 		return NAME;
 	}
 
 	@Override
-	public boolean test() {
-		return !ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && ServerConfig.GENERAL.recipeDifficulty.get().equalsIgnoreCase("easy");
+	public boolean test(IContext context) {
+		Collection<Holder<Item>> vault = context.getTag(LegacyVaultTags.Items.EASY_RECIPE);
+		return !vault.isEmpty();
 	}
-
+	
     @Override
     public String toString() {
         return "easy";

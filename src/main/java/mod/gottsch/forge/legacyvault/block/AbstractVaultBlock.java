@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2022, Mark Gottschling (gottsch)
+ * Copyright (c) 2022 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -23,11 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.someguyssoftware.gottschcore.block.ModContainerBlock;
-import com.someguyssoftware.gottschcore.spatial.Coords;
-import com.someguyssoftware.gottschcore.spatial.ICoords;
-import com.someguyssoftware.gottschcore.world.WorldInfo;
-
+import mod.gottsch.forge.gottschcore.spatial.Coords;
+import mod.gottsch.forge.gottschcore.spatial.ICoords;
+import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.entity.IVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
@@ -41,7 +39,6 @@ import mod.gottsch.forge.legacyvault.util.LegacyVaultHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -54,7 +51,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -69,7 +66,7 @@ import net.minecraftforge.network.PacketDistributor;
  * @author Mark Gottschling on May 1, 2021
  *
  */
-public abstract class AbstractVaultBlock extends ModContainerBlock implements ILegacyVaultBlock {
+public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILegacyVaultBlock {
 	/*
 	 * An array of VoxelShape shapes for the bounding box
 	 */
@@ -121,7 +118,7 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
 		MenuProvider containerProvider = new MenuProvider() {
             @Override
             public Component getDisplayName() {
-                return new TranslatableComponent("display.vault.name");
+                return Component.translatable("display.vault.name");
             }
 
             @Override
@@ -129,7 +126,7 @@ public abstract class AbstractVaultBlock extends ModContainerBlock implements IL
                 return new VaultContainerMenu(windowId, pos, playerInventory, playerEntity);
             }
         };
-        NetworkHooks.openGui((ServerPlayer) player, containerProvider, blockEntity.getBlockPos());
+        NetworkHooks.openScreen((ServerPlayer) player, containerProvider, blockEntity.getBlockPos());
 
 		return InteractionResult.SUCCESS;
 	}

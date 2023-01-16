@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -19,10 +19,9 @@
  */
 package mod.gottsch.forge.legacyvault.item;
 
-import com.someguyssoftware.gottschcore.spatial.Coords;
-import com.someguyssoftware.gottschcore.spatial.ICoords;
-import com.someguyssoftware.gottschcore.world.WorldInfo;
-
+import mod.gottsch.forge.gottschcore.spatial.Coords;
+import mod.gottsch.forge.gottschcore.spatial.ICoords;
+import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
@@ -84,7 +83,7 @@ public class VaultBlockItem extends BlockItem {
 
 						// increment capability size
 						int count = cap.getCount() + 1;
-						count = count > ServerConfig.GENERAL.vaultsPerPlayer.get() ?ServerConfig.GENERAL.vaultsPerPlayer.get() : count;
+						count = count > ServerConfig.GENERAL.vaultsPerPlayer.get() ? ServerConfig.GENERAL.vaultsPerPlayer.get() : count;
 						cap.setCount(count);
 						
 						// send state message to client
@@ -103,8 +102,7 @@ public class VaultBlockItem extends BlockItem {
 
 				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 			}
-		}
-		else {
+		} else {
 			LegacyVault.LOGGER.debug("no can do, you're on client side");
 		}
 		return false;

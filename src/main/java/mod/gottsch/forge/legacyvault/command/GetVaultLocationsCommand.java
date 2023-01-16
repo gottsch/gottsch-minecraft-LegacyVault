@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -22,15 +22,15 @@ package mod.gottsch.forge.legacyvault.command;
 import java.util.Collection;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.someguyssoftware.gottschcore.spatial.ICoords;
 
+import mod.gottsch.forge.gottschcore.spatial.ICoords;
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
@@ -77,10 +77,11 @@ public class GetVaultLocationsCommand {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 			});
 
+			Component.translatable("display.vault.name");
 			// cycle through all the locations and print to chat
-			source.sendSuccess(new TextComponent(((Player)entity).getDisplayName().getString() + " " + "vault locations:"), false);
+			source.sendSuccess(Component.literal(((Player)entity).getDisplayName().getString() + " " + "vault locations:"), false);
 			for (ICoords location : cap.getLocations()) {
-				source.sendSuccess(new TextComponent(location.toShortString()), false);
+				source.sendSuccess(Component.literal(location.toShortString()), false);
 			}
 		}
 		return 1;

@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2022, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -19,8 +19,7 @@
  */
 package mod.gottsch.forge.legacyvault.eventhandler;
 
-import com.someguyssoftware.gottschcore.world.WorldInfo;
-
+import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.capability.LegacyVaultCapabilities;
@@ -44,22 +43,22 @@ public class PlayerEventHandler {
 	@SubscribeEvent
 	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 
-		if (WorldInfo.isClientSide(event.getPlayer().level)) {
+		if (WorldInfo.isClientSide(event.getEntity() .level)) {
 			return;
 		}
 		
 		// update client players capabilities
 		if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && ServerConfig.GENERAL.enableLimitedVaults.get()) {
 			// get  player capabilities
-			IPlayerVaultsHandler cap = event.getPlayer().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
+			IPlayerVaultsHandler cap = event.getEntity().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 			});
 			LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 
 			if (cap != null) {
 				// send state message to client
-				VaultCountMessageToClient message = new VaultCountMessageToClient(event.getPlayer().getStringUUID(), cap.getCount());
-				LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getPlayer()),message);
+				VaultCountMessageToClient message = new VaultCountMessageToClient(event.getEntity().getStringUUID(), cap.getCount());
+				LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getEntity()),message);
 			}
 		}		
 	}

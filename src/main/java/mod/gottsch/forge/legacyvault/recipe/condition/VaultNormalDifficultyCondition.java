@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -19,10 +19,15 @@
  */
 package mod.gottsch.forge.legacyvault.recipe.condition;
 
+import java.util.Collection;
+
 import com.google.gson.JsonObject;
 
 import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
+import mod.gottsch.forge.legacyvault.tags.LegacyVaultTags;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
@@ -40,8 +45,9 @@ public class VaultNormalDifficultyCondition implements ICondition {
 	}
 
 	@Override
-	public boolean test() {
-		return !ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && ServerConfig.GENERAL.recipeDifficulty.get().equalsIgnoreCase("normal");
+	public boolean test(IContext context) {
+		Collection<Holder<Item>> vault = context.getTag(LegacyVaultTags.Items.NORMAL_RECIPE);
+		return !vault.isEmpty();
 	}
 
     @Override

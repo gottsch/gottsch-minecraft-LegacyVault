@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2022, Mark Gottschling (gottsch)
+ * Copyright (c) 2022 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -406,5 +406,12 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	
 	public int getVaultsRemainingYPos() {
 		return getHotbarYPos() + getSlotYSpacing() + 2;
+	}
+
+	@Override
+	public ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
+		// TODO Auto-generated method stub
+		// TODO look at Treasure2 1.18.2
+		return null;
 	}
 }

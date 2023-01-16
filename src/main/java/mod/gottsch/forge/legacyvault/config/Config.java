@@ -25,10 +25,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.someguyssoftware.gottschcore.config.AbstractConfig;
-
+import mod.gottsch.forge.gottschcore.config.AbstractConfig;
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -46,16 +43,18 @@ import net.minecraftforge.fml.config.ModConfig;
 @EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config extends AbstractConfig {
 
-	public static final String GENERAL_CATEGORY = "03-general";
-	public static final String PUBLIC_VAULT_CATEGORY = "04-public-vault";
-	public static final String DATABASE_CATEGORY = "05-database";
+	public static final String GENERAL_CATEGORY = "general";
+	public static final String PUBLIC_VAULT_CATEGORY = "public-vault";
+	public static final String DATABASE_CATEGORY = "database";
 	public static final String CATEGORY_DIV = "##############################";
 	public static final String UNDERLINE_DIV = "------------------------------";
 
 	public static Config instance = new Config();
 	
+	public static ForgeConfigSpec SERVER_SPEC;
+	public static ForgeConfigSpec COMMON_SPEC;
+	
 	public static class ServerConfig {
-		public static Mod MOD;
 		public static General GENERAL;
 		public static PublicVault PUBLIC_VAULT;
 		public static Db DATABASE;
@@ -76,27 +75,25 @@ public class Config extends AbstractConfig {
 	public static void register() {
 		registerServerConfigs();
 		registerCommonConfigs();
-		// perform any initializations on data
-		Config.init();
 	}
-	
+
 	/**
 	 * 
 	 */
 	private static void registerServerConfigs() {
 		ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
-		ServerConfig.MOD = new Mod(SERVER_BUILDER);
 		ServerConfig.GENERAL = new General(SERVER_BUILDER);
 		ServerConfig.PUBLIC_VAULT = new PublicVault(SERVER_BUILDER);
 		ServerConfig.DATABASE = new Db(SERVER_BUILDER);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
+		SERVER_SPEC = SERVER_BUILDER.build();
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
 	}
 
 	private static void registerCommonConfigs() {
 		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 		CommonConfig.LOGGING = new Logging(COMMON_BUILDER);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
-
+		COMMON_SPEC = COMMON_BUILDER.build();
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
 	}
 	
 	/**
@@ -183,12 +180,17 @@ public class Config extends AbstractConfig {
 		public ForgeConfigSpec.IntValue stackSize;
 		public BooleanValue enableLimitedVaults;
 		public IntValue vaultsPerPlayer;
-		public ConfigValue<String> recipeDifficulty;
+//		public ConfigValue<String> recipeDifficulty;
 		
 		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
 
 		public General(final ForgeConfigSpec.Builder builder) {
-			builder.comment(CATEGORY_DIV, " General properties for Legacy Vault  mod.", CATEGORY_DIV).push(GENERAL_CATEGORY);
+			builder.comment(CATEGORY_DIV, 
+					" General properties for Legacy Vault  mod.", 
+					" Note: As of mc1.19.2, the recipe conditions are data-driven via Tags.",
+					" Therefor, ensure to update tags at data.legacyvault.tags.items.difficult accordingly.",
+					" ie. Add legacyvault/vault to the values list in one of the difficulty tags. Default = Normal.",
+					CATEGORY_DIV).push(GENERAL_CATEGORY);
 
 			inventorySize = builder
 					.comment(" Maximum capacity of the vault inventory.", 
@@ -208,9 +210,9 @@ public class Config extends AbstractConfig {
 					.comment(" The number of vaults each player can place per world.", " Enable public vault' must be disabled.")
 					.defineInRange("Number of vaults per player:", 1, 3, 100);
 
-			recipeDifficulty = builder
-					.comment("Values are [easy | normal | hard]")
-					.define("Recipe Difficulty", "normal");
+//			recipeDifficulty = builder
+//					.comment("Values are [easy | normal | hard]")
+//					.define("Recipe Difficulty", "normal");
 
 			inventoryWhiteList = builder
 					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs")
@@ -255,7 +257,12 @@ public class Config extends AbstractConfig {
 		public ConfigValue<List<? extends String>> playerBlackList;
 
 		PublicVault(final ForgeConfigSpec.Builder builder) {
-			builder.comment(CATEGORY_DIV, " Public Vault properties for Legacy Vault  mod.", CATEGORY_DIV).push(PUBLIC_VAULT_CATEGORY);
+			builder.comment(CATEGORY_DIV, 
+					" Public Vault properties for Legacy Vault  mod.", 
+					" Note: As of mc1.19.2, the recipe conditions are data-driven via Tags.",
+					" Therefor, ensure to update tags at data.legacyvault.tags.items.difficult accordingly.",
+					" ie. You probably don't want vault recipes enabled if Public Vault is enabled.",
+					CATEGORY_DIV).push(PUBLIC_VAULT_CATEGORY);
 
 			enablePublicVault = builder
 					.comment(" Enables a singular global public vault(s) that can be used by all players from the same location.",
@@ -280,44 +287,18 @@ public class Config extends AbstractConfig {
 	public static void init() {
 		Config.ServerConfig.GENERAL.init();
 	}
-
+	
 	@Override
-	public boolean isLatestVersionReminder() {
-		return Config.ServerConfig.MOD.latestVersionReminder.get();
+	public String getLogsFolder() {
+		return Config.CommonConfig.LOGGING.folder.get();
 	}
-
-	@Override
-	public void setLatestVersionReminder(boolean latestVersionReminder) {
-		Config.ServerConfig.MOD.latestVersionReminder.set(latestVersionReminder);
+	
+	public void setLogsFolder(String folder) {
+		Config.CommonConfig.LOGGING.folder.set(folder);
 	}
-
+	
 	@Override
-	public boolean isModEnabled() {
-		return Config.ServerConfig.MOD.enabled.get();
-	}
-
-	@Override
-	public void setModEnabled(boolean modEnabled) {
-		Config.ServerConfig.MOD.enabled.set(modEnabled);
-	}
-
-	@Override
-	public String getModsFolder() {
-		return Config.ServerConfig.MOD.folder.get();
-	}
-
-	@Override
-	public void setModsFolder(String modsFolder) {
-		Config.ServerConfig.MOD.folder.set(modsFolder);
-	}
-
-	@Override
-	public String getConfigFolder() {
-		return Config.ServerConfig.MOD.configFolder.get();
-	}
-
-	@Override
-	public void setConfigFolder(String configFolder) {
-		Config.ServerConfig.MOD.configFolder.set(configFolder);
+	public String getLoggingLevel() {
+		return Config.CommonConfig.LOGGING.level.get();
 	}
 }

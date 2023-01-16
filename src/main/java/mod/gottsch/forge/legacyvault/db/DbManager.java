@@ -1,5 +1,19 @@
-/**
- * 
+/*
+ * This file is part of  Treasure2.
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 package mod.gottsch.forge.legacyvault.db;
 
@@ -18,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +44,6 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
-import mod.gottsch.forge.legacyvault.config.Config;
 import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.db.entity.Account;
 import mod.gottsch.forge.legacyvault.exception.DbInitializationException;
@@ -44,7 +56,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 public class DbManager {
 
 	// LOGGER
-	public static Logger LOGGER = LogManager.getLogger(LegacyVault.instance.getName());
+	public static Logger LOGGER = LogManager.getLogger(LegacyVault.MODID);
 
 	public static final String DB_FILE_NAME = "vault";
 	public static final String DB_EXTENSION = ".mv.db";

@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -24,10 +24,10 @@ import java.util.Collection;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.someguyssoftware.gottschcore.spatial.Coords;
-import com.someguyssoftware.gottschcore.spatial.Heading;
-import com.someguyssoftware.gottschcore.spatial.ICoords;
 
+import mod.gottsch.forge.gottschcore.spatial.Coords;
+import mod.gottsch.forge.gottschcore.spatial.Heading;
+import mod.gottsch.forge.gottschcore.spatial.ICoords;
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.ILegacyVaultBlock;
 import mod.gottsch.forge.legacyvault.block.LegacyVaultBlocks;

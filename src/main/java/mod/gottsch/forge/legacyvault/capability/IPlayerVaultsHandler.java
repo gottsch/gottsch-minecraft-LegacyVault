@@ -5,7 +5,8 @@ package mod.gottsch.forge.legacyvault.capability;
 
 import java.util.List;
 
-import com.someguyssoftware.gottschcore.spatial.ICoords;
+import mod.gottsch.forge.gottschcore.spatial.ICoords;
+
 
 /**
  * @author Mark Gottschling on May 11, 2021
