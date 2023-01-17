@@ -208,7 +208,7 @@ public class Config extends AbstractConfig {
 
 			vaultsPerPlayer = builder
 					.comment(" The number of vaults each player can place per world.", " Enable public vault' must be disabled.")
-					.defineInRange("Number of vaults per player:", 1, 3, 100);
+					.defineInRange("Number of vaults per player:", 3, 1, 100);
 
 //			recipeDifficulty = builder
 //					.comment("Values are [easy | normal | hard]")
