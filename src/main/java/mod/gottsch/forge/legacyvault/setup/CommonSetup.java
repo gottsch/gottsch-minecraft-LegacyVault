@@ -41,8 +41,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class CommonSetup {
 	
 	public static void init(final FMLCommonSetupEvent event) {
+		event.enqueueWork(() ->  {
+			LegacyVaultNetworking.register();
+		});
 		Config.instance.addRollingFileAppender(LegacyVault.MODID);
-		LegacyVaultNetworking.register();
+
 	}
 	
 	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)

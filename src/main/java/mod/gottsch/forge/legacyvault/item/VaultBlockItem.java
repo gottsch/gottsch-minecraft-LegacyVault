@@ -88,7 +88,7 @@ public class VaultBlockItem extends BlockItem {
 						
 						// send state message to client
 						VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
-						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)context.getPlayer()),message);
+						LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)context.getPlayer()),message);
 					}
 					else {
 						LegacyVault.LOGGER.debug("player branch count greater than config-> {}", ServerConfig.GENERAL.vaultsPerPlayer.get());

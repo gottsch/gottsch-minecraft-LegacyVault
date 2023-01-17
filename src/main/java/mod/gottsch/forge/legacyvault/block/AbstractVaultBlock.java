@@ -230,7 +230,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 						// send state message to client
 						VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
 						ServerPlayer serverPlayer = (ServerPlayer)vaultOwnerPlayer;
-						LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
+						LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
 					}
 				}
 

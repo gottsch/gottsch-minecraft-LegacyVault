@@ -53,12 +53,13 @@ public class PlayerEventHandler {
 			IPlayerVaultsHandler cap = event.getEntity().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 			});
-			LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+			LegacyVault.LOGGER.debug("player cap branch count -> {}", cap.getCount());
 
 			if (cap != null) {
 				// send state message to client
 				VaultCountMessageToClient message = new VaultCountMessageToClient(event.getEntity().getStringUUID(), cap.getCount());
-				LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getEntity()),message);
+				LegacyVault.LOGGER.debug("sending message to client -> {}", message);
+				LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getEntity()), message);
 			}
 		}		
 	}

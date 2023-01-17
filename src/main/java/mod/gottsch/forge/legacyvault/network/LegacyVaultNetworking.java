@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
@@ -36,11 +35,11 @@ import net.minecraftforge.network.simple.SimpleChannel;
  */
 public class LegacyVaultNetworking {
 	
-	public static final String MESSAGE_PROTOCOL_VERSION = "1.0";
+	public static final String PROTOCOL_VERSION = "1.0";
 	public static final int VAULT_COUNT_MESSAGE_ID = 14;	
 	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MODID, "legacy_vault_channel");
 	
-	public static SimpleChannel simpleChannel;    // used to transmit your network messages
+	public static SimpleChannel channel;    // used to transmit your network messages
 
 	/**
 	 * 
@@ -48,12 +47,18 @@ public class LegacyVaultNetworking {
 	 */
 	public static void register() {
 		// register the channel
-		simpleChannel = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> MESSAGE_PROTOCOL_VERSION,
-	            VaultCountMessageHandlerOnClient::isThisProtocolAcceptedByClient,
-	            VaultCountMessageHandlerOnServer::isThisProtocolAcceptedByServer);
+//		channel = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> PROTOCOL_VERSION,
+//	            VaultCountMessageHandlerOnClient::isThisProtocolAcceptedByClient,
+//	            VaultCountMessageHandlerOnServer::isThisProtocolAcceptedByServer);
+		
+		channel = NetworkRegistry.ChannelBuilder.named(CHANNEL_NAME)
+				.networkProtocolVersion(() -> PROTOCOL_VERSION)
+				.clientAcceptedVersions(PROTOCOL_VERSION::equals)
+				.serverAcceptedVersions(PROTOCOL_VERSION::equals)
+				.simpleChannel();
 		
 		// register the message
-		simpleChannel.registerMessage(VAULT_COUNT_MESSAGE_ID, VaultCountMessageToClient.class,
+		channel.registerMessage(VAULT_COUNT_MESSAGE_ID, VaultCountMessageToClient.class,
 	            VaultCountMessageToClient::encode, VaultCountMessageToClient::decode,
 	            VaultCountMessageHandlerOnClient::onMessageReceived,
 	            Optional.of(PLAY_TO_CLIENT));

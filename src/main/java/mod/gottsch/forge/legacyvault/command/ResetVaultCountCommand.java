@@ -91,7 +91,7 @@ public class ResetVaultCountCommand {
 					// send state message to client
 					ServerPlayer serverPlayer = (ServerPlayer)entity;
 					VaultCountMessageToClient message = new VaultCountMessageToClient(serverPlayer.getStringUUID(), count);
-					LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
+					LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
 	          }
 	      }
 		return 1;

@@ -146,7 +146,7 @@ public class SpawnVaultCommand {
 				// send state message to client
 				ServerPlayer serverPlayer = (ServerPlayer)entity;
 				VaultCountMessageToClient message = new VaultCountMessageToClient(serverPlayer.getStringUUID(), count);
-				LegacyVaultNetworking.simpleChannel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
+				LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
 			}
 			// add the vault location to capabilities
 			ICoords location = new Coords(pos);
