@@ -47,10 +47,6 @@ public class LegacyVaultNetworking {
 	 */
 	public static void register() {
 		// register the channel
-//		channel = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> PROTOCOL_VERSION,
-//	            VaultCountMessageHandlerOnClient::isThisProtocolAcceptedByClient,
-//	            VaultCountMessageHandlerOnServer::isThisProtocolAcceptedByServer);
-		
 		channel = NetworkRegistry.ChannelBuilder.named(CHANNEL_NAME)
 				.networkProtocolVersion(() -> PROTOCOL_VERSION)
 				.clientAcceptedVersions(PROTOCOL_VERSION::equals)
