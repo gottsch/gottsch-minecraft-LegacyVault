@@ -23,14 +23,10 @@ import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
 import mod.gottsch.forge.legacyvault.config.Config;
 import mod.gottsch.forge.legacyvault.inventory.VaultContainerMenu;
 import mod.gottsch.forge.legacyvault.item.VaultBlockItem;
-import mod.gottsch.forge.legacyvault.recipe.condition.VaultEasyDifficultyCondition;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
@@ -61,15 +57,12 @@ public class Registration {
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, LegacyVault.MODID);
 //    private static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, LegacyVault.MODID);
     
-    // item properties convenience property
-	public static final Item.Properties ITEM_PROPERTIES = new Item.Properties().tab(CreativeModeTab.TAB_MISC);
-
 	// blocks
 	public static final RegistryObject<VaultBlock> VAULT = Registration.BLOCKS.register(Config.BlockID.VAULT_ID, () -> new VaultBlock(Block.Properties.of(Material.METAL, MaterialColor.WOOD).strength(2.5F)));
 	
 	// items
 	public static final RegistryObject<Item> VAULT_ITEM = fromBlock(VAULT);
-	public static final RegistryObject<Item> APPLICATION = Registration.ITEMS.register("vault_application", () -> new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+	public static final RegistryObject<Item> APPLICATION = Registration.ITEMS.register("vault_application", () -> new Item(new Item.Properties()));
 	// block entities
 	public static final RegistryObject<BlockEntityType<VaultBlockEntity>> VAULT_BLOCK_ENTITY_TYPE;
 	// containers
@@ -105,6 +98,6 @@ public class Registration {
      *  conveniance method: take a RegistryObject<Block> and make a corresponding RegistryObject<Item> from it
      */
     public static <B extends Block> RegistryObject<Item> fromBlock(RegistryObject<B> block) {
-        return Registration.ITEMS.register(block.getId().getPath(), () -> new VaultBlockItem(block.get(), ITEM_PROPERTIES));
+        return Registration.ITEMS.register(block.getId().getPath(), () -> new VaultBlockItem(block.get(), new Item.Properties()));
     }
 }

@@ -27,6 +27,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.SpriteLoader.Preparations;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -51,18 +52,6 @@ public class ClientSetup {
             MenuScreens.register(Registration.VAULT_CONTAINER.get(), VaultScreen::new);           // attach our container to the screen
             ItemBlockRenderTypes.setRenderLayer(Registration.VAULT.get(), RenderType.cutoutMipped());
         });
-    }
-    
-    /**
-     * Add model textures to the atlas.
-     * @param event
-     */
-    @SubscribeEvent
-    public static void onTextureStitch(TextureStitchEvent.Pre event) {
-        if (!event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-            return;
-        }
-        event.addSprite(VaultRenderer.VAULT_RENDERER_ATLAS_TEXTURE);
     }
     
 	/**

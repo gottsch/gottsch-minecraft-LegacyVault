@@ -21,16 +21,14 @@ package mod.gottsch.forge.legacyvault.setup;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.config.Config;
-import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
-import mod.gottsch.forge.legacyvault.recipe.condition.VaultEasyDifficultyCondition;
-import mod.gottsch.forge.legacyvault.recipe.condition.VaultHardDifficultyCondition;
-import mod.gottsch.forge.legacyvault.recipe.condition.VaultNormalDifficultyCondition;
-import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraft.world.item.CreativeModeTab.TabVisibility;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.event.CreativeModeTabEvent.BuildContents;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * 
@@ -51,5 +49,13 @@ public class CommonSetup {
 	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)
 	public static class ForgeBusSubscriber {
 
+	}
+	
+	@SubscribeEvent
+	public static void registemItemsToTab(BuildContents event) {
+		if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+			event.accept(Registration.VAULT_ITEM.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(Registration.APPLICATION.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+		}
 	}
 }

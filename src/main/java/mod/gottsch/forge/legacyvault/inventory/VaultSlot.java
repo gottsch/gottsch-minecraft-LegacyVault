@@ -23,13 +23,11 @@ import java.util.regex.Pattern;
 
 import mod.gottsch.forge.legacyvault.block.ILegacyVaultBlock;
 import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraftforge.items.IItemHandler;
@@ -95,9 +93,7 @@ public class VaultSlot extends SlotItemHandler {
 		}
 
 		// get the registry name of the item
-//		String registryName = item.getRegistryName().toString();
-		// TODO so don't like this way of getting the registry name.
-		String registryName = Registry.ITEM.getKey(item).toString();
+		String registryName = ForgeRegistries.ITEMS.getKey(item).toString();
 
 		// determine if using white lists or black lists
 		if (!ServerConfig.GENERAL.inventoryWhiteList.get().isEmpty()) {

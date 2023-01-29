@@ -21,30 +21,24 @@ package mod.gottsch.forge.legacyvault.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3d;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import mod.gottsch.forge.legacyvault.LegacyVault;
 import mod.gottsch.forge.legacyvault.block.VaultBlock;
 import mod.gottsch.forge.legacyvault.block.entity.IVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
 import mod.gottsch.forge.legacyvault.client.model.VaultModel;
-import mod.gottsch.forge.legacyvault.setup.Registration;
-import net.minecraft.client.model.BookModel;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 
@@ -93,12 +87,12 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity>{
 		// The model is defined centred on [0,0,0], so if we drew it at the current render origin, its centre would be
 		// at the corner of the block, sunk halfway into the ground and overlapping into the adjacent blocks.
 		// We want it to hover above the centre of the hopper base, so we need to translate up and across to the desired position
-		final Vector3d TRANSLATION_OFFSET = new Vector3d(0.5, 1.5, 0.5);
+		final Vec3 TRANSLATION_OFFSET = new Vec3(0.5, 1.5, 0.5);
 		poseStack.translate(TRANSLATION_OFFSET.x, TRANSLATION_OFFSET.y, TRANSLATION_OFFSET.z); // translate
 		
 		poseStack.scale(-1, -1, 1);
 		float f = getHorizontalAngle(facing);
-		poseStack.mulPose(Vector3f.YP.rotationDegrees(-f));
+		poseStack.mulPose(Axis.YP.rotationDegrees(-f));
 		
 		// update the lid rotation - animation
 		this.vaultModel.setupAnim(vaultBlockEntity, partialTicks);
