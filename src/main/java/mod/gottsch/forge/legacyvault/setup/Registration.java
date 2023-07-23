@@ -23,14 +23,11 @@ import mod.gottsch.forge.legacyvault.block.entity.VaultBlockEntity;
 import mod.gottsch.forge.legacyvault.config.Config;
 import mod.gottsch.forge.legacyvault.inventory.VaultContainerMenu;
 import mod.gottsch.forge.legacyvault.item.VaultBlockItem;
-import mod.gottsch.forge.legacyvault.recipe.condition.VaultEasyDifficultyCondition;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
@@ -74,12 +71,7 @@ public class Registration {
 	public static final RegistryObject<BlockEntityType<VaultBlockEntity>> VAULT_BLOCK_ENTITY_TYPE;
 	// containers
 	public static final RegistryObject<MenuType<VaultContainerMenu>> VAULT_CONTAINER;
-	// recipes
-//	public static final RegistryObject<RecipeSerializer<Recipe<?>>>
-//	private static final DeferredRegister<RecipeSerializer<?>> REGISTER = DeferredRegister.create(Registry.RECIPE_SERIALIZER_REGISTRY, LegacyVault.MODID);
 
-//	public static final RegistryObject<RecipeSerializer<?>> EXAMPLE_LOOT_ITEM_CONDITION_TYPE = REGISTER.register("example_loot_item_condition_type", () -> VaultEasyDifficultyCondition.Serializer.INSTANCE);
-	
 	static {
 		VAULT_BLOCK_ENTITY_TYPE = BLOCK_ENTITIES.register(Config.BlockEntityID.VAULT_TE_ID, () -> BlockEntityType.Builder.of(VaultBlockEntity::new, VAULT.get()).build(null));
 				
