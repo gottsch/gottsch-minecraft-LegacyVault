@@ -43,7 +43,7 @@ public class PlayerEventHandler {
 	@SubscribeEvent
 	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 
-		if (WorldInfo.isClientSide(event.getEntity() .level)) {
+		if (WorldInfo.isClientSide(event.getEntity().level())) {
 			return;
 		}
 		

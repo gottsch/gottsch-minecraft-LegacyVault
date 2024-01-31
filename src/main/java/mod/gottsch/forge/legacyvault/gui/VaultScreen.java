@@ -31,6 +31,7 @@ import mod.gottsch.forge.legacyvault.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.inventory.VaultContainerMenu;
 import mod.gottsch.forge.legacyvault.inventory.VaultSlotSize;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -78,18 +79,18 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 	}
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrixStack, mouseX, mouseY);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics gui, int mouseX, int mouseY) {
 		final int LABEL_XPOS = 5;
 		final int FONT_Y_SPACING = 12;
 		final int CHEST_LABEL_YPOS = getMenu().getTitleYPos() - FONT_Y_SPACING;
-        drawString(matrixStack, Minecraft.getInstance().font, Component.translatable("display.vault.name").getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
+        gui.drawString(this.font, Component.translatable("display.vault.name").getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
 
 		String vaultsRemaining = "";
 		if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
@@ -107,17 +108,16 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 				vaultsRemaining = Component.translatable("display.unlimited_vaults").getString();
 			}
 		}
-		this.font.draw(matrixStack, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(),Color.darkGray.getRGB());
-
+		gui.drawString(this.font, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(), Color.WHITE.getRGB());
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphics matrixStack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, getBgTexture());
         int relX = (this.width - this.imageWidth) / 2;
         int relY = (this.height - this.imageHeight) / 2;
-        this.blit(matrixStack, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
-    }
+		matrixStack.blit(getBgTexture(), relX, relY, 0, 0, this.imageWidth, this.imageHeight);
+	}
 
 	private ResourceLocation getBgTexture() {
 		return bgTexture;

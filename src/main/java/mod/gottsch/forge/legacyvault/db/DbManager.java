@@ -37,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.tools.RunScript;
 import org.h2.tools.Server;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -177,10 +176,7 @@ public class DbManager {
 		return instance;
 	}
 
-	/**
-	 * @param config
-	 */
-	public static void start() throws DbInitializationException {		
+	public static void start() throws DbInitializationException {
 		if (instance == null) {
 			LOGGER.debug("Creating new instance of DbManager");
 			try {

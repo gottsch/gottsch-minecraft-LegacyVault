@@ -29,8 +29,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -58,7 +57,7 @@ public class Registration {
 //    private static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, LegacyVault.MODID);
     
 	// blocks
-	public static final RegistryObject<VaultBlock> VAULT = Registration.BLOCKS.register(Config.BlockID.VAULT_ID, () -> new VaultBlock(Block.Properties.of(Material.METAL, MaterialColor.WOOD).strength(2.5F)));
+	public static final RegistryObject<VaultBlock> VAULT = Registration.BLOCKS.register(Config.BlockID.VAULT_ID, () -> new VaultBlock(Block.Properties.of().mapColor(MapColor.METAL).strength(2.5F)));
 	
 	// items
 	public static final RegistryObject<Item> VAULT_ITEM = fromBlock(VAULT);

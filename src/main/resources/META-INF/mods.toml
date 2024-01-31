@@ -1,26 +1,35 @@
-modLoader="javafml"
-# mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
-loaderVersion="[44,)" 
+# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml" #mandatory
+
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+loaderVersion="${loader_version_range}"
+
 # License
-license="GNU GPL v3"
+license="GNU GPLv3"
 
 # A URL to refer people to when problems occur with this mod
-# optional
-issueTrackerURL="https://github.com/gottsch/gottsch-minecraft-LegacyVault/issues"
+issueTrackerURL="https://github.com/gottsch/gottsch-minecraft-LegacyVault/issues" #optional
 
+# A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
+
+# The modid of the mod
 modId="legacyvault" #mandatory
-version="1.3.0" #mandatory
+
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version="${mod_version}" #mandatory
+
+# A display name for the mod
 displayName="Legacy Vault" #mandatory
 
-# A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
-updateJSONURL="https://raw.githubusercontent.com/gottsch/gottsch-minecraft-LegacyVault/1.19.2-main/update.json"
+# A URL to query for updates for this mod. See the JSON update specification <here>
+updateJSONURL="https://raw.githubusercontent.com/gottsch/gottsch-minecraft-LegacyVault/1.20.1-main/update.json"
 
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://www.curseforge.com/minecraft/mc-mods/legacyvault" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+logoFile="legacyvault-curseforge-logo.png" #optional
 
 # A text field displayed in the mod UI
 credits="" #optional
@@ -29,34 +38,32 @@ credits="" #optional
 authors="gottsch" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
-description='''
-A Minecraft mod that allows a player(s) to store inventory between worlds.
-'''
+description="Adds new chests filled with loot to be discovered."
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.legacyvault]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[44,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-    ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+# the modid of the dependency
+modId="forge" #mandatory
+# Does this dependency have to exist - if not, ordering below must be specified
+mandatory=true #mandatory
+# The version range of the dependency
+versionRange="${forge_version_range}" #mandatory
+# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+ordering="NONE"
+# Side this dependency is applied on - BOTH, CLIENT or SERVER
+side="BOTH"
 # Here's another dependency
 [[dependencies.legacyvault]]
-    modId="minecraft"
-    mandatory=true
+modId="minecraft"
+mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.19.3,1.20)"
-    ordering="NONE"
-    side="BOTH"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
 [[dependencies.legacyvault]]
-    modId="gottschcore"
-    mandatory=true
+modId="gottschcore"
+mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[2.0.0,]"
-    ordering="BEFORE"
-    side="BOTH"
+versionRange="[2.1.0,)"
+ordering="BEFORE"
+side="BOTH"

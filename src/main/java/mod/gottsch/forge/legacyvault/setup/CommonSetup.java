@@ -24,7 +24,7 @@ import mod.gottsch.forge.legacyvault.config.Config;
 import mod.gottsch.forge.legacyvault.network.LegacyVaultNetworking;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.event.CreativeModeTabEvent.BuildContents;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -50,12 +50,13 @@ public class CommonSetup {
 	public static class ForgeBusSubscriber {
 
 	}
-	
+
 	@SubscribeEvent
-	public static void registemItemsToTab(BuildContents event) {
-		if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+	public static void registemItemsToTab(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
 			event.accept(Registration.VAULT_ITEM.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
 			event.accept(Registration.APPLICATION.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+
 		}
 	}
 }

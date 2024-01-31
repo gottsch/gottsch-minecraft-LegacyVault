@@ -91,7 +91,6 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 
 	/**
 	 * 
-	 * @param menuType
 	 * @param containerId
 	 * @param pos
 	 * @param playerInventory
@@ -105,7 +104,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 		this.vaultInventory = new InvWrapper(new SimpleContainer(ServerConfig.GENERAL.inventorySize.get()));
 
 		// load from the DB
-		if (!player.level.isClientSide) {
+		if (!player.level().isClientSide) {
 			LegacyVault.LOGGER.debug("db instance -> {}", DbManager.getInstance());
 			Optional<Account> account = DbManager.getInstance().getAccount(playerInventory.player.getUUID().toString(), LegacyVault.MC_VERSION, 
 					LegacyVault.instance.isHardCore() ? GameType.HARDCORE.getValue() : GameType.NORMAL.getValue());
@@ -149,7 +148,6 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 
 	/**
 	 * @param account
-	 * @param inventory
 	 */
 	private void loadPersistedInventory(Account account) {
 
@@ -164,10 +162,9 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	}
 
 	/**
-	 * TODO this will have to be refactored if the size of the legacy valut > the block entity size. as it stands this will only read in x items from vault, and then save those x items back to the vault
+	 * TODO this will have to be refactored if the size of the legacy vault > the block entity size. as it stands this will only read in x items from vault, and then save those x items back to the vault
 	 * overriding the current vault items, but the vault could have had a x*n size, and so those items are lost.
 	 * @param account
-	 * @param legacyVaultInventory2
 	 */
 	private void savePersistedInventory(Account account) {
 		CompoundTag compound = new CompoundTag();
@@ -235,7 +232,6 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	/**
 	 * 
 	 * @param playerInventory
-	 * @param inventory
 	 */
 	public void buildContainer(IItemHandler playerInventory) {
 		// build inventories
@@ -257,7 +253,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 
 	/**
 	 * 
-	 * @param playerInventory
+	 * @param inventory
 	 */
 	//	@Override
 	public void buildPlayerInventory(IItemHandler inventory) {
@@ -309,7 +305,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 		}
 
 		// fetch the players account from persistence
-		if (!player.level.isClientSide) {
+		if (!player.level().isClientSide) {
 			Optional<Account> account = DbManager.getInstance().getAccount(player.getUUID().toString(), LegacyVault.MC_VERSION, 
 					LegacyVault.instance.isHardCore() ? GameType.HARDCORE.getValue() : GameType.NORMAL.getValue());
 			if (account.isPresent()) {

@@ -96,7 +96,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 
 		// check if a block is blocking the door
 		BlockPos blockPos = pos.relative(getFacing(state));
-		if (world.getBlockState(blockPos).getMaterial().isSolid() || world.getBlockState(blockPos).getMaterial().isSolidBlocking()) {
+		if (!world.getBlockState(blockPos).isAir() && !world.getBlockState(blockPos).canBeReplaced()) {
 			return InteractionResult.SUCCESS;
 		}
 
