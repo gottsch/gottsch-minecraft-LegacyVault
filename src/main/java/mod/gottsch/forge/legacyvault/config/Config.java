@@ -144,6 +144,7 @@ public class Config extends AbstractConfig {
 	public static class Db {
 		public ConfigValue<String> user;
 		public ConfigValue<String> password;
+		public IntValue backupInterval;
 
 		Db(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV, " Database properties for Legacy Vault  mod.", CATEGORY_DIV).push(DATABASE_CATEGORY);
@@ -154,6 +155,10 @@ public class Config extends AbstractConfig {
 			password = builder
 					.comment("Password for H2 DB access.")
 					.define("Password", "sa");
+
+			backupInterval = builder
+					.comment("The time interval to backup the DB.", "Measured in minutes.")
+							.defineInRange("backupInterval", 30, 5, 240);
 
 			builder.pop();
 		}

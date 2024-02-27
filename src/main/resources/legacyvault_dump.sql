@@ -1,0 +1,1 @@
+SCRIPT TO 'config/legacyvault/dump.sql';

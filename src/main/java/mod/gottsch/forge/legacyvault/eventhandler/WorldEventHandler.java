@@ -19,19 +19,26 @@ package mod.gottsch.forge.legacyvault.eventhandler;
 
 import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.LegacyVault;
+import mod.gottsch.forge.legacyvault.config.Config;
 import mod.gottsch.forge.legacyvault.db.DbManager;
 import mod.gottsch.forge.legacyvault.exception.DbInitializationException;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.util.concurrent.*;
 
 /**
  * @author Mark Gottschling on May 2, 2021
  *
  */
 public class WorldEventHandler {
+	private static boolean isLoaded = false;
 
 //	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
 //	public static class RegistrationHandler {
@@ -41,21 +48,48 @@ public class WorldEventHandler {
 			/*
 			 * On load of dimension 0 (overworld), initialize the loot table's context and other static loot tables
 			 */
-			if (WorldInfo.isServerSide((Level)event.getLevel())) {
+			if (WorldInfo.isServerSide((Level)event.getLevel()) && !isLoaded) {
 				LevelAccessor world = event.getLevel();
+				boolean isHardCore = world.getServer().isHardcore();
 				LegacyVault.LOGGER.debug("In world load event for dimension {}", WorldInfo.getDimension((Level) world).toString());
-				if (WorldInfo.isSurfaceWorld((Level) world)) {
-					// init the db manager
+//				if (WorldInfo.isSurfaceWorld((Level) world)) {
+
 					try {
+						// init the db manager
 						DbManager.start();
+						// schedule db backups
+						ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+						ScheduledFuture<?> resultFuture
+								= executorService.scheduleAtFixedRate(DbManager::runBackupScript, 5, Config.ServerConfig.DATABASE.backupInterval.get(), TimeUnit.MINUTES);
+
 					} catch (DbInitializationException e) {
 						LegacyVault.LOGGER.error("Unable to start database manager:", e);
 					}
-					
-					if (world.getServer().isHardcore()) {
+
+					if (isHardCore) {
 						LegacyVault.instance.setHardCore(true);
 					}
+					isLoaded = true;
 				}
+
+//			}
+	}
+
+	private static long lastTickTime = 0;
+	@SubscribeEvent
+	public static void playerTick(TickEvent.LevelTickEvent event) {
+
+		if (event.phase == TickEvent.Phase.END) {
+			if (lastTickTime == 0) {
+				lastTickTime = event.level.getGameTime();
 			}
+
+			// if 5 minutes have passed
+			if (event.level.getGameTime() - lastTickTime > 6000) {
+				// TODO spin a new thread
+				// dump the h2 db
+				DbManager.runBackupScript();
+			}
+		}
 	}
 }

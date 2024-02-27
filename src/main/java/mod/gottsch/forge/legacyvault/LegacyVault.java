@@ -19,6 +19,8 @@
  */
 package mod.gottsch.forge.legacyvault;
 
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +43,9 @@ import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig.Type;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 
@@ -81,6 +86,14 @@ public class LegacyVault {
         
         // register 'ClientSetup::init' to be called at mod setup time (client only)
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modEventBus.addListener(ClientSetup::init)); 	
+	}
+
+	// TODO this only gets called on dedicated server - not SP.
+	@SubscribeEvent
+	public void onServerStarting(ServerStartingEvent event) {
+		// Do something when the server starts
+		LOGGER.info("HELLO from server starting");
+
 	}
 
 	/**

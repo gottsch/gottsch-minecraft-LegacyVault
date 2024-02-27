@@ -3,6 +3,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+//    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 version = "${minecraft_version}-${mod_version}"
@@ -85,11 +86,12 @@ repositories {
     maven {
         url = "https://maven.theillusivec4.top/"
     }
-    
+
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
-    // flatDir {
-    //     dir 'libs'
-    // }
+     flatDir {
+         dir 'libs'
+     }
+
 }
 
 dependencies {
@@ -99,7 +101,12 @@ dependencies {
     //minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 	implementation fg.deobf("gottsch:gottschcore:1.20.1-2.1.0")
-    implementation fg.deobf("com.h2database:h2:1.4.187")
+//    implementation fg.deobf("com.h2database:h2:1.4.187")
+//    implementation fg.deobf("com.h2database:h2:2.2.224")
+    // https://mvnrepository.com/artifact/com.h2database/h2
+  //  testImplementation 'com.h2database:h2:2.2.224'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation fg.deobf("com.j256.ormlite:ormlite-core:5.0")
     implementation fg.deobf("com.j256.ormlite:ormlite-jdbc:5.0")
 }
@@ -138,7 +145,16 @@ tasks.named('jar', Jar).configure {
     }
 
     // for PROD only
+//    from (zipTree('../ModCommonLibs/libs/h2-1.4.200.jar')) {
+//        exclude 'META-INF/**'
+//    }
+    from (zipTree('../ModCommonLibs/libs/commons-exec-1.4.0.jar')) {
+        exclude 'META-INF/**'
+    }
     from (zipTree('../ModCommonLibs/libs/h2-1.4.187.jar')) {
+        exclude 'META-INF/**'
+    }
+    from (zipTree('../ModCommonLibs/libs/H2_X2_SHADOW_JAR-1.0-SNAPSHOT-fat.jar')) {
         exclude 'META-INF/**'
     }
     from (zipTree('../ModCommonLibs/libs/ormlite-core-5.0.jar')) {
@@ -175,3 +191,16 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+//shadowJar {
+//    // replace the default JAR
+//    archiveClassifier = 'fat'
+//
+//    dependencies {
+//        include(dependency(files('h2-1.4.187.jar')))
+//    }
+//    relocate 'org.h2', 'mod.gottsch.forge.legacyvault.shade.org.h2.v1_4_187'
+//
+//}
+//
+//jar.finalizedBy shadowJar
