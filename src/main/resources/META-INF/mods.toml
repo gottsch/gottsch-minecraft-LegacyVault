@@ -14,7 +14,7 @@ issueTrackerURL="https://github.com/gottsch/gottsch-minecraft-LegacyVault/issues
 [[mods]] #mandatory
 
 # The modid of the mod
-modId="legacyvault" #mandatory
+modId="${mod_id}" #mandatory
 
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${mod_version}" #mandatory
@@ -35,7 +35,7 @@ logoFile="legacyvault-curseforge-logo.png" #optional
 credits="" #optional
 
 # A text field displayed in the mod UI
-authors="gottsch" #optional
+authors="${mod_authors}" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description="Legacy Vault is a mod that allows a player(s) to store inventory between worlds."
