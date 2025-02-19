@@ -1,0 +1,107 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:not",
+          "value": {
+            "type": "forge:tag_empty",
+            "tag": "legacyvault:difficulty/normal"
+          }
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "c": {
+            "item": "minecraft:chest"
+          },
+          "i": {
+            "item": "minecraft:iron_ingot"
+          },
+          "v": {
+            "tag": "legacyvault:ingredients/vault_contracts"
+          }
+        },
+        "pattern": [
+          "iiv",
+          "ici",
+          "iii"
+        ],
+        "result": {
+          "item": "legacyvault:rustic_vault"
+        },
+        "show_notification": true
+      }
+    },
+    {
+      "conditions": [
+        {
+          "type": "forge:not",
+          "value": {
+            "type": "forge:tag_empty",
+            "tag": "legacyvault:difficulty/easy"
+          }
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "c": {
+            "item": "minecraft:barrel"
+          },
+          "v": {
+            "tag": "legacyvault:ingredients/vault_contracts"
+          }
+        },
+        "pattern": [
+          "  v",
+          " c ",
+          "   "
+        ],
+        "result": {
+          "item": "legacyvault:rustic_vault"
+        },
+        "show_notification": true
+      }
+    },
+    {
+      "conditions": [
+        {
+          "type": "forge:not",
+          "value": {
+            "type": "forge:tag_empty",
+            "tag": "legacyvault:difficulty/hard"
+          }
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "c": {
+            "item": "minecraft:barrel"
+          },
+          "i": {
+            "item": "minecraft:iron_block"
+          },
+          "v": {
+            "tag": "legacyvault:ingredients/vault_contracts"
+          }
+        },
+        "pattern": [
+          "iiv",
+          "ici",
+          "iii"
+        ],
+        "result": {
+          "item": "legacyvault:rustic_vault"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

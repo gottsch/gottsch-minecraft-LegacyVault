@@ -1,0 +1,11 @@
+{
+  "block.legacyvault.classic_vault": "Classic Vault",
+  "block.legacyvault.rustic_vault": "Rustic Vault",
+  "item.legacyvault.vault_application": "Vault Application",
+  "item.legacyvault.vault_contract": "Vault Contract",
+  "screen.legacyvault.public_vault": "Public Vault",
+  "screen.legacyvault.unlimited_vaults": "Vaults Remaining: Unlimited",
+  "screen.legacyvault.vault.name": "Legacy Vault",
+  "screen.legacyvault.vaults_remaining": "Vaults Remaining: %s of %s",
+  "tooltip.legacyvault.hold_shift": "Hold [SHIFT] to expand"
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "item": "minecraft:ink_sac"
+    },
+    "p": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    "pip",
+    "pip",
+    "pip"
+  ],
+  "result": {
+    "item": "legacyvault:vault_contract"
+  },
+  "show_notification": true
+}
