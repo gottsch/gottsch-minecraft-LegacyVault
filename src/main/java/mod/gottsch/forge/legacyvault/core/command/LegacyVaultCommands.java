@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.Mod;
  * @author Mark Gottschling on Jun 5, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MODID)
+@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID)
 public class LegacyVaultCommands {
 	@SubscribeEvent
 	public static void register(RegisterCommandsEvent event) {

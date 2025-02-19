@@ -6,7 +6,7 @@
       "entries": [
         {
            "type": "minecraft:item",
-           "name": "legacyvault:vault"
+           "name": "legacyvault:rustic_vault"
         }
       ],
       "conditions": [

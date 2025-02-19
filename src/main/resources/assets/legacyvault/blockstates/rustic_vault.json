@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=north": { "model": "legacyvault:block/rustic_vault" },
+        "facing=south": { "model": "legacyvault:block/rustic_vault", "y": 180, "uvlock": true },
+        "facing=west":  { "model": "legacyvault:block/rustic_vault", "y": 270, "uvlock": true },
+        "facing=east":  { "model": "legacyvault:block/rustic_vault", "y": 90, "uvlock": true },
+        "facing=up": { "model": "legacyvault:block/rustic_vault" },
+        "facing=down": { "model": "legacyvault:block/rustic_vault" }
+    }
+}

@@ -1,0 +1,134 @@
+
+package mod.gottsch.forge.legacyvault.datagen;
+
+
+import mod.gottsch.forge.legacyvault.core.block.ModBlocks;
+import mod.gottsch.forge.legacyvault.core.item.ModItems;
+import mod.gottsch.forge.legacyvault.core.tags.ModTags;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+
+import java.util.function.Consumer;
+
+/**
+ * TODO this is insane... just use a manual recipe
+ * @author Mark Gottschling Feb 2, 2025
+ *
+ */
+public class Recipes extends RecipeProvider implements IConditionBuilder {
+
+	public Recipes(PackOutput generator) {
+		super(generator);
+	}
+
+	@Override
+	protected void buildRecipes(Consumer<FinishedRecipe> recipe) {
+
+		// contract
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CONTRACT.get())
+				.pattern("pip")
+				.pattern("pip")
+				.pattern("pip")
+				.define('p', Items.PAPER)
+				.define('i', Items.INK_SAC)
+				.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
+						Items.PAPER, Items.INK_SAC))
+				.save(recipe);
+
+		// rustic vault
+		ConditionalRecipe.builder()
+				// Add the conditions for the recipe
+				.addCondition(
+					not(
+						tagEmpty(ModTags.Items.NORMAL_RECIPE)
+					)
+				)
+				.addRecipe(rustic -> {
+					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
+							.pattern(	"iiv")
+							.pattern("ici")
+							.pattern("iii")
+							.define('i', Items.IRON_INGOT)
+							.define('v', ModTags.Items.VAULT_CONTRACTS)
+							.define('c', Items.CHEST)
+							.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
+									Items.CHEST, Items.IRON_INGOT, ModItems.CONTRACT.get()))
+							.save(rustic);
+				})
+				.addCondition(not(tagEmpty(ModTags.Items.EASY_RECIPE)))
+				.addRecipe(this::buildEasyDifficultyVaultRecipe)
+				.addCondition(not(tagEmpty(ModTags.Items.HARD_RECIPE)))
+				.addRecipe(this::buildHardDifficultyVaultRecipe)
+				.build(recipe, ModBlocks.RUSTIC_VAULT.getId());
+
+		// classic vault
+//		ConditionalRecipe.builder()
+//				// Add the conditions for the recipe
+//				.addCondition(not(tagEmpty(LegacyVaultTags.Items.NORMAL_RECIPE)))
+//				.addRecipe(rustic -> {
+//					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CLASSIC_VAULT.get())
+//							.pattern(	"iiv")
+//							.pattern("ici")
+//							.pattern("iii")
+//							.define('i', Items.IRON_INGOT)
+//							.define('v', LegacyVaultTags.Items.VAULT_CONTRACTS)
+//							.define('c', Items.BARREL)
+//							.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
+//									Items.BARREL, Items.IRON_INGOT, ModItems.CONTRACT.get()))
+//							.save(rustic);
+//				})
+//				.addCondition(not(tagEmpty(LegacyVaultTags.Items.EASY_RECIPE)))
+//				.addRecipe(this::buildEasyDifficultyVaultRecipe)
+//				.addCondition(not(tagEmpty(LegacyVaultTags.Items.HARD_RECIPE)))
+//				.addRecipe(this::buildHardDifficultyVaultRecipe)
+//				.build(recipe, ModBlocks.CLASSIC_VAULT.getId());
+	}
+
+	protected void buildNormalDifficultyVaultRecipe(Consumer<FinishedRecipe> recipe) {
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
+				.pattern(	"iiv")
+				.pattern("ici")
+				.pattern("iii")
+				.define('i', Items.IRON_INGOT)
+				.define('v', ModTags.Items.VAULT_CONTRACTS)
+				.define('c', Items.CHEST)
+				.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
+						Items.CHEST, Items.IRON_INGOT, ModItems.CONTRACT.get()))
+				.save(recipe);
+	}
+
+	protected void buildEasyDifficultyVaultRecipe(Consumer<FinishedRecipe> recipe) {
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
+				.pattern(	"  v")
+				.pattern(" c ")
+				.pattern("   ")
+				.define('v', ModTags.Items.VAULT_CONTRACTS)
+				.define('c', Items.BARREL)
+				.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
+						Items.BARREL, ModItems.CONTRACT.get()))
+				.save(recipe);
+	}
+
+	protected void buildHardDifficultyVaultRecipe(Consumer<FinishedRecipe> recipe) {
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
+				.pattern(	"iiv")
+				.pattern("ici")
+				.pattern("iii")
+				.define('i', Items.IRON_BLOCK)
+				.define('v', ModTags.Items.VAULT_CONTRACTS)
+				.define('c', Items.BARREL)
+				.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
+						Items.BARREL, Items.IRON_BLOCK, ModItems.CONTRACT.get()))
+				.save(recipe);
+	}
+}

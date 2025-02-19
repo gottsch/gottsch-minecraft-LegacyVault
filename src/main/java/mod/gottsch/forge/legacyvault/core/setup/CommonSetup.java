@@ -21,13 +21,13 @@ package mod.gottsch.forge.legacyvault.core.setup;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.config.Config;
+import mod.gottsch.forge.legacyvault.core.item.ModItems;
 import mod.gottsch.forge.legacyvault.core.network.LegacyVaultNetworking;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 /**
@@ -35,28 +35,20 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
  * @author Mark Gottschling on Jun 15, 2022
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CommonSetup {
 	
 	public static void init(final FMLCommonSetupEvent event) {
-		event.enqueueWork(() ->  {
-			LegacyVaultNetworking.register();
-		});
-		Config.instance.addRollingFileAppender(LegacyVault.MODID);
-
-	}
-	
-	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)
-	public static class ForgeBusSubscriber {
-
+		event.enqueueWork(LegacyVaultNetworking::register);
+		Config.instance.addRollingFileAppender(LegacyVault.MOD_ID);
 	}
 
 	@SubscribeEvent
 	public static void registemItemsToTab(BuildCreativeModeTabContentsEvent event) {
 		if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-			event.accept(Registration.VAULT_ITEM.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
-			event.accept(Registration.APPLICATION.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
-
+			event.accept(ModItems.RUSTIC_VAULT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(ModItems.CLASSIC_VAULT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(ModItems.CONTRACT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
 		}
 	}
 }

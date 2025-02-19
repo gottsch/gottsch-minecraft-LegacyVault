@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -23,7 +23,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.block.entity.VaultBlockEntity;
+import mod.gottsch.forge.legacyvault.core.block.entity.ClassicVaultBlockEntity;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -42,8 +42,8 @@ import net.minecraft.resources.ResourceLocation;
  *
  * @param <T>
  */
-public class VaultModel extends Model implements IVaultModel {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(LegacyVault.MODID, "vault"), "main");
+public class ClassicVaultModel extends Model implements IVaultModel {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(LegacyVault.MOD_ID, "vault"), "main");
 	
 	private final ModelPart mainGroup;
 	private final ModelPart doorGroup;
@@ -55,7 +55,7 @@ public class VaultModel extends Model implements IVaultModel {
 	 * 
 	 * @param root
 	 */
-	public VaultModel(ModelPart root) {
+	public ClassicVaultModel(ModelPart root) {
 		super(RenderType::entitySolid);
 		this.mainGroup = root.getChild("mainGroup");
 		this.doorGroup = root.getChild("doorGroup");
@@ -116,10 +116,8 @@ public class VaultModel extends Model implements IVaultModel {
 
 	/**
 	 * Perform animation modifications to the model.
-	 * @param vaultBlockEntity
-	 * @param partialTicks
 	 */
-	public void setupAnim(VaultBlockEntity entity, float partialTicks) {
+	public void setupAnim(ClassicVaultBlockEntity entity, float partialTicks) {
 		// move the rotation calculations to here from entity.
 		// ie set y-rotation etc
 		if (entity.isLidClosed()) {

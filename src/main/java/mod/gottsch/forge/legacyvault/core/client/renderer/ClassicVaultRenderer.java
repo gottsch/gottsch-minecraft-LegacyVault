@@ -24,10 +24,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.block.VaultBlock;
+import mod.gottsch.forge.legacyvault.core.block.RusticVaultBlock;
+import mod.gottsch.forge.legacyvault.core.block.entity.ClassicVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.block.entity.IVaultBlockEntity;
-import mod.gottsch.forge.legacyvault.core.block.entity.VaultBlockEntity;
-import mod.gottsch.forge.legacyvault.core.client.model.VaultModel;
+import mod.gottsch.forge.legacyvault.core.client.model.ClassicVaultModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -45,28 +45,28 @@ import net.minecraft.world.phys.Vec3;
  * @author Mark Gottschling on Aug 9, 2022
  *
  */
-public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity>{
+public class ClassicVaultRenderer implements BlockEntityRenderer<ClassicVaultBlockEntity>{
 	
 	/*
 	 * NOTE when defining a resource location for the Atlas, you don't need to specify the /textures/ parent folder nor, the .png extension
 	 */
-	public static final ResourceLocation VAULT_RENDERER_ATLAS_TEXTURE = new ResourceLocation(LegacyVault.MODID, "entity/vault/vault");
+	public static final ResourceLocation VAULT_RENDERER_ATLAS_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "entity/vault/vault");
 
 	private Material material;
-	private VaultModel vaultModel;
+	private ClassicVaultModel vaultModel;
 	
 	/**
 	 * 
 	 * @param context
 	 */
-	public VaultRenderer(BlockEntityRendererProvider.Context context) {
-		this.vaultModel = new VaultModel(context.bakeLayer(VaultModel.LAYER_LOCATION));
+	public ClassicVaultRenderer(BlockEntityRendererProvider.Context context) {
+		this.vaultModel = new ClassicVaultModel(context.bakeLayer(ClassicVaultModel.LAYER_LOCATION));
 		material = new Material(TextureAtlas.LOCATION_BLOCKS, VAULT_RENDERER_ATLAS_TEXTURE);
 	}
 	
 	@Override
-	public void render(VaultBlockEntity vaultBlockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
-			int combinedLight, int combinedOverlay) {
+	public void render(ClassicVaultBlockEntity vaultBlockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource,
+					   int combinedLight, int combinedOverlay) {
 
 		if (!(vaultBlockEntity instanceof IVaultBlockEntity)) {
 			return; // should never happen
@@ -77,7 +77,7 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity>{
 		BlockState state = vaultBlockEntity.getBlockState();
 		Direction facing = Direction.NORTH;
 		if (hasWorld) {
-			facing = state.getValue(VaultBlock.FACING);
+			facing = state.getValue(RusticVaultBlock.FACING);
 		}
 //		LegacyVault.LOGGER.info("rendering from client or server? -> {}", world.isClientSide);
 //		LegacyVault.LOGGER.info("openCount? -> {}", vaultBlockEntity.openCount);
@@ -104,7 +104,6 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity>{
 
 	/**
 	 * Helper method since all my models face the opposite direction of vanilla models
-	 * @param meta
 	 * @return
 	 */
 	public int getHorizontalAngle(Direction facing) {

@@ -28,12 +28,15 @@ import net.minecraft.world.item.Item;
  * @author Mark Gottschling Jan 16, 2023
  *
  */
-public class LegacyVaultTags {
+public class ModTags {
 	
 	public static class Items {
-		public static final TagKey<Item> EASY_RECIPE = mod(LegacyVault.MODID, "difficulty/easy");
-		public static final TagKey<Item> NORMAL_RECIPE = mod(LegacyVault.MODID, "difficulty/normal");
-		public static final TagKey<Item> HARD_RECIPE = mod(LegacyVault.MODID, "difficulty/hard");
+		public static final TagKey<Item> EASY_RECIPE = mod(LegacyVault.MOD_ID, "difficulty/easy");
+		public static final TagKey<Item> NORMAL_RECIPE = mod(LegacyVault.MOD_ID, "difficulty/normal");
+		public static final TagKey<Item> HARD_RECIPE = mod(LegacyVault.MOD_ID, "difficulty/hard");
+
+		// to support legacy vault ingredients
+		public static final TagKey<Item> VAULT_CONTRACTS = mod(LegacyVault.MOD_ID, "ingredients/vault_contracts");
 
 		public static TagKey<Item> mod(String domain, String path) {
 			return ItemTags.create(new ResourceLocation(domain, path));

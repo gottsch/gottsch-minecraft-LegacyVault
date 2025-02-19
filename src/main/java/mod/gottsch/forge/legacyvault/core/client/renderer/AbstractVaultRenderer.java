@@ -1,7 +1,7 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
- * 
+ * Copyright (c) 2025 Mark Gottschling (gottsch)
+ *
  * All rights reserved.
  *
  * Legacy Vault is free software: you can redistribute it and/or modify
@@ -17,16 +17,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package mod.gottsch.forge.legacyvault.core.block;
+package mod.gottsch.forge.legacyvault.core.client.renderer;
 
-import net.minecraft.world.level.block.Block;
+import mod.gottsch.forge.legacyvault.core.block.entity.RusticVaultBlockEntity;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.resources.model.Material;
 
 /**
- * @author Mark Gottschling on Apr 29, 2021
- *
+ * Created by Mark Gottschling on 2/18/2025
  */
-public class LegacyVaultBlocks {
+public abstract class AbstractVaultRenderer implements BlockEntityRenderer<RusticVaultBlockEntity> {
 
-	public static Block VAULT = null;
+    private Material material;
+    private EntityModel<?> vaultModel;
 
 }

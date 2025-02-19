@@ -27,7 +27,7 @@ import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.core.network.VaultCountMessageToClient;
-import mod.gottsch.forge.legacyvault.core.util.LegacyVaultHelper;
+import mod.gottsch.forge.legacyvault.core.util.ModUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -66,7 +66,8 @@ public class VaultBlockItem extends BlockItem {
 			if (context.getPlayer().isCreative()) {
 				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 			}			
-			
+
+			// TODO add access checks ie Ops, or admin list
 			if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
 				return false;
 				// TODO how does Admin place then?
@@ -74,12 +75,16 @@ public class VaultBlockItem extends BlockItem {
 			else {
 				
 				// get  player capabilities
-				IPlayerVaultsHandler cap = LegacyVaultHelper.getPlayerCapability(context.getPlayer());
-				LegacyVault.LOGGER.debug("player vault count -> {}", cap.getCount());
+				IPlayerVaultsHandler cap = ModUtil.getPlayerCapability(context.getPlayer());
+				if (LegacyVault.LOGGER.isDebugEnabled()) {
+					LegacyVault.LOGGER.debug("player vault count -> {}", cap.getCount());
+				}
 				
-				if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
+				if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
 					if (cap != null && cap.getCount() < ServerConfig.GENERAL.vaultsPerPlayer.get()) {
-						LegacyVault.LOGGER.debug("player branch count less than config -> {}", ServerConfig.GENERAL.vaultsPerPlayer.get());
+						if (LegacyVault.LOGGER.isDebugEnabled()) {
+							LegacyVault.LOGGER.debug("player branch count less than config -> {}", ServerConfig.GENERAL.vaultsPerPlayer.get());
+						}
 
 						// increment capability size
 						int count = cap.getCount() + 1;

@@ -34,7 +34,7 @@ import net.minecraftforge.common.util.LazyOptional;
  *
  */
 public class PlayerVaultsCapability implements ICapabilitySerializable<CompoundTag> {
-	public static final ResourceLocation ID = new ResourceLocation(LegacyVault.MODID, "playervaults");
+	public static final ResourceLocation ID = new ResourceLocation(LegacyVault.MOD_ID, "playervaults");
 	
 	// reference of handler/data for easy access
 	private final PlayerVaultsHandler handler = new PlayerVaultsHandler();

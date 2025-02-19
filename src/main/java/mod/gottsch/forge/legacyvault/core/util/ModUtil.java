@@ -19,42 +19,20 @@
  */
 package mod.gottsch.forge.legacyvault.core.util;
 
-import java.nio.file.Path;
-import java.util.Optional;
 import java.util.UUID;
 
 import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 
 /**
  * @author Mark Gottschling on Jun 6, 2021
  *
  */
-public class LegacyVaultHelper {
-
-//	/**
-//	 *
-//	 * @param level
-//	 * @return
-//	 */
-//	public static Optional<Path> getWorldSaveFolder(ServerLevel level) {
-//		Object save = ObfuscationReflectionHelper.getPrivateValue(MinecraftServer.class, level.getServer(), SAVE_FORMAT_LEVEL_SAVE_SRG_NAME);
-//		if (save instanceof LevelStorageSource.LevelStorageAccess) {
-//			Path path = ((LevelStorageSource.LevelStorageAccess) save)
-//					.getWorldDir().resolve(((LevelStorageSource.LevelStorageAccess) save).getLevelId())
-//					.resolve("datapacks");
-//			return Optional.of(path);
-//		}
-//		return Optional.empty();
-//	}
+public class ModUtil {
 
 	public static IPlayerVaultsHandler getPlayerCapability(Player player) {
 		IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
@@ -86,9 +64,9 @@ public class LegacyVaultHelper {
 	 * @param playerUUID
 	 * @return
 	 */
-	public static boolean doesPlayerHavePulicAccess(Level world, String playerUUID) {
+	public static boolean doesPlayerHavePublicAccess(Level world, String playerUUID) {
 		Player player = world.getPlayerByUUID(UUID.fromString(playerUUID));
-		return doesPlayerHavePulicAccess(player);
+		return doesPlayerHavePublicAccess(player);
 	}
 	
 	/**
@@ -96,7 +74,7 @@ public class LegacyVaultHelper {
 	 * @param player
 	 * @return
 	 */
-	public static boolean doesPlayerHavePulicAccess(Player player) {
+	public static boolean doesPlayerHavePublicAccess(Player player) {
 		if (player == null) {
 			return false;
 		}

@@ -30,7 +30,7 @@ import mod.gottsch.forge.gottschcore.spatial.Heading;
 import mod.gottsch.forge.gottschcore.spatial.ICoords;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.ILegacyVaultBlock;
-import mod.gottsch.forge.legacyvault.core.block.LegacyVaultBlocks;
+import mod.gottsch.forge.legacyvault.core.block.ModBlocks;
 import mod.gottsch.forge.legacyvault.core.block.entity.IVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
@@ -113,7 +113,7 @@ public class SpawnVaultCommand {
 			
 			// place vault
 			ServerLevel world = source.getLevel();
-			world.setBlockAndUpdate(pos, LegacyVaultBlocks.VAULT.defaultBlockState().setValue(ILegacyVaultBlock.FACING, direction));
+			world.setBlockAndUpdate(pos, ModBlocks.RUSTIC_VAULT.get().defaultBlockState().setValue(ILegacyVaultBlock.FACING, direction));
 			IVaultBlockEntity blockEntity = (IVaultBlockEntity) world.getBlockEntity(pos);
 			if (blockEntity == null) {
 				// remove block
@@ -137,7 +137,7 @@ public class SpawnVaultCommand {
 			});
 			
 			// increment capability size
-			if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
+			if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
 				int count = cap.getCount() + 1;
 				count = count > ServerConfig.GENERAL.vaultsPerPlayer.get() ? ServerConfig.GENERAL.vaultsPerPlayer.get() : count;
 				cap.setCount(count);

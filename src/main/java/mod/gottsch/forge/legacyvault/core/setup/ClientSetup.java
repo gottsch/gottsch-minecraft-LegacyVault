@@ -20,9 +20,14 @@
 package mod.gottsch.forge.legacyvault.core.setup;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.client.model.VaultModel;
-import mod.gottsch.forge.legacyvault.core.client.renderer.VaultRenderer;
+import mod.gottsch.forge.legacyvault.core.block.ModBlocks;
+import mod.gottsch.forge.legacyvault.core.block.entity.ModBlockEntities;
+import mod.gottsch.forge.legacyvault.core.client.model.RusticVaultModel;
+import mod.gottsch.forge.legacyvault.core.client.model.ClassicVaultModel;
+import mod.gottsch.forge.legacyvault.core.client.renderer.RusticVaultRenderer;
+import mod.gottsch.forge.legacyvault.core.client.renderer.ClassicVaultRenderer;
 import mod.gottsch.forge.legacyvault.core.gui.VaultScreen;
+import mod.gottsch.forge.legacyvault.core.inventory.ModContainers;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -37,7 +42,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
  * @author Mark Gottschling
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
 	
 	/**
@@ -46,8 +51,9 @@ public class ClientSetup {
 	 */
     public static void init(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MenuScreens.register(Registration.VAULT_CONTAINER.get(), VaultScreen::new);           // attach our container to the screen
-            ItemBlockRenderTypes.setRenderLayer(Registration.VAULT.get(), RenderType.cutoutMipped());
+            MenuScreens.register(ModContainers.VAULT_CONTAINER.get(), VaultScreen::new);  // attach our container to the screen
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.RUSTIC_VAULT.get(), RenderType.cutoutMipped());
+			ItemBlockRenderTypes.setRenderLayer(ModBlocks.CLASSIC_VAULT.get(), RenderType.cutoutMipped());
         });
     }
     
@@ -57,7 +63,8 @@ public class ClientSetup {
 	 */
 	@SubscribeEvent
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
-		event.registerBlockEntityRenderer(Registration.VAULT_BLOCK_ENTITY_TYPE.get(), VaultRenderer::new);
+		event.registerBlockEntityRenderer(ModBlockEntities.RUSTIC_VAULT.get(), RusticVaultRenderer::new);
+		event.registerBlockEntityRenderer(ModBlockEntities.CLASSIC_VAULT.get(), ClassicVaultRenderer::new);
 	}
 	
 	/**
@@ -66,6 +73,7 @@ public class ClientSetup {
 	 */
 	@SubscribeEvent()
 	public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-		event.registerLayerDefinition(VaultModel.LAYER_LOCATION, VaultModel::createBodyLayer);
+		event.registerLayerDefinition(ClassicVaultModel.LAYER_LOCATION, ClassicVaultModel::createBodyLayer);
+		event.registerLayerDefinition(RusticVaultModel.LAYER_LOCATION, RusticVaultModel::createBodyLayer);
 	}
 }

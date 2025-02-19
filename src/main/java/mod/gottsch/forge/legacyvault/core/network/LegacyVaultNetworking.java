@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -37,7 +37,7 @@ public class LegacyVaultNetworking {
 	
 	public static final String PROTOCOL_VERSION = "1.0";
 	public static final int VAULT_COUNT_MESSAGE_ID = 14;	
-	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MODID, "legacy_vault_channel");
+	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MOD_ID, "legacy_vault_channel");
 	
 	public static SimpleChannel channel;    // used to transmit your network messages
 

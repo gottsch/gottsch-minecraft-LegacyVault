@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -24,9 +24,11 @@ package mod.gottsch.forge.legacyvault.core.inventory;
  *
  */
 public enum VaultSlotSize {
-	SMALL(27),
-	MEDIUM(54),
-	LARGE(91);
+	STANDARD(27),
+	VANILLA(27),
+	LARGE(54),
+	DOUBLE(54),
+	XLARGE(84);
 
 	private int size;
 	

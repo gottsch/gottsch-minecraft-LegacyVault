@@ -88,22 +88,22 @@ public class VaultPersistenceManager {
 
         try {
             // get the file from the file system
-            Path directoryPath = Paths.get(FMLPaths.CONFIGDIR.get().toString(), LegacyVault.MODID).toAbsolutePath();
+            Path directoryPath = Paths.get(FMLPaths.CONFIGDIR.get().toString(), LegacyVault.MOD_ID).toAbsolutePath();
             Files.createDirectories(directoryPath);
             Path filePath = directoryPath.resolve(key);
             if (Files.exists(filePath) && !Files.isDirectory(filePath, new LinkOption[]{})) {
                 FileInputStream fis = new FileInputStream(filePath.toFile());
-                DataInputStream instream = new DataInputStream(fis);
+                DataInputStream dis = new DataInputStream(fis);
                 CompoundTag compound = null;
                 try {
                     // load data into a nbt compound
-                    compound = NbtIo.readCompressed(instream);
+                    compound = NbtIo.readCompressed(dis);
                     // copy items from nbt compound to inventory
                     ContainerHelper.loadAllItems(compound, persistedInventory);
                 } catch (IOException e) {
                     LegacyVault.LOGGER.error("an error occurred attempting to load vault inventory from persistence ->", e);
                 }
-               instream.close();
+               dis.close();
                 fis.close();
             }
         } catch(Exception e) {
@@ -128,7 +128,7 @@ public class VaultPersistenceManager {
             ContainerHelper.saveAllItems(compound, persistedInventory);
 
             // save to file, overwriting if it exists
-            Path dbPath = Paths.get(FMLPaths.CONFIGDIR.get().toString(), LegacyVault.MODID, key).toAbsolutePath();
+            Path dbPath = Paths.get(FMLPaths.CONFIGDIR.get().toString(), LegacyVault.MOD_ID, key).toAbsolutePath();
             try {
                 FileOutputStream fos = new FileOutputStream(dbPath.toFile());
                 DataOutputStream dos = new DataOutputStream(fos);

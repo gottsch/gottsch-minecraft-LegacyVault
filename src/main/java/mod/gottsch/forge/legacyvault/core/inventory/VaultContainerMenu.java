@@ -20,20 +20,17 @@
 package mod.gottsch.forge.legacyvault.core.inventory;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.block.entity.VaultBlockEntity;
+import mod.gottsch.forge.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.config.Config;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.entity.Account;
 import mod.gottsch.forge.legacyvault.core.persistence.VaultPersistenceManager;
-import mod.gottsch.forge.legacyvault.core.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -49,7 +46,7 @@ import java.util.Optional;
  */
 public class VaultContainerMenu extends AbstractContainerMenu {
 	// the backing block entity
-	private VaultBlockEntity blockEntity;
+	private AbstractVaultBlockEntity blockEntity;
 	// the player opening the vault
 	private Player playerEntity;
 	// the player's inventory
@@ -91,39 +88,36 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	 * @param player
 	 */
 	public VaultContainerMenu(int containerId, BlockPos pos, Inventory playerInventory, Player player) {
-		super(Registration.VAULT_CONTAINER.get(), containerId);
+		super(ModContainers.VAULT_CONTAINER.get(), containerId);
 
 		this.playerEntity =  player;
 		this.playerInventory = new InvWrapper(playerInventory);
-		this.vaultInventory = new InvWrapper(new SimpleContainer(ServerConfig.GENERAL.inventorySize.get()));
+		this.vaultInventory = new InvWrapper(new SimpleContainer(ServerConfig.GENERAL.resolvedSize));
 
 		// load from the persistence
 		if (!player.level().isClientSide) {
 
-			// TODO the vault inventory should already be in memory in
-			// a registry. fetch is and load into vault entity inventory
+			// the persisted vault inventory should already be in memory in
+			// a registry. fetch it and load into vault entity inventory
 			Optional<NonNullList<ItemStack>> optionalInventory = VaultPersistenceManager.get(player);
-            //				this.items.clear();
-            //				this.items.addAll(optionalInventory.get());
 			// copy from persisted inventory to vault inventory
             optionalInventory.ifPresent(itemStacks -> copyInventoryTo(itemStacks, vaultInventory));
 		}
 
 		// get the block entity
-		blockEntity = (VaultBlockEntity)player.getCommandSenderWorld().getBlockEntity(pos);
+		blockEntity = (AbstractVaultBlockEntity)player.getCommandSenderWorld().getBlockEntity(pos);
 		blockEntity.openCount++;
 
-		// TODO really need to change property to text value -> SMALL, MEDIUM, LARGE
 		// setup the internal properties dependant on the size
-		if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.SMALL.getSize()) {
+		if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.STANDARD.getSize()) {
 			// default
 		}
-		else if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.MEDIUM.getSize()) {
+		else if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.DOUBLE.getSize()) {
 			setMenuInventoryRowCount(6);
 			setPlayerInventoryYPos(138);
 			setHotbarYPos(196);
 		}
-		else if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.LARGE.getSize()) {
+		else if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.XLARGE.getSize()) {
 			setMenuInventoryColumnCount(13);
 			setMenuInventoryRowCount(7);
 			setPlayerInventoryXPos(45);
@@ -141,14 +135,6 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	// TODO change to take Key or key values - playerUuid, mcVersion, difficulty
 	private void loadPersistedInventory(Account account) {
 
-//		ByteArrayInputStream bais = new ByteArrayInputStream(account.getInventory());
-//		CompoundTag  compound = null;
-//		try {
-//			compound =  NbtIo.readCompressed(bais);
-//			ContainerHelper.loadAllItems(compound, this.items);
-//		} catch (IOException e) {
-//			LegacyVault.LOGGER.error("an error occurred attempting to load vault inventory from persistence ->", e);
-//		}
 	}
 
 	/**
@@ -157,34 +143,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	 * @param account
 	 */
 	private void savePersistedInventory(Account account) {
-		// TODO copy vault entity inventory to VaultPersistenceManager
-		// TODO it will be saved when the Player leaves the server.
-//		CompoundTag compound = new CompoundTag();
-//		try {
-//			LegacyVault.LOGGER.debug("saving inventory items -> {}", items);
-//			// copy from vault inventory to items list
-//			copyInventoryFrom(vaultInventory);
-//			// copy items list to nbt
-//			ContainerHelper.saveAllItems(compound, items);
-//			LegacyVault.LOGGER.debug("saving compound items -> {}", compound.getList("Items", 10));
-//
-//		} catch (Exception e) {
-//			LegacyVault.LOGGER.error("error writing inventory to NBT ->", e);
-//			return;
-//		}
-//
-//		// convert to a byte array
-//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//		try {
-//			NbtIo.writeCompressed(compound, baos);
-//		} catch (IOException e) {
-//			LegacyVault.LOGGER.error("error compressing inventory stream to compound ->", e);
-//			return;
-//		}
-//		baos.toByteArray();
-//
-//		account.setInventory(baos.toByteArray());
-//		DbManager.getInstance().saveAccount(account);
+
 	}
 
 	/**
@@ -297,8 +256,16 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public boolean stillValid(Player playerIn) {
-		return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, Registration.VAULT.get());
+	public boolean stillValid(Player player) {
+//		return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, ModBlocks.RUSTIC_VAULT.get());
+
+		// is player within distance
+		if (blockEntity != null) {
+			BlockPos pos = this.blockEntity.getBlockPos();
+			boolean withinDistance = player.distanceToSqr((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D) <= 64.0D;
+			return withinDistance && (blockEntity != null);
+		}
+		return true;
 	}
 
 	@Override
@@ -444,7 +411,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 			if (!this.moveItemStackTo(sourceStack, CONTAINER_INVENTORY_FIRST_SLOT_INDEX, CONTAINER_INVENTORY_FIRST_SLOT_INDEX + getMenuInventorySlotCount(), true)) {
 				return ItemStack.EMPTY;
 			}
-			
+
 //			if (!moveItemStackTo(sourceStack, CONTAINER_INVENTORY_FIRST_SLOT_INDEX,
 //					CONTAINER_INVENTORY_FIRST_SLOT_INDEX + getContainerInventorySlotCount(), false)) {
 //				return ItemStack.EMPTY;

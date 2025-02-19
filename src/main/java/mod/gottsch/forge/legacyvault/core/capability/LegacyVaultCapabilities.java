@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
  * @author Mark Gottschling on May 11, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = Bus.MOD)
+@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = Bus.MOD)
 public class LegacyVaultCapabilities {
 	public static Capability<IPlayerVaultsHandler> PLAYER_VAULTS_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {	});
 	
@@ -52,7 +52,7 @@ public class LegacyVaultCapabilities {
 	/**
 	 * Forge Bus Event Subscriber class
 	 */
-	@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)
+	@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
 	public static class ForgeBusSubscriber {
 		/*
 		 * NOTE called before entity is spawned in world

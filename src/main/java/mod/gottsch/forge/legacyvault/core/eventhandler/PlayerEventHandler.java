@@ -38,7 +38,7 @@ import net.minecraftforge.network.PacketDistributor;
  * @author Mark Gottschling on May 12, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
 public class PlayerEventHandler {
 
 	// player vault files will be loaded when player joins level
@@ -57,7 +57,7 @@ public class PlayerEventHandler {
 
 		// TODO review this block - this is mainly to get the # of remaining vaults available to the user and update GUI
 		// update client players capabilities
-		if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && ServerConfig.GENERAL.enableLimitedVaults.get()) {
+		if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && !ServerConfig.GENERAL.unlimitedVaults.get()) {
 			// get  player capabilities
 			IPlayerVaultsHandler cap = event.getEntity().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");

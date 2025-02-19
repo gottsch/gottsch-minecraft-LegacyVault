@@ -32,7 +32,8 @@ import net.minecraftforge.registries.RegisterEvent;
  * @author Mark Gottschling on May 26, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
+@Deprecated
+@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class LegacyVaultRecipes {
 
 	@SubscribeEvent

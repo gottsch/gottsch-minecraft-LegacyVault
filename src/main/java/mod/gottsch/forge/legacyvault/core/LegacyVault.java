@@ -24,10 +24,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mod.gottsch.forge.legacyvault.core.config.Config;
-import mod.gottsch.forge.legacyvault.core.eventhandler.WorldEventHandler;
 import mod.gottsch.forge.legacyvault.core.setup.ClientSetup;
 import mod.gottsch.forge.legacyvault.core.setup.CommonSetup;
-import mod.gottsch.forge.legacyvault.core.setup.LegacyVaultSetup;
 import mod.gottsch.forge.legacyvault.core.setup.Registration;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,14 +42,14 @@ import net.minecraftforge.fml.config.ModConfig.Type;
  * @author Mark Gottschling on Jun 15, 2022
  *
  */
-@Mod(LegacyVault.MODID)
+@Mod(LegacyVault.MOD_ID)
 public class LegacyVault {
 	// logger
-	public static final Logger LOGGER = LogManager.getLogger(LegacyVault.MODID);
+	public static final Logger LOGGER = LogManager.getLogger(LegacyVault.MOD_ID);
 
-	public static final String MODID = "legacyvault";
+	public static final String MOD_ID = "legacyvault";
 	// TODO don't like that this is here - how to access from the mods.toml file
-	public static final String MC_VERSION = "1.20.1";
+	public static final String MC_VERSION = "1.20";
 
 	public static LegacyVault instance;
 	private boolean  hardCore = false;
@@ -85,7 +83,7 @@ public class LegacyVault {
 	 * @param event
 	 */
 	private void config(final ModConfigEvent event) {
-		if (event.getConfig().getModId().equals(MODID)) {
+		if (event.getConfig().getModId().equals(MOD_ID)) {
 			if (event.getConfig().getType() == Type.SERVER) {
 				IConfigSpec<?> spec = event.getConfig().getSpec();
 

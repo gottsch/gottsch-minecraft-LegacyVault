@@ -3,6 +3,10 @@
         {
             "type": "single",
             "resource": "legacyvault:entity/vault/vault"
+        },
+        {
+            "type": "single",
+            "resource": "legacyvault:entity/vault/rustic_vault"
         }
     ]
 }

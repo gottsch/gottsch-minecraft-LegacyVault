@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -19,10 +19,8 @@
  */
 package mod.gottsch.forge.legacyvault.core.block;
 
-import javax.annotation.Nullable;
-
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.block.entity.VaultBlockEntity;
+import mod.gottsch.forge.legacyvault.core.block.entity.ClassicVaultBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -36,12 +34,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nullable;
+
 
 /**
  * @author Mark Gottschling on Apr 29, 2021
  *
  */
-public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
+public class ClassicVaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
 	private static final VoxelShape NORTH_MAIN = Block.box(1, 1, 2, 15, 16, 15);
 	private static final VoxelShape NORTH_FOOT1 = Block.box(1, 0, 2, 3, 1, 4);
 	private static final VoxelShape NORTH_FOOT2 = Block.box(13, 0, 2, 15, 1, 4);
@@ -66,16 +66,16 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	private static final VoxelShape WEST_FOOT3 = Block.box(13, 0, 13, 15, 1, 15);
 	private static final VoxelShape WEST_FOOT4 = Block.box(2, 0, 13, 4, 1, 15);
 
-	private static final VoxelShape NORTH_VAULT = Shapes.or(NORTH_MAIN, NORTH_FOOT1, NORTH_FOOT2, NORTH_FOOT3, NORTH_FOOT4);	
+	private static final VoxelShape NORTH_VAULT = Shapes.or(NORTH_MAIN, NORTH_FOOT1, NORTH_FOOT2, NORTH_FOOT3, NORTH_FOOT4);
 	private static final VoxelShape SOUTH_VAULT = Shapes.or(SOUTH_MAIN, SOUTH_FOOT1, SOUTH_FOOT2, SOUTH_FOOT3, SOUTH_FOOT4);
 	private static final VoxelShape EAST_VAULT = Shapes.or(EAST_MAIN, EAST_FOOT1, EAST_FOOT2, EAST_FOOT3, EAST_FOOT4);
 	private static final VoxelShape WEST_VAULT = Shapes.or(WEST_MAIN, WEST_FOOT1, WEST_FOOT2, WEST_FOOT3, WEST_FOOT4);
 
 	/**
-	 * 
+	 *
 	 * @param properties
 	 */
-	public VaultBlock(Properties properties) {
+	public ClassicVaultBlock(Properties properties) {
 		super(properties);
 		
 		setBounds(
@@ -94,7 +94,7 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		BlockEntity vaultBlockEntity = null;
 		try {
-			vaultBlockEntity = new VaultBlockEntity(pos, state);
+			vaultBlockEntity = new ClassicVaultBlockEntity(pos, state);
 		}
 		catch(Exception e) {
 			LegacyVault.LOGGER.error(e);
@@ -108,19 +108,16 @@ public class VaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
         	return (lvl, pos, blockState, t) -> {
-                if (t instanceof VaultBlockEntity entity) { // test and cast
+                if (t instanceof ClassicVaultBlockEntity entity) { // test and cast
                     entity.tickClient();
                 }
             };
         }
         return null;
-//        return (lvl, pos, blockState, t) -> {
-//            if (t instanceof VaultBlockEntity entity) { // test and cast
-//                entity.tickServer();
-//            }
-//        };
     }
-	
+
+	// TODO could move this stuff out to Abstract class
+
 	/**
 	 * 
 	 */

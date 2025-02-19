@@ -29,6 +29,7 @@ import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.inventory.VaultContainerMenu;
 import mod.gottsch.forge.legacyvault.core.inventory.VaultSlotSize;
+import mod.gottsch.forge.legacyvault.core.util.LangUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -42,9 +43,9 @@ import net.minecraft.world.entity.player.Inventory;
  */
 public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 	// the resource locations for the background images of the GUI
-	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault1c.png");
-	private static final ResourceLocation MEDIUM_BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault2c.png");
-	private static final ResourceLocation LARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MODID, "textures/gui/container/vault3c.png");
+	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/vault1c.png");
+	private static final ResourceLocation LARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/vault2c.png");
+	private static final ResourceLocation XLARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/vault3c.png");
 
 	private ResourceLocation bgTexture;
 	private Inventory inventory;
@@ -59,20 +60,20 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 
 		this.inventory = inventory;
 		
-		if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.SMALL.getSize()) {
+		if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.STANDARD.getSize()) {
 			imageWidth = 176;
 			imageHeight = 174;//167;
 			bgTexture = BG_TEXTURE;
 		}
-		else if (ServerConfig.GENERAL.inventorySize.get() <= VaultSlotSize.MEDIUM.getSize()) {
+		else if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.LARGE.getSize()) {
 			imageWidth = 176;
 			imageHeight = 228;
-			bgTexture = MEDIUM_BG_TEXTURE;
+			bgTexture = LARGE_BG_TEXTURE;
 		}
 		else {
 			imageWidth = 247;
 			imageHeight = 246;
-			bgTexture = LARGE_BG_TEXTURE;
+			bgTexture = XLARGE_BG_TEXTURE;
 		}
 	}
 
@@ -88,22 +89,23 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 		final int LABEL_XPOS = 5;
 		final int FONT_Y_SPACING = 12;
 		final int CHEST_LABEL_YPOS = getMenu().getTitleYPos() - FONT_Y_SPACING;
-        gui.drawString(this.font, Component.translatable("display.vault.name").getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
+        gui.drawString(this.font, Component.translatable(LangUtil.screen("vault.name")).getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
 
 		String vaultsRemaining = "";
+
 		if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-			vaultsRemaining = Component.translatable("display.public_vault").getString();
+			vaultsRemaining = Component.translatable(LangUtil.screen("public_vault")).getString();
 		}
 		else {
 			// check for unlimited
-			if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
+			if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
 				IPlayerVaultsHandler cap = inventory.player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 				});
-				vaultsRemaining = Component.translatable("display.vaults_remaining", String.valueOf(ServerConfig.GENERAL.vaultsPerPlayer.get() - cap.getCount()), ServerConfig.GENERAL.vaultsPerPlayer.get()).getString();
+				vaultsRemaining = Component.translatable(LangUtil.screen("display.vaults_remaining"), String.valueOf(ServerConfig.GENERAL.vaultsPerPlayer.get() - cap.getCount()), ServerConfig.GENERAL.vaultsPerPlayer.get()).getString();
 			}
 			else {
-				vaultsRemaining = Component.translatable("display.unlimited_vaults").getString();
+				vaultsRemaining = Component.translatable(LangUtil.screen("unlimited_vaults")).getString();
 			}
 		}
 		gui.drawString(this.font, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(), Color.WHITE.getRGB());

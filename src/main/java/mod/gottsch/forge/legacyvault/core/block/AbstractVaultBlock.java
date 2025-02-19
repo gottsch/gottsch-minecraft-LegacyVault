@@ -19,23 +19,19 @@
  */
 package mod.gottsch.forge.legacyvault.core.block;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import mod.gottsch.forge.gottschcore.spatial.Coords;
 import mod.gottsch.forge.gottschcore.spatial.ICoords;
 import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
+import mod.gottsch.forge.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.block.entity.IVaultBlockEntity;
-import mod.gottsch.forge.legacyvault.core.block.entity.VaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.inventory.VaultContainerMenu;
 import mod.gottsch.forge.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.core.network.VaultCountMessageToClient;
-import mod.gottsch.forge.legacyvault.core.util.LegacyVaultHelper;
+import mod.gottsch.forge.legacyvault.core.util.ModUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -60,7 +56,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Mark Gottschling on May 1, 2021
@@ -88,7 +86,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 		InteractionHand hand, BlockHitResult result) {
 
 		LegacyVault.LOGGER.debug("using vault...");
-		VaultBlockEntity blockEntity = (VaultBlockEntity) world.getBlockEntity(pos);
+		AbstractVaultBlockEntity blockEntity = (AbstractVaultBlockEntity) world.getBlockEntity(pos);
 
 		if (WorldInfo.isClientSide(world)) {
 			return InteractionResult.SUCCESS;
@@ -109,7 +107,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 				return InteractionResult.SUCCESS;
 			}
 		}
-		else if (!LegacyVaultHelper.doesPlayerHavePulicAccess(player)) {
+		else if (!ModUtil.doesPlayerHavePublicAccess(player)) {
 			LegacyVault.LOGGER.debug("player does not have access!");
 			return InteractionResult.SUCCESS;
 		}
@@ -218,7 +216,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 				});
 				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 
-				if (ServerConfig.GENERAL.enableLimitedVaults.get()) {
+				if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
 					// decrement cap vault branch count
 					if (cap.getCount() > 0) {
 						// decrement count

@@ -1,6 +1,6 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021, Mark Gottschling (gottsch)
+ * Copyright (c) 2021 Mark Gottschling (gottsch)
  * 
  * All rights reserved.
  *
@@ -27,25 +27,28 @@ import java.util.regex.Pattern;
 
 import mod.gottsch.forge.gottschcore.config.AbstractConfig;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
+import mod.gottsch.forge.legacyvault.core.inventory.VaultSlotSize;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 /**
  * 
  * @author Mark Gottschling on Apr 28, 2021
  *
  */
-@EventBusSubscriber(modid = LegacyVault.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Config extends AbstractConfig {
 
 	public static final String GENERAL_CATEGORY = "general";
 	public static final String PUBLIC_VAULT_CATEGORY = "public-vault";
-	public static final String DATABASE_CATEGORY = "database";
 	public static final String CATEGORY_DIV = "##############################";
 	public static final String UNDERLINE_DIV = "------------------------------";
 
@@ -93,46 +96,6 @@ public class Config extends AbstractConfig {
 		COMMON_SPEC = COMMON_BUILDER.build();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
 	}
-	
-	/**
-	 * 
-	 * @author Mark Gottschling on May 5, 2021
-	 *
-	 */
-	public static class BlockID {
-		public static final String VAULT_ID = "vault";
-	}
-
-	/**
-	 * 
-	 * @author Mark Gottschling on May 5, 2021
-	 *
-	 */
-	public static final class BlockEntityID {
-		public static final String VAULT_TE_ID = "vault_te";
-//		public static final String MEDIUM_VAULT_TE_ID = "medium_vault_te";
-//		public static final String LARGE_VAULT_TE_ID = "large_vault_te";
-	}
-
-	/**
-	 * 
-	 * @author Mark Gottschling on May 25, 2021
-	 *
-	 */
-	public static final class ContainerID {
-		public static final String VAULT_CONTAINER = "vault_container";
-//		public static final String MEDIUM_VAULT_CONTAINER ="medium_vault_container";
-//		public static final String LARGE_VAULT_CONTAINER = "large_vault_container";
-	}
-
-	/**
-	 * 
-	 * @author Mark Gottschling on May 25, 2021
-	 *
-	 */
-	public static final class CapabilityID {
-		public static final String PLAYER_PROVIDER = "player_cap_provider";
-	}
 
 	/**
 	 * 
@@ -151,13 +114,15 @@ public class Config extends AbstractConfig {
 		public List<Pattern> inventoryWhiteListPatterns = new ArrayList<>();
 		public List<Pattern> inventoryBlackListPatterns = new ArrayList<>();
 
-		// TODO change to text values - SMALL, MEDIUM, LARGE, etc
-		public ForgeConfigSpec.IntValue inventorySize;
+		// TODO change to text values - STANDARD, LARGE, XLARGE, etc
+		public ConfigValue<String> inventorySize;
 		public ForgeConfigSpec.IntValue stackSize;
-		public BooleanValue enableLimitedVaults;
+		public BooleanValue unlimitedVaults;
 		public IntValue vaultsPerPlayer;
 //		public ConfigValue<String> recipeDifficulty;
-		
+
+		public int resolvedSize;
+
 		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
 
 		public General(final ForgeConfigSpec.Builder builder) {
@@ -168,24 +133,25 @@ public class Config extends AbstractConfig {
 					" ie. Add legacyvault/vault to the values list in one of the difficulty tags. Default = Normal.",
 					CATEGORY_DIV).push(GENERAL_CATEGORY);
 
+			// TODO change to String and different values - STANDARD/MEDIUM/LARGE
 			inventorySize = builder
 					.comment(" Maximum capacity of the vault inventory.", 
-							" Sizes are 27 (small/standard), 54 (medium), 91 (large). (**91 is odd, I know, but it fits within the 256x256, without having to scroll.)")
-					.defineInRange("Vault inventory size:", 27, 27, 91);
+							" Sizes are standard/vanilla (27), large/double (54), xlarge (84).")
+					.define("inventorySize:", "standard");
 
 			stackSize = builder
 					.comment(" Maximum item stack size in a vault.")
-					.defineInRange("Maximum item stack size:", 64, 1, 1024);
+					.defineInRange("maxStackSize:", 64, 1, 1024);
 
 			// TODO invert this property ie enableUnlimitedVaults = false. if true overrides vaultsPerPlayer
-			enableLimitedVaults = builder
-					.comment(" Enables a limited number of vaults per player per world.",
-							" Default value = true, with 3 vaults per player.")
-					.define("Enable limited vaults player:", true);
+			unlimitedVaults = builder
+					.comment(" Enables unlimited number of vaults per player per world.",
+							" Default value = false, with 3 vaults per player.")
+					.define("unlimitedVaults", false);
 
 			vaultsPerPlayer = builder
 					.comment(" The number of vaults each player can place per world.", " Enable public vault' must be disabled.")
-					.defineInRange("Number of vaults per player:", 3, 1, 100);
+					.defineInRange("vaultsPerPlayer", 3, 1, 100);
 
 //			recipeDifficulty = builder
 //					.comment("Values are [easy | normal | hard]")
@@ -193,19 +159,19 @@ public class Config extends AbstractConfig {
 
 			inventoryWhiteList = builder
 					.comment(" Allowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs")
-					.defineList("White list by  Item/Block name:", new ArrayList<String>(), STRING_PREDICATE);
+					.defineList("inventoryWhitelist", new ArrayList<String>(), STRING_PREDICATE);
 
 			inventoryBlackList = builder
 					.comment(" Disallowed Items/Blocks for vault inventory. Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs")
-					.defineList("Black list by Item/Block name:", Arrays.asList("(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box","treasure2:milk_crate"), STRING_PREDICATE);
+					.defineList("inventoryBlacklist", Arrays.asList("(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box","treasure2:milk_crate"), STRING_PREDICATE);
 
 			tagsWhiteList = builder
 					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
-					.defineList("White list by  Tag name:", new ArrayList<String>(), STRING_PREDICATE);
+					.defineList("tagsWhitelist", new ArrayList<String>(), STRING_PREDICATE);
 
 			tagsBlackList = builder
 					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
-					.defineList("Black list by  Tag name:", new ArrayList<String>(), STRING_PREDICATE);
+					.defineList("tagsBlacklist", new ArrayList<String>(), STRING_PREDICATE);
 
 			builder.pop();
 		}
@@ -220,12 +186,18 @@ public class Config extends AbstractConfig {
 			for(String name : inventoryBlackList.get()) {
 				inventoryBlackListPatterns.add(Pattern.compile(name));
 			}
+
+			// map sizes
+			try {
+				resolvedSize = VaultSlotSize.valueOf(inventorySize.get().toUpperCase()).getSize();
+			} catch (Exception e) {
+				// TODO log warning
+				resolvedSize = VaultSlotSize.STANDARD.getSize();
+			}
 		}
 	}
 
 	/**
-	 * 
-	 * @author Mark Gottschling on Jun 6, 2021
 	 *
 	 */
 	public static class PublicVault {
@@ -245,17 +217,17 @@ public class Config extends AbstractConfig {
 					.comment(" Enables a singular global public vault(s) that can be used by all players from the same location.",
 							" ie. a vault block is not 'owned' or 'keyed' to a specific player only.",
 							" Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
-					.define("Enable public vault:", false);
+					.define("enablePublicVault", false);
 
 			playerWhiteList = builder
 					.comment(" Allowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
 							"If both White and Black lists are empty, then all players have access.")
-					.defineList("White list by player uuid:", new ArrayList<String>(), s -> s instanceof String);
+					.defineList("playerWhitelist", new ArrayList<String>(), s -> s instanceof String);
 
 			playerBlackList = builder
 					.comment(" Disallowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
 							"If both White and Black lists are empty, then all players have access.")
-					.defineList("Black list by player uuid:", new ArrayList<String>(), s -> s instanceof String);
+					.defineList("playerBlacklist", new ArrayList<String>(), s -> s instanceof String);
 
 			builder.pop();
 		}

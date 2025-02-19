@@ -19,42 +19,15 @@
  */
 package mod.gottsch.forge.legacyvault.core.block.entity;
 
-import javax.annotation.Nullable;
-
-import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.setup.Registration;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * 
  * @author Mark Gottschling on Jun 18, 2022
  *
  */
-public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
-
-	private static final String FACING_TAG ="facing";
-	private static final String OWNER_UUID_TAG = "ownerUuid";
-
-	/*
-	 * The Vault block entity does NOT contain an IItemHandler as it will never hold
-	 * any real inventory. The inventory is pulled from the database on per user basis and
-	 * the changes in the client container screen do not need to be reflected to the
-	 * back end entity.
-	 */
-
-	/** The FACING index value of the VaultBlock*/
-	private Direction facing;	
-	private String ownerUuid;
+public class ClassicVaultBlockEntity extends AbstractVaultBlockEntity {
 
 	/*
 	 * Client updated variables
@@ -77,31 +50,15 @@ public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
 	protected boolean isLidOpen = false;
 	protected boolean isLidClosed = false;
 
-	/*
-	 * Server updated properties
-	 */
-	/** The number of players currently using this chest */
-	public int openCount;
-	/** Server sync counter (once per 20 ticks) */
-	public int ticksSinceSync;
-
 	/**
-	 * 
+	 *
 	 * @param pos
 	 * @param state
 	 */
-	public VaultBlockEntity(BlockPos pos, BlockState state) {
-		super(Registration.VAULT_BLOCK_ENTITY_TYPE.get(), pos, state);
+	public ClassicVaultBlockEntity(BlockPos pos, BlockState state) {
+		super(ModBlockEntities.CLASSIC_VAULT.get(), pos, state);
 	}
 
-	@Override
-	public void setRemoved() {
-		super.setRemoved();
-	}
-
-	/**
-	 * 
-	 */
 	public void tickClient() {
 		// save the previous positions and angles of vault components
 		this.prevLidAngle = this.lidAngle;
@@ -119,7 +76,7 @@ public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
 				if (this.handleAngle <= -1.0F) {
 					this.handleAngle = -1.0F;
 					isHandleOpen = true;
-				}	
+				}
 			}
 			else {
 				isHandleOpen = true;
@@ -195,122 +152,6 @@ public class VaultBlockEntity extends BlockEntity implements IVaultBlockEntity {
 				}
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * @param sound
-	 */
-	void playSound(SoundEvent sound) {
-		double d0 = (double)getBlockPos().getX() + 0.5D;
-		double d1 = (double)getBlockPos().getY() + 0.5D;
-		double d2 = (double)getBlockPos().getZ() + 0.5D;
-//		level.playSound(player, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-        level.playLocalSound(d0, d1, d2, sound, SoundSource.BLOCKS, 1.0F, 1.0F, false);
-	}
-
-	/**
-	 * What happens per tick in this entity on the server
-	 */
-	public void tickServer() {
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void load(CompoundTag compound) {		
-		try {
-			if (compound.contains(FACING_TAG)) {
-				this.setFacing(compound.getInt(FACING_TAG));
-			}
-			if (compound.contains(OWNER_UUID_TAG)) {
-				this.setOwnerUuid(compound.getString(OWNER_UUID_TAG));
-			}
-			super.load(compound);
-		} catch (Exception e) {
-			LegacyVault.LOGGER.error("Error reading to NBT:", e);
-		}		
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
-		try {
-			if (getFacing() != null) {
-				compound.putInt(FACING_TAG, getFacing().get3DDataValue());
-			}
-			if (getOwnerUuid() !=null) {
-				compound.putString(OWNER_UUID_TAG, getOwnerUuid());
-			}
-		} catch (Exception e) {
-			LegacyVault.LOGGER.error("Error writing to NBT:", e);
-		}
-	}
-
-	// The getUpdateTag()/handleUpdateTag() pair is called whenever the client receives a new chunk
-	// it hasn't seen before. i.e. the chunk is loaded
-
-	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
-		saveAdditional(tag);
-		return tag;
-	}
-
-	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		if (tag != null) {
-			load(tag);
-		}
-	}
-
-	@Nullable
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		CompoundTag tag = pkt.getTag();
-		handleUpdateTag(tag);
-	}
-
-	public Direction getFacing() {
-		return facing;
-	}
-
-	public void setFacing(Direction facing) {
-		this.facing = facing;
-	}
-
-	//@Override
-	public void setFacing(int facingIndex) {
-		this.facing = Direction.from3DDataValue(facingIndex);
-	}
-
-	public String getOwnerUuid() {
-		return ownerUuid;
-	}
-
-	public void setOwnerUuid(String ownerUuid) {
-		this.ownerUuid = ownerUuid;
-	}
-
-	@Override
-	public Component getCustomName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setCustomName(Component name) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public boolean isHandleOpen() {
