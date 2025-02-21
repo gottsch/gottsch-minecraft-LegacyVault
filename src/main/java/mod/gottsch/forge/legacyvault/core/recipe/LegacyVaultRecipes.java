@@ -32,6 +32,8 @@ import net.minecraftforge.registries.RegisterEvent;
  * @author Mark Gottschling on May 26, 2021
  *
  */
+// TODO re-active and use new Config options to test.
+// TODO use in DataGen.
 @Deprecated
 @Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class LegacyVaultRecipes {

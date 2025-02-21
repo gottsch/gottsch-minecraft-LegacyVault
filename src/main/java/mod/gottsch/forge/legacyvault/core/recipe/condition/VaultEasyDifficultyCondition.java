@@ -48,7 +48,8 @@ public class VaultEasyDifficultyCondition implements ICondition {
 	@Override
 	public boolean test(IContext context) {
 		Collection<Holder<Item>> vault = context.getTag(ModTags.Items.EASY_RECIPE);
-		return !vault.isEmpty();
+		// TODO change to look for vaults, because not empty could have anything in it.
+        return !vault.isEmpty();
 	}
 	
     @Override

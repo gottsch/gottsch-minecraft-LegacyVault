@@ -118,7 +118,7 @@ public class VaultPersistenceManager {
         // generate key
         String key = generateKey(player);
 
-        // TODO get NonNullList from registry
+        // get the NonNullList inventory from registry
         Optional<NonNullList<ItemStack>> optionalInventory = get(key);
 
         if (optionalInventory.isPresent()) {

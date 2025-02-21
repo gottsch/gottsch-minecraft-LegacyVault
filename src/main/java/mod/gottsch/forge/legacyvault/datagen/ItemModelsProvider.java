@@ -20,7 +20,6 @@
 package mod.gottsch.forge.legacyvault.datagen;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.block.ModBlocks;
 import mod.gottsch.forge.legacyvault.core.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -54,6 +53,7 @@ public class ItemModelsProvider extends ItemModelProvider {
 
 		blockItemParent(ModItems.CLASSIC_VAULT);
 		blockItemParent(ModItems.RUSTIC_VAULT);
+		blockItemParent(ModItems.COMMUNITY_VAULT);
 	}
 
 	public ItemModelBuilder blockItemParent(RegistryObject<Item> item) {

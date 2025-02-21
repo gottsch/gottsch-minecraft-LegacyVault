@@ -56,7 +56,7 @@ public class ResetVaultCountCommand {
 				})			
 				.then(Commands.argument("targets", EntityArgument.entities())
 						.executes(source -> {
-							return reset(source.getSource(), EntityArgument.getEntities(source, "targets"), ServerConfig.GENERAL.vaultsPerPlayer.get());							
+							return reset(source.getSource(), EntityArgument.getEntities(source, "targets"), ServerConfig.PERSONAL.vaultsPerPlayer.get());
 						})
 						.then(Commands.argument("count", IntegerArgumentType.integer())
 								.executes(source -> { 

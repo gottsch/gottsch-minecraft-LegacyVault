@@ -17,29 +17,24 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package mod.gottsch.forge.legacyvault.datagen;
+package mod.gottsch.forge.legacyvault.core.inventory;
 
-import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-
-import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 
 /**
- * @author Mark Gottschling on Feb 2, 2025
+ * @author Mark Gottschling on 2/21/2025
  */
-public class ModBlockTagsProvider extends BlockTagsProvider {
-    
-    public ModBlockTagsProvider(PackOutput output, CompletableFuture<Provider> lookupProvider,
-								ExistingFileHelper existingFileHelper) {
-    	super(output, lookupProvider, LegacyVault.MOD_ID, existingFileHelper);
-	}
+public class CommunityVaultContainerMenu extends VaultContainerMenu {
+    /**
+     * @param containerId
+     * @param pos
+     * @param playerInventory
+     * @param player
+     */
+    public CommunityVaultContainerMenu(int containerId, BlockPos pos, Inventory playerInventory, Player player) {
+        super(ModContainers.COMMUNITY_VAULT_CONTAINER.get(), containerId, pos, playerInventory, player);
 
-	@Override
-    protected void addTags(Provider provider) {
-
-	}
-
+    }
 }

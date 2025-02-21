@@ -21,17 +21,13 @@ import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.ModBlocks;
 import mod.gottsch.forge.legacyvault.core.block.entity.ModBlockEntities;
 import mod.gottsch.forge.legacyvault.core.inventory.ModContainers;
-import mod.gottsch.forge.legacyvault.core.inventory.VaultContainerMenu;
 import mod.gottsch.forge.legacyvault.core.item.ModItems;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 /**
  * 
@@ -45,13 +41,6 @@ public class Registration {
 	 */
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, LegacyVault.MOD_ID);
 	public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, LegacyVault.MOD_ID);
-
-
-	// recipes
-//	public static final RegistryObject<RecipeSerializer<Recipe<?>>>
-//	private static final DeferredRegister<RecipeSerializer<?>> REGISTER = DeferredRegister.create(Registry.RECIPE_SERIALIZER_REGISTRY, LegacyVault.MODID);
-
-//	public static final RegistryObject<RecipeSerializer<?>> EXAMPLE_LOOT_ITEM_CONDITION_TYPE = REGISTER.register("example_loot_item_condition_type", () -> VaultEasyDifficultyCondition.Serializer.INSTANCE);
 
 	/**
 	 * 

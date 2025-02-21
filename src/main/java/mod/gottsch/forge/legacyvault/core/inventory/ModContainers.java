@@ -34,8 +34,11 @@ public class ModContainers {
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, LegacyVault.MOD_ID);
 
     // containers
-    public static final RegistryObject<MenuType<VaultContainerMenu>> VAULT_CONTAINER = MENUS.register("vault",
-            () -> IForgeMenuType.create((windowId, inventory, data) -> new VaultContainerMenu(windowId, data.readBlockPos(), inventory, inventory.player)));
+    public static final RegistryObject<MenuType<VaultContainerMenu>> COMMUNITY_VAULT_CONTAINER = MENUS.register("community_vault",
+            () -> IForgeMenuType.create((windowId, inventory, data) -> new CommunityVaultContainerMenu(windowId, data.readBlockPos(), inventory, inventory.player)));
+
+    public static final RegistryObject<MenuType<VaultContainerMenu>> PERSONAL_VAULT_CONTAINER = MENUS.register("personal_vault",
+            () -> IForgeMenuType.create((windowId, inventory, data) -> new PersonalVaultContainerMenu(windowId, data.readBlockPos(), inventory, inventory.player)));
 
     public static void register(IEventBus eventBus) {
         MENUS.register(eventBus);

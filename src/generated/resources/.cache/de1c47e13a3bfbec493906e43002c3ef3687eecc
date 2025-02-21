@@ -1,5 +1,6 @@
-// 1.20.1	2025-02-17T18:57:39.5892271	Tags for minecraft:item mod id legacyvault
+// 1.20.1	2025-02-21T07:51:20.0972991	Tags for minecraft:item mod id legacyvault
 8a3b6c43de5696d22edea798ffefe18769ecd1fb data/legacyvault/tags/items/difficulty/easy.json
 8a3b6c43de5696d22edea798ffefe18769ecd1fb data/legacyvault/tags/items/difficulty/hard.json
 87e0d8f0e5f83433d1c52fdf96dffe312cd0935b data/legacyvault/tags/items/difficulty/normal.json
 dd0531bbbe63373250101908ae18f4981cf416b9 data/legacyvault/tags/items/ingredients/vault_contracts.json
+9019721f2b48e1d69d93a3baa102dc453b0587a0 data/legacyvault/tags/items/vault_blacklist.json

@@ -40,6 +40,9 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<ClassicVaultBlockEntity>> CLASSIC_VAULT =
             BLOCK_ENTITIES.register("classic_vault", () -> BlockEntityType.Builder.of(ClassicVaultBlockEntity::new, ModBlocks.CLASSIC_VAULT.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<CommunityVaultBlockEntity>> COMMUNITY_VAULT =
+            BLOCK_ENTITIES.register("community_vault", () -> BlockEntityType.Builder.of(CommunityVaultBlockEntity::new, ModBlocks.COMMUNITY_VAULT.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

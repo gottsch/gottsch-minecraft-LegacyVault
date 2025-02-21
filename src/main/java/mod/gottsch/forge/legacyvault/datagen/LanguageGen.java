@@ -1,4 +1,22 @@
-
+/*
+ * This file is part of Legacy Vault.
+ * Copyright (c) 2025 Mark Gottschling (gottsch)
+ *
+ * All rights reserved.
+ *
+ * Legacy Vault is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Legacy Vault is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
+ */
 package mod.gottsch.forge.legacyvault.datagen;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
@@ -31,7 +49,8 @@ public class LanguageGen extends LanguageProvider {
         // blocks
         add(ModBlocks.RUSTIC_VAULT.get(), "Rustic Vault");
         add(ModBlocks.CLASSIC_VAULT.get(), "Classic Vault");
-
+        add(ModBlocks.COMMUNITY_VAULT.get(), "Community Vault");
+        
         /*
          *  Util.tooltips
          */
@@ -42,8 +61,10 @@ public class LanguageGen extends LanguageProvider {
          * Screen
          */
         add(LangUtil.screen("vault.name"),"Legacy Vault");
+        add(LangUtil.screen("personal_vault.name"), "Personal Legacy Vault");
+        add(LangUtil.screen("community_vault.name"), "Community Legacy Vault");
         add(LangUtil.screen("unlimited_vaults"), "Vaults Remaining: Unlimited");
         add(LangUtil.screen("vaults_remaining"), "Vaults Remaining: %s of %s");
-        add(LangUtil.screen("public_vault"), "Public Vault");
+        add(LangUtil.screen("community_vault"), "Community Vault");
     }
 }

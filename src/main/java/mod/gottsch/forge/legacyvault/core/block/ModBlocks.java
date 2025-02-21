@@ -36,6 +36,7 @@ public class ModBlocks {
 
 	public static final RegistryObject<RusticVaultBlock> RUSTIC_VAULT = BLOCKS.register("rustic_vault", () -> new RusticVaultBlock(Block.Properties.of().mapColor(MapColor.WOOD).strength(2.5F)));
 	public static final RegistryObject<ClassicVaultBlock>CLASSIC_VAULT = BLOCKS.register("classic_vault", () -> new ClassicVaultBlock(Block.Properties.of().mapColor(MapColor.METAL).strength(2.5F)));
+	public static final RegistryObject<CommunityVaultBlock>COMMUNITY_VAULT = BLOCKS.register("community_vault", () -> new CommunityVaultBlock(Block.Properties.of().mapColor(MapColor.METAL).strength(2.5F)));
 
 	public static void register(IEventBus eventBus) {
 		BLOCKS.register(eventBus);

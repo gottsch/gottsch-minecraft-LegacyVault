@@ -17,15 +17,7 @@
  */
 package mod.gottsch.forge.legacyvault.core.eventhandler;
 
-import mod.gottsch.forge.gottschcore.world.WorldInfo;
-import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.exception.DbInitializationException;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 /**
  * @author Mark Gottschling on May 2, 2021

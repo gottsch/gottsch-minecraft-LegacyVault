@@ -19,12 +19,9 @@
  */
 package mod.gottsch.forge.legacyvault.core.command;
 
-import java.util.Collection;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-
 import mod.gottsch.forge.gottschcore.spatial.Coords;
 import mod.gottsch.forge.gottschcore.spatial.Heading;
 import mod.gottsch.forge.gottschcore.spatial.ICoords;
@@ -50,6 +47,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.Collection;
+
 /**
  * @author Mark Gottschling on Jun 5, 2021
  *
@@ -65,7 +64,6 @@ public class SpawnVaultCommand {
     
 	/**
 	 * 
-	 * @param dispatcher
 	 */
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher
@@ -94,10 +92,6 @@ public class SpawnVaultCommand {
 
 	/**
 	 * 
-	 * @param source
-	 * @param playerUUID
-	 * @param count
-	 * @return
 	 */
 	private static int spawn(CommandSourceStack source, BlockPos pos, Collection<? extends Entity> entities, String directionStr) {
 		LegacyVault.LOGGER.debug("spawn command being called.");
@@ -118,12 +112,12 @@ public class SpawnVaultCommand {
 			if (blockEntity == null) {
 				// remove block
 				world.removeBlock(pos, false);
-				// TODO log
+				// TODO message to chat
 				return 1;
 			}
 			
 			// set the owner of the chest
-			if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
+			if (!ServerConfig.COMMUNITY.communityVault.get()) {
 				blockEntity.setOwnerUuid(player.getStringUUID());
 				LegacyVault.LOGGER.debug("setting vault owner -> {}", player.getStringUUID());
 			}
@@ -137,9 +131,9 @@ public class SpawnVaultCommand {
 			});
 			
 			// increment capability size
-			if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
+			if (!ServerConfig.PERSONAL.unlimitedVaults.get()) {
 				int count = cap.getCount() + 1;
-				count = count > ServerConfig.GENERAL.vaultsPerPlayer.get() ? ServerConfig.GENERAL.vaultsPerPlayer.get() : count;
+				count = count > ServerConfig.PERSONAL.vaultsPerPlayer.get() ? ServerConfig.PERSONAL.vaultsPerPlayer.get() : count;
 				cap.setCount(count);
 			
 				LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());

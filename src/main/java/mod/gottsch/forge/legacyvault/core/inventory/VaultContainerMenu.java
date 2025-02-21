@@ -20,10 +20,10 @@
 package mod.gottsch.forge.legacyvault.core.inventory;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
+import mod.gottsch.forge.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.forge.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.config.Config;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
-import mod.gottsch.forge.legacyvault.core.entity.Account;
 import mod.gottsch.forge.legacyvault.core.persistence.VaultPersistenceManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -31,6 +31,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -44,7 +45,7 @@ import java.util.Optional;
  * @author Mark Gottschling on Jun 19, 2022
  *
  */
-public class VaultContainerMenu extends AbstractContainerMenu {
+public abstract class VaultContainerMenu extends AbstractContainerMenu {
 	// the backing block entity
 	private AbstractVaultBlockEntity blockEntity;
 	// the player opening the vault
@@ -87,8 +88,8 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	 * @param playerInventory
 	 * @param player
 	 */
-	public VaultContainerMenu(int containerId, BlockPos pos, Inventory playerInventory, Player player) {
-		super(ModContainers.VAULT_CONTAINER.get(), containerId);
+	public VaultContainerMenu(MenuType<?> type, int containerId, BlockPos pos, Inventory playerInventory, Player player) {
+		super(type, containerId);
 
 		this.playerEntity =  player;
 		this.playerInventory = new InvWrapper(playerInventory);
@@ -97,8 +98,10 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 		// load from the persistence
 		if (!player.level().isClientSide) {
 
-			// the persisted vault inventory should already be in memory in
-			// a registry. fetch it and load into vault entity inventory
+			/*
+			 * the persisted vault inventory should already be in memory in
+			 * a registry. fetch it and load into vault entity inventory
+			 */
 			Optional<NonNullList<ItemStack>> optionalInventory = VaultPersistenceManager.get(player);
 			// copy from persisted inventory to vault inventory
             optionalInventory.ifPresent(itemStacks -> copyInventoryTo(itemStacks, vaultInventory));
@@ -121,7 +124,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 			setMenuInventoryColumnCount(13);
 			setMenuInventoryRowCount(7);
 			setPlayerInventoryXPos(45);
-			setPlayerInventoryYPos(155);
+			setPlayerInventoryYPos(156);
 			setHotbarXPos(45);
 			setHotbarYPos(214);
 		}
@@ -130,19 +133,17 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	}
 
 	/**
-	 * @param account
+	 *
 	 */
-	// TODO change to take Key or key values - playerUuid, mcVersion, difficulty
-	private void loadPersistedInventory(Account account) {
+	private void loadPersistedInventory(Player player) {
 
 	}
 
 	/**
 	 * TODO this will have to be refactored if the size of the legacy vault > the block entity size. as it stands this will only read in x items from vault, and then save those x items back to the vault
 	 * overriding the current vault items, but the vault could have had a x*n size, and so those items are lost.
-	 * @param account
 	 */
-	private void savePersistedInventory(Account account) {
+	private void savePersistedInventory() {
 
 	}
 
@@ -205,7 +206,6 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 		buildContainerInventory();
 	}
 
-	// TODO need to change all slots to LegacyVault slots or change isAllowed()? method that prevents other LegacyVaults from being stored
 	/**
 	 * 
 	 */
@@ -236,7 +236,7 @@ public class VaultContainerMenu extends AbstractContainerMenu {
 	}	
 
 	/**
-	 *  Add the vault inventory to the gui
+	 *  add the vault inventory to the gui
 	 */
 	public void buildContainerInventory() {		
 		if (vaultInventory == null ) {

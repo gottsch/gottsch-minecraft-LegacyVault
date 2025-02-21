@@ -48,6 +48,8 @@ public class CommonSetup {
 		if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
 			event.accept(ModItems.RUSTIC_VAULT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
 			event.accept(ModItems.CLASSIC_VAULT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(ModItems.COMMUNITY_VAULT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+
 			event.accept(ModItems.CONTRACT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
 		}
 	}

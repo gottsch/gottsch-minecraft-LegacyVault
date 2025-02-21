@@ -44,12 +44,16 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -98,35 +102,49 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 			return InteractionResult.SUCCESS;
 		}
 
-		// check if the vault already has a uuid assigned
-		if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-			LegacyVault.LOGGER.debug("private vault");
-
-			if (blockEntity.getOwnerUuid() != null && !blockEntity.getOwnerUuid().equals(player.getStringUUID())) {
-				LegacyVault.LOGGER.debug("not your vault!");
-				return InteractionResult.SUCCESS;
+		if (!doesPlayerHaveAccess(blockEntity, player)) {
+			if (LegacyVault.LOGGER.isDebugEnabled()) {
+				LegacyVault.LOGGER.debug("player {} does not have access!", player.getDisplayName().getString());
 			}
-		}
-		else if (!ModUtil.doesPlayerHavePublicAccess(player)) {
-			LegacyVault.LOGGER.debug("player does not have access!");
 			return InteractionResult.SUCCESS;
 		}
 
-		// get the container provider
-		MenuProvider containerProvider = new MenuProvider() {
-            @Override
-            public Component getDisplayName() {
-                return Component.translatable("display.vault.name");
-            }
+		// check if the vault already has a uuid assigned
+//		if (!ServerConfig.COMMUNITY.communityVault.get()) {
+//			LegacyVault.LOGGER.debug("private vault");
+//
+//			if (blockEntity.getOwnerUuid() != null && !blockEntity.getOwnerUuid().equals(player.getStringUUID())) {
+//				LegacyVault.LOGGER.debug("not your vault!");
+//				return InteractionResult.SUCCESS;
+//			}
+//		}
+//		else if (!ModUtil.doesPlayerHaveCommunityAccess(player)) {
+//			LegacyVault.LOGGER.debug("player does not have access!");
+//			return InteractionResult.SUCCESS;
+//		}
 
-            @Override
-            public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
-                return new VaultContainerMenu(windowId, pos, playerInventory, playerEntity);
-            }
-        };
-        NetworkHooks.openScreen((ServerPlayer) player, containerProvider, blockEntity.getBlockPos());
+		// get the container provider
+//		MenuProvider containerProvider = new MenuProvider() {
+//            @Override
+//            public Component getDisplayName() {
+//                return Component.translatable("display.vault.name");
+//            }
+//
+//            @Override
+//            public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
+//                // TODO this is now dependent on the actual block type
+//				return new VaultContainerMenu(windowId, pos, playerInventory, playerEntity);
+//            }
+//        };
+        NetworkHooks.openScreen((ServerPlayer) player, getMenuProvider(pos), blockEntity.getBlockPos());
 
 		return InteractionResult.SUCCESS;
+	}
+
+	public abstract MenuProvider getMenuProvider(BlockPos pos);
+
+	public boolean doesPlayerHaveAccess(AbstractVaultBlockEntity blockEntity, Player player) {
+		return true;
 	}
 
 	/**
@@ -142,14 +160,12 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 		// face the block towards the player (there isn't really a front)
 		worldIn.setBlock(pos, state.setValue(FACING, placer.getDirection().getOpposite()), 3);
 		BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-		if (blockEntity != null && blockEntity instanceof IVaultBlockEntity) {
+		if (blockEntity instanceof IVaultBlockEntity) {
 			vaultBlockEntity = (IVaultBlockEntity) blockEntity;
-			LegacyVault.LOGGER.debug("public vault -> {}", ServerConfig.PUBLIC_VAULT.enablePublicVault.get());
-			LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
-			// set the owner of the chest
-			if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-				vaultBlockEntity.setOwnerUuid(placer.getStringUUID());
-				LegacyVault.LOGGER.debug("setting vault owner -> {}", placer.getStringUUID());
+
+			if (LegacyVault.LOGGER.isDebugEnabled()) {
+				LegacyVault.LOGGER.debug("community vault -> {}", ServerConfig.COMMUNITY.communityVault.get());
+				LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 			}
 
 			// set the name of the chest
@@ -167,84 +183,87 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 		super.destroy(world, pos, state);
 	}
 
+//	/**
+//	 * NOTE this is called only in survival!
+//	 */
+//	@Override
+//	public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state,
+//			BlockEntity blockEntity, ItemStack itemStack) {
+//
+//		LegacyVault.LOGGER.debug("player is destroying vault block");
+//		if (WorldInfo.isClientSide(world) || ServerConfig.COMMUNITY.communityVault.get()) {
+//			return;
+//		}
+//
+//		// get the vault-owning player (not the current player who is destroying block)
+//		if (blockEntity != null && blockEntity instanceof IVaultBlockEntity) {
+//			IVaultBlockEntity vaultBlockEntity = (IVaultBlockEntity) blockEntity;
+//
+//			// get the owner by uuid
+//			String playerUUID = vaultBlockEntity.getOwnerUuid();
+//			Player vaultOwnerPlayer = null;
+//			if (playerUUID != null && !playerUUID.isEmpty()) {
+//				try {
+//					vaultOwnerPlayer = world.getPlayerByUUID(UUID.fromString(playerUUID));
+//				}
+//				catch(Exception e) {
+//					LegacyVault.LOGGER.error("unable to get player by uuid -> " + playerUUID, e);
+//				}
+//			}
+//
+//			if (vaultOwnerPlayer != null) {
+//				// get  player capabilities
+//				IPlayerVaultsHandler cap = vaultOwnerPlayer.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
+//					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
+//				});
+//				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+//
+//				if (!ServerConfig.PERSONAL.unlimitedVaults.get()) {
+//					// decrement cap vault branch count
+//					if (cap.getCount() > 0) {
+//						// decrement count
+//						int count = cap.getCount() - 1;
+//						count = count < 0 ? 0 : count;
+//						cap.setCount(count);
+//
+//						LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
+//						// send state message to client
+//						VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
+//						ServerPlayer serverPlayer = (ServerPlayer)vaultOwnerPlayer;
+//						LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
+//					}
+//				}
+//
+//				// remove location
+//				ICoords vaultLocation = new Coords(pos);
+//				List<ICoords> newLocations = new ArrayList<>();
+//				for (ICoords location : cap.getLocations()) {
+//					if (!location.equals(vaultLocation)) {
+//						newLocations.add(location);
+//					}
+//				}
+//				cap.setLocations(newLocations);
+//			}
+//		}
+//
+//		super.playerDestroy(world, player, pos, state, blockEntity, itemStack);
+//	}
+
+
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public float getDestroyProgress(BlockState state, Player player, BlockGetter blockReader, BlockPos blockPos) {
-
-		// prevent player from destroying vault if they don't have access
-		if((ServerConfig.PUBLIC_VAULT.enablePublicVault.get())) {
-			return 0;
-		}
-
-		return super.getDestroyProgress(state, player, blockReader, blockPos);
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(FACING);
 	}
 
 	/**
-	 * NOTE this is called only in survival!
+	 *
 	 */
 	@Override
-	public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state,
-			BlockEntity blockEntity, ItemStack itemStack) {
-
-		LegacyVault.LOGGER.debug("player is destroying vault block");
-		if (WorldInfo.isClientSide(world) || ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-			return;
-		}
-
-		// get the vault-owning player (not the current player who is destroying block)
-		if (blockEntity != null && blockEntity instanceof IVaultBlockEntity) {
-			IVaultBlockEntity vaultBlockEntity = (IVaultBlockEntity) blockEntity;
-
-			// get the owner by uuid
-			String playerUUID = vaultBlockEntity.getOwnerUuid();
-			Player vaultOwnerPlayer = null;
-			if (playerUUID != null && !playerUUID.isEmpty()) {
-				try {
-					vaultOwnerPlayer = world.getPlayerByUUID(UUID.fromString(playerUUID));
-				}
-				catch(Exception e) {
-					LegacyVault.LOGGER.error("unable to get player by uuid -> " + playerUUID, e);
-				}
-			}
-
-			if (vaultOwnerPlayer != null) {
-				// get  player capabilities
-				IPlayerVaultsHandler cap = vaultOwnerPlayer.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
-					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-				});
-				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
-
-				if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
-					// decrement cap vault branch count
-					if (cap.getCount() > 0) {
-						// decrement count
-						int count = cap.getCount() - 1;
-						count = count < 0 ? 0 : count;
-						cap.setCount(count);
-
-						LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
-						// send state message to client
-						VaultCountMessageToClient message = new VaultCountMessageToClient(playerUUID, count);
-						ServerPlayer serverPlayer = (ServerPlayer)vaultOwnerPlayer;
-						LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer),message);
-					}
-				}
-
-				// remove location
-				ICoords vaultLocation = new Coords(pos);
-				List<ICoords> newLocations = new ArrayList<>();
-				for (ICoords location : cap.getLocations()) {
-					if (!location.equals(vaultLocation)) {
-						newLocations.add(location);
-					}
-				}
-				cap.setLocations(newLocations);
-			}
-		}
-
-		super.playerDestroy(world, player, pos, state, blockEntity, itemStack);
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	/**
@@ -256,9 +275,6 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 		return state.getValue(FACING);
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		switch(state.getValue(FACING)) {
@@ -272,6 +288,13 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 		case WEST:
 			return bounds[3];
 		}
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		BlockState blockState = this.defaultBlockState().setValue(FACING,
+				context.getHorizontalDirection().getOpposite());
+		return blockState;
 	}
 
 	@Override

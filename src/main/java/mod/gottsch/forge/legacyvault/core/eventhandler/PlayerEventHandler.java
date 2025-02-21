@@ -51,13 +51,11 @@ public class PlayerEventHandler {
 
 		LegacyVault.LOGGER.debug("player is logging in.");
 
-		// TODO load players vault from file system into VaultPersistenceManager. this is regardless of Public Vault setting
-		// TODO (Public Vault setting only refers to who is able to place a vault in the world and who can access it)
+		// load the players persistent vault inventory
 		VaultPersistenceManager.load(event.getEntity());
 
-		// TODO review this block - this is mainly to get the # of remaining vaults available to the user and update GUI
 		// update client players capabilities
-		if (!ServerConfig.PUBLIC_VAULT.enablePublicVault.get() && !ServerConfig.GENERAL.unlimitedVaults.get()) {
+		if (!ServerConfig.COMMUNITY.communityVault.get() && !ServerConfig.PERSONAL.unlimitedVaults.get()) {
 			// get  player capabilities
 			IPlayerVaultsHandler cap = event.getEntity().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");

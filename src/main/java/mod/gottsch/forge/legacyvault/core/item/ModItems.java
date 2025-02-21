@@ -38,6 +38,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> RUSTIC_VAULT = fromBlock(ModBlocks.RUSTIC_VAULT);
     public static final RegistryObject<Item> CLASSIC_VAULT = fromBlock(ModBlocks.CLASSIC_VAULT);
+    public static final RegistryObject<Item> COMMUNITY_VAULT = fromBlock(ModBlocks.COMMUNITY_VAULT);
 
     public static final RegistryObject<Item> CONTRACT = ITEMS.register("vault_contract", () -> new Item(new Item.Properties()));
 

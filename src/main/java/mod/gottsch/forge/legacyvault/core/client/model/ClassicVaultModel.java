@@ -125,7 +125,6 @@ public class ClassicVaultModel extends Model implements IVaultModel {
 			float handleRotation = entity.getPrevHandleAngle() + (entity.getHandleAngle() - entity.getPrevHandleAngle()) * partialTicks;
 			handleRotation = 1.0F - handleRotation;
 			handleRotation = 1.0F - handleRotation * handleRotation * handleRotation;
-			// TODO the handle angle modifier may be slower/faster than lid
 			handle.zRot = (handleRotation * (float)Math.PI / /*getAngleModifier()*/ 2.0F);
 			
 			// update the model's bolt(s) position

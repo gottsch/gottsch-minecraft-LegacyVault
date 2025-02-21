@@ -37,15 +37,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * 
+ * TODO going to need a CommunityVaultScreen and remove all the respective conditional code in each.
+ * TODO abstract out the screen because most of the code is the same.
  * @author Mark Gottschling on Jun 21, 2022
  *
  */
 public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 	// the resource locations for the background images of the GUI
-	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/vault1c.png");
-	private static final ResourceLocation LARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/vault2c.png");
-	private static final ResourceLocation XLARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/vault3c.png");
+	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/standard_vault.png");
+	private static final ResourceLocation LARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/large_vault.png");
+	private static final ResourceLocation XLARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/xlarge_vault.png");
 
 	private ResourceLocation bgTexture;
 	private Inventory inventory;
@@ -86,29 +87,29 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics gui, int mouseX, int mouseY) {
-		final int LABEL_XPOS = 5;
+		final int LABEL_XPOS = 8;
 		final int FONT_Y_SPACING = 12;
 		final int CHEST_LABEL_YPOS = getMenu().getTitleYPos() - FONT_Y_SPACING;
-        gui.drawString(this.font, Component.translatable(LangUtil.screen("vault.name")).getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.WHITE.getRGB());
+        gui.drawString(this.font, Component.translatable(LangUtil.screen("vault.name")).getString(), LABEL_XPOS, CHEST_LABEL_YPOS, Color.DARK_GRAY.getRGB(), false);
 
 		String vaultsRemaining = "";
 
-		if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-			vaultsRemaining = Component.translatable(LangUtil.screen("public_vault")).getString();
+		if (ServerConfig.COMMUNITY.communityVault.get()) {
+			vaultsRemaining = Component.translatable(LangUtil.screen("community_vault")).getString();
 		}
-		else {
+		else if (ServerConfig.PERSONAL.personalVault.get()){
 			// check for unlimited
-			if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
+			if (!ServerConfig.PERSONAL.unlimitedVaults.get()) {
 				IPlayerVaultsHandler cap = inventory.player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
 				});
-				vaultsRemaining = Component.translatable(LangUtil.screen("display.vaults_remaining"), String.valueOf(ServerConfig.GENERAL.vaultsPerPlayer.get() - cap.getCount()), ServerConfig.GENERAL.vaultsPerPlayer.get()).getString();
+				vaultsRemaining = Component.translatable(LangUtil.screen("vaults_remaining"), String.valueOf(ServerConfig.PERSONAL.vaultsPerPlayer.get() - cap.getCount()), ServerConfig.PERSONAL.vaultsPerPlayer.get()).getString();
 			}
 			else {
 				vaultsRemaining = Component.translatable(LangUtil.screen("unlimited_vaults")).getString();
 			}
 		}
-		gui.drawString(this.font, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(), Color.WHITE.getRGB());
+		gui.drawString(this.font, vaultsRemaining, LABEL_XPOS, getMenu().getVaultsRemainingYPos(), Color.DARK_GRAY.getRGB(), false);
     }
 
     @Override
@@ -121,5 +122,9 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 
 	private ResourceLocation getBgTexture() {
 		return bgTexture;
+	}
+
+	public Inventory getInventory() {
+		return inventory;
 	}
 }

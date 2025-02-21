@@ -24,13 +24,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * @author Mark Gottschling on Feb 18, 2025
+ * @author Mark Gottschling on Feb 20, 2025
  *
  */
-public class RusticVaultBlockEntity extends AbstractVaultBlockEntity {
-
-//	private static final String FACING_TAG ="facing";
-//	private static final String OWNER_UUID_TAG = "ownerUuid";
+public class CommunityVaultBlockEntity extends AbstractVaultBlockEntity {
 
 	/*
 	 * The Vault block entity does NOT contain an IItemHandler as it will never hold
@@ -48,12 +45,12 @@ public class RusticVaultBlockEntity extends AbstractVaultBlockEntity {
 	public float prevLidAngle;
 
 	/**
-	 * 
+	 *
 	 * @param pos
 	 * @param state
 	 */
-	public RusticVaultBlockEntity(BlockPos pos, BlockState state) {
-		super(ModBlockEntities.RUSTIC_VAULT.get(), pos, state);
+	public CommunityVaultBlockEntity(BlockPos pos, BlockState state) {
+		super(ModBlockEntities.COMMUNITY_VAULT.get(), pos, state);
 	}
 
 	public void tickClient() {

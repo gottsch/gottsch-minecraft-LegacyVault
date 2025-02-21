@@ -1,7 +1,7 @@
 /*
  * This file is part of Legacy Vault.
  * Copyright (c) 2021 Mark Gottschling (gottsch)
- * 
+ *
  * All rights reserved.
  *
  * Legacy Vault is free software: you can redistribute it and/or modify
@@ -23,7 +23,9 @@ import mod.gottsch.forge.gottschcore.spatial.Coords;
 import mod.gottsch.forge.gottschcore.spatial.ICoords;
 import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
+import mod.gottsch.forge.legacyvault.core.block.CommunityVaultBlock;
 import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
+import mod.gottsch.forge.legacyvault.core.config.Config;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.core.network.VaultCountMessageToClient;
@@ -36,80 +38,85 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 
 /**
+ * Don't necessarily need separate classes for Personal and Community Vault block items.
+ * However, need to ensure the right object is being checked for.
  * @author Mark Gottschling on May 25, 2021
  *
  */
 public class VaultBlockItem extends BlockItem {
 
 	/**
-	 * 
+	 *
 	 * @param block
 	 * @param properties
 	 */
 	public VaultBlockItem(Block block, Properties properties) {
 		super(block, properties);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
 		if (WorldInfo.isServerSide(context.getLevel())) {
-			
+
 			/*
 			 *  Q: why add this creative check ? what is the reasoning?
-			 *  A: the Block.playerDestroy() is only called in survival mode, thus the decrement vault count calculation is not executed, 
+			 *  A: the Block.playerDestroy() is only called in survival mode, thus the decrement vault count calculation is not executed,
 			 *  which will throw off the vault count. so just making Creative actions the same for placement and destroy.
 			 */
-			
+
 			if (context.getPlayer().isCreative()) {
 				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
-			}			
+			}
 
-			// TODO add access checks ie Ops, or admin list
-			if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-				return false;
-				// TODO how does Admin place then?
+			if ((state.getBlock() instanceof CommunityVaultBlock)) {
+				if (Config.ServerConfig.COMMUNITY.communityVault.get()
+						&& ModUtil.doesPlayerHaveCommunityAccess(context.getPlayer())) {
+					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+				}
 			}
 			else {
-				
-				// get  player capabilities
-				IPlayerVaultsHandler cap = ModUtil.getPlayerCapability(context.getPlayer());
-				if (LegacyVault.LOGGER.isDebugEnabled()) {
-					LegacyVault.LOGGER.debug("player vault count -> {}", cap.getCount());
-				}
-				
-				if (!ServerConfig.GENERAL.unlimitedVaults.get()) {
-					if (cap != null && cap.getCount() < ServerConfig.GENERAL.vaultsPerPlayer.get()) {
-						if (LegacyVault.LOGGER.isDebugEnabled()) {
-							LegacyVault.LOGGER.debug("player branch count less than config -> {}", ServerConfig.GENERAL.vaultsPerPlayer.get());
+				// only place if personal vaults are enabled
+				if (ServerConfig.PERSONAL.personalVault.get()) {
+					// get  player capabilities
+					IPlayerVaultsHandler cap = ModUtil.getPlayerCapability(context.getPlayer());
+					if (LegacyVault.LOGGER.isDebugEnabled()) {
+						LegacyVault.LOGGER.debug("player vault count -> {}", cap.getCount());
+					}
+
+					if (!ServerConfig.PERSONAL.unlimitedVaults.get()) {
+						if (cap != null && cap.getCount() < ServerConfig.PERSONAL.vaultsPerPlayer.get()) {
+							if (LegacyVault.LOGGER.isDebugEnabled()) {
+								LegacyVault.LOGGER.debug("player branch count less than config -> {}", ServerConfig.PERSONAL.vaultsPerPlayer.get());
+							}
+
+							// increment capability size
+							int count = cap.getCount() + 1;
+							count = count > ServerConfig.PERSONAL.vaultsPerPlayer.get() ? ServerConfig.PERSONAL.vaultsPerPlayer.get() : count;
+							cap.setCount(count);
+
+							// send state message to client
+							VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
+							LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), message);
+						} else {
+							LegacyVault.LOGGER.debug("player branch count greater than config-> {}", ServerConfig.PERSONAL.vaultsPerPlayer.get());
+							return false;
 						}
+					}
 
-						// increment capability size
-						int count = cap.getCount() + 1;
-						count = count > ServerConfig.GENERAL.vaultsPerPlayer.get() ? ServerConfig.GENERAL.vaultsPerPlayer.get() : count;
-						cap.setCount(count);
-						
-						// send state message to client
-						VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
-						LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)context.getPlayer()),message);
-					}
-					else {
-						LegacyVault.LOGGER.debug("player branch count greater than config-> {}", ServerConfig.GENERAL.vaultsPerPlayer.get());
-						return false;
-					}
+					// add the vault location to capabilities
+					ICoords location = new Coords(context.getClickedPos());
+					cap.getLocations().add(location);
+
+					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 				}
-					
-				// add the vault location to capabilities
-				ICoords location = new Coords(context.getClickedPos());
-				cap.getLocations().add(location);
-
-				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 			}
 		} else {
 			LegacyVault.LOGGER.debug("no can do, you're on client side");
 		}
+
 		return false;
 	}
 }

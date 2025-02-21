@@ -27,8 +27,7 @@ public class LangUtil {
 	public static void appendAdvancedHoverText(String modid, List<Component> tooltip, Consumer<List<Component>> consumer) {
 		if (!Screen.hasShiftDown()) {
 			tooltip.add(Component.literal(NEWLINE));
-			// TODO how do make this call to tooltip generic for any mod because it would require the modid
-			tooltip.add(Component.translatable(tooltip(modid, "hold_shift")).withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.translatable(tooltip("hold_shift")).withStyle(ChatFormatting.GRAY));
 			tooltip.add(Component.literal(LangUtil.NEWLINE));
 		}
 		else {

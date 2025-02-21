@@ -38,6 +38,9 @@ public class ModTags {
 		// to support legacy vault ingredients
 		public static final TagKey<Item> VAULT_CONTRACTS = mod(LegacyVault.MOD_ID, "ingredients/vault_contracts");
 
+		public static final TagKey<Item> VAULT_ITEMS_WHITELIST = mod(LegacyVault.MOD_ID, "vault_whitelist");
+		public static final TagKey<Item> VAULT_ITEMS_BLACKLIST = mod(LegacyVault.MOD_ID, "vault_blacklist");
+
 		public static TagKey<Item> mod(String domain, String path) {
 			return ItemTags.create(new ResourceLocation(domain, path));
 		}

@@ -64,9 +64,9 @@ public class ModUtil {
 	 * @param playerUUID
 	 * @return
 	 */
-	public static boolean doesPlayerHavePublicAccess(Level world, String playerUUID) {
+	public static boolean doesPlayerHaveCommunityAccess(Level world, String playerUUID) {
 		Player player = world.getPlayerByUUID(UUID.fromString(playerUUID));
-		return doesPlayerHavePublicAccess(player);
+		return doesPlayerHaveCommunityAccess(player);
 	}
 	
 	/**
@@ -74,23 +74,23 @@ public class ModUtil {
 	 * @param player
 	 * @return
 	 */
-	public static boolean doesPlayerHavePublicAccess(Player player) {
+	public static boolean doesPlayerHaveCommunityAccess(Player player) {
 		if (player == null) {
 			return false;
 		}
 
-		if (ServerConfig.PUBLIC_VAULT.enablePublicVault.get()) {
-			if (!ServerConfig.PUBLIC_VAULT.playerWhiteList.get().isEmpty()) {
+		if (ServerConfig.COMMUNITY.communityVault.get()) {
+			if (!ServerConfig.COMMUNITY.playerWhiteList.get().isEmpty()) {
 				// check that player is part of white list
-				for (String whiteListedUUID : ServerConfig.PUBLIC_VAULT.playerWhiteList.get()) {
+				for (String whiteListedUUID : ServerConfig.COMMUNITY.playerWhiteList.get()) {
 					if (whiteListedUUID.equalsIgnoreCase(player.getStringUUID())) {
 						return true;
 					}
 				}
 			}
-			else if (!ServerConfig.PUBLIC_VAULT.playerBlackList.get().isEmpty()) {
+			else if (!ServerConfig.COMMUNITY.playerBlackList.get().isEmpty()) {
 				// check that player is not part of black list
-				for (String blackListedUUID : ServerConfig.PUBLIC_VAULT.playerWhiteList.get()) {
+				for (String blackListedUUID : ServerConfig.COMMUNITY.playerWhiteList.get()) {
 					if (blackListedUUID.equalsIgnoreCase(player.getStringUUID())) {
 						return false;
 					}

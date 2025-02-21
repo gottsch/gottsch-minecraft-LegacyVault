@@ -47,6 +47,11 @@ public class AbstractVaultBlockEntity extends BlockEntity implements IVaultBlock
     private String ownerUuid;
 
     /*
+     * The custom name of this block entity
+     */
+    private Component name;
+
+    /*
      * Server updated properties
      */
     /** The number of players currently using this chest */
@@ -174,12 +179,11 @@ public class AbstractVaultBlockEntity extends BlockEntity implements IVaultBlock
 
     @Override
     public Component getCustomName() {
-        // TODO
-        return null;
+        return this.name;
     }
 
     @Override
     public void setCustomName(Component name) {
-        // TODO
+        this.name = name;
     }
 }

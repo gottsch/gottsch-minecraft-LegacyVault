@@ -23,9 +23,8 @@ import java.util.regex.Pattern;
 
 import mod.gottsch.forge.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
+import mod.gottsch.forge.legacyvault.core.tags.ModTags;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -33,6 +32,7 @@ import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
 
 /**
  * @author Mark Gottschling on May 4, 2021
@@ -44,7 +44,7 @@ public class VaultSlot extends SlotItemHandler {
 	
 	/**
 	 * 
-	 * @param inventory
+	 * @param itemHandler
 	 * @param index
 	 * @param xPosition
 	 * @param yPosition
@@ -56,7 +56,7 @@ public class VaultSlot extends SlotItemHandler {
 	
 	/**
 	 * 
-	 * @param inventory
+	 * @param itemHandler
 	 * @param index
 	 * @param xPosition
 	 * @param yPosition
@@ -80,15 +80,29 @@ public class VaultSlot extends SlotItemHandler {
 		if (block instanceof ILegacyVaultBlock) {
 			return false;
 		}
+
 		// check if shulker box
 		if (block instanceof ShulkerBoxBlock) {
 			return false;
 		}
+
 		// check if itemStack contains more items
 		if (itemStack.hasTag()) {
 			ListTag itemsList = itemStack.getTag().getList("Items", 10);
-			if (itemsList != null && itemsList.size() > 0) {
+			if (!itemsList.isEmpty()) {
 				return false;
+			}
+		}
+
+		// check white/blacklist tags first
+		if (itemStack.is(ModTags.Items.VAULT_ITEMS_BLACKLIST)) {
+			return false;
+		} else {
+			ITag<Item> whitelistTag = ForgeRegistries.ITEMS.tags().getTag(ModTags.Items.VAULT_ITEMS_WHITELIST);
+			if (!whitelistTag.isEmpty()) {
+				if ((itemStack.is(ModTags.Items.VAULT_ITEMS_WHITELIST))) {
+					return true;
+				}
 			}
 		}
 
@@ -96,18 +110,18 @@ public class VaultSlot extends SlotItemHandler {
 		String registryName = ForgeRegistries.ITEMS.getKey(item).toString();
 
 		// determine if using white lists or black lists
-		if (!ServerConfig.GENERAL.inventoryWhiteList.get().isEmpty()) {
+		if (!ServerConfig.GENERAL.inventoryWhitelist.get().isEmpty()) {
 			// check against the item/block name white list
-			for(Pattern pattern : ServerConfig.GENERAL.inventoryWhiteListPatterns) {
+			for(Pattern pattern : ServerConfig.GENERAL.inventoryWhitelistPatterns) {
 				if (registryName.matches(pattern.pattern())) {
 					return true;
 				}
 			}
 			return false;
 		}
-		else if (!ServerConfig.GENERAL.inventoryBlackList.get().isEmpty()) {
+		else if (!ServerConfig.GENERAL.inventoryBlacklist.get().isEmpty()) {
 			// check against the item/block name black list
-			for(Pattern pattern : ServerConfig.GENERAL.inventoryBlackListPatterns) {
+			for(Pattern pattern : ServerConfig.GENERAL.inventoryBlacklistPatterns) {
 				if (registryName.matches(pattern.pattern())) {
 					return false;
 				}
@@ -115,36 +129,38 @@ public class VaultSlot extends SlotItemHandler {
 			return true;
 		}
 
+		// @deprecate - removed in favor of actual tags
 		// check against the tags lists
-		if (!ServerConfig.GENERAL.tagsWhiteList.get().isEmpty()) {
-			for (String tagName : ServerConfig.GENERAL.tagsWhiteList.get()) {
-				ResourceLocation location = new ResourceLocation(tagName);
-				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
-				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
-				if ((ForgeRegistries.BLOCKS.tags().getTag(blockTag) != null &&
-						ForgeRegistries.BLOCKS.tags().getTag(blockTag).contains(block)) ||
-						(ForgeRegistries.ITEMS.tags().getTag(itemTag) != null &&
-								ForgeRegistries.ITEMS.tags().getTag(itemTag).contains(item))) {
+//		if (!ServerConfig.GENERAL.tagsWhitelist.get().isEmpty()) {
+//			for (String tagName : ServerConfig.GENERAL.tagsWhitelist.get()) {
+//				ResourceLocation location = new ResourceLocation(tagName);
+//				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
+//				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
+//				if ((ForgeRegistries.BLOCKS.tags().getTag(blockTag) != null &&
+//						ForgeRegistries.BLOCKS.tags().getTag(blockTag).contains(block)) ||
+//						(ForgeRegistries.ITEMS.tags().getTag(itemTag) != null &&
+//								ForgeRegistries.ITEMS.tags().getTag(itemTag).contains(item))) {
+//
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
+//		else if (!ServerConfig.GENERAL.tagsBlacklist.get().isEmpty()){
+//			for (String tagName : ServerConfig.GENERAL.tagsBlacklist.get()) {
+//				ResourceLocation location = new ResourceLocation(tagName);
+//				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
+//				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
+//				if ((ForgeRegistries.BLOCKS.tags().getTag(blockTag) != null &&
+//						ForgeRegistries.BLOCKS.tags().getTag(blockTag).contains(block)) ||
+//						(ForgeRegistries.ITEMS.tags().getTag(itemTag) != null &&
+//								ForgeRegistries.ITEMS.tags().getTag(itemTag).contains(item))) {
+//					return false;
+//				}
+//			}
+//			return true;
+//		}
 
-					return true;
-				}
-			}
-			return false;
-		}
-		else if (!ServerConfig.GENERAL.tagsBlackList.get().isEmpty()){
-			for (String tagName : ServerConfig.GENERAL.tagsBlackList.get()) {				
-				ResourceLocation location = new ResourceLocation(tagName);
-				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
-				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
-				if ((ForgeRegistries.BLOCKS.tags().getTag(blockTag) != null &&
-						ForgeRegistries.BLOCKS.tags().getTag(blockTag).contains(block)) ||
-						(ForgeRegistries.ITEMS.tags().getTag(itemTag) != null &&
-								ForgeRegistries.ITEMS.tags().getTag(itemTag).contains(item))) {
-					return false;
-				}
-			}
-			return true;
-		}
 		return true;
 	}
 

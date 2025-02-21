@@ -1,4 +1,5 @@
-// 1.20.1	2025-02-18T10:07:46.6700275	Recipes
+// 1.20.1	2025-02-19T23:32:56.937284	Recipes
 b70dd25f3a22acdf19db15391ea5e1e149c66081 data/legacyvault/advancements/recipes/misc/vault_contract.json
-dc35c27cce6bd60128ff74956797885ef6fe49ba data/legacyvault/recipes/rustic_vault.json
+40ae183600d78a132521887a89b7ac4ddef44f71 data/legacyvault/recipes/classic_vault.json
+f2888ea7824c52d5c1f4f31171a646f9da521f33 data/legacyvault/recipes/rustic_vault.json
 9c1c3f02364e3720ebe4c59cc9c034519b35f7b8 data/legacyvault/recipes/vault_contract.json

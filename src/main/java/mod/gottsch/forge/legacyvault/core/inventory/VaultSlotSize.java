@@ -28,7 +28,7 @@ public enum VaultSlotSize {
 	VANILLA(27),
 	LARGE(54),
 	DOUBLE(54),
-	XLARGE(84);
+	XLARGE(91);
 
 	private int size;
 	

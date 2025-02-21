@@ -16,7 +16,7 @@
         "category": "misc",
         "key": {
           "c": {
-            "item": "minecraft:chest"
+            "item": "minecraft:barrel"
           },
           "i": {
             "item": "minecraft:iron_ingot"
@@ -31,7 +31,7 @@
           "iii"
         ],
         "result": {
-          "item": "legacyvault:rustic_vault"
+          "item": "legacyvault:classic_vault"
         },
         "show_notification": true
       }
@@ -51,7 +51,7 @@
         "category": "misc",
         "key": {
           "c": {
-            "item": "minecraft:chest"
+            "item": "minecraft:barrel"
           },
           "v": {
             "tag": "legacyvault:ingredients/vault_contracts"
@@ -63,7 +63,7 @@
           "   "
         ],
         "result": {
-          "item": "legacyvault:rustic_vault"
+          "item": "legacyvault:classic_vault"
         },
         "show_notification": true
       }
@@ -83,7 +83,7 @@
         "category": "misc",
         "key": {
           "c": {
-            "item": "minecraft:chest"
+            "item": "minecraft:barrel"
           },
           "i": {
             "item": "minecraft:iron_block"
@@ -98,7 +98,7 @@
           "iii"
         ],
         "result": {
-          "item": "legacyvault:rustic_vault"
+          "item": "legacyvault:classic_vault"
         },
         "show_notification": true
       }

@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  * @author Mark Gottschling on Apr 29, 2021
  *
  */
-public class ClassicVaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
+public class ClassicVaultBlock extends PersonalVaultBlock {
 	private static final VoxelShape NORTH_MAIN = Block.box(1, 1, 2, 15, 16, 15);
 	private static final VoxelShape NORTH_FOOT1 = Block.box(1, 0, 2, 3, 1, 4);
 	private static final VoxelShape NORTH_FOOT2 = Block.box(13, 0, 2, 15, 1, 4);
@@ -115,33 +115,4 @@ public class ClassicVaultBlock extends AbstractVaultBlock  implements ILegacyVau
         }
         return null;
     }
-
-	// TODO could move this stuff out to Abstract class
-
-	/**
-	 * 
-	 */
-	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING);
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.ENTITYBLOCK_ANIMATED;
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		BlockState blockState = this.defaultBlockState().setValue(FACING,
-				context.getHorizontalDirection().getOpposite());
-		return blockState;
-	}
-
 }
