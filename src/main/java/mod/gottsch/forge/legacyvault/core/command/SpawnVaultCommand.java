@@ -117,7 +117,7 @@ public class SpawnVaultCommand {
 			}
 			
 			// set the owner of the chest
-			if (!ServerConfig.COMMUNITY.communityVault.get()) {
+			if (!ServerConfig.COMMUNITY.enabled.get()) {
 				blockEntity.setOwnerUuid(player.getStringUUID());
 				LegacyVault.LOGGER.debug("setting vault owner -> {}", player.getStringUUID());
 			}

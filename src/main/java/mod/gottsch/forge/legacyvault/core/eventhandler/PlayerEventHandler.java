@@ -55,7 +55,7 @@ public class PlayerEventHandler {
 		VaultPersistenceManager.load(event.getEntity());
 
 		// update client players capabilities
-		if (!ServerConfig.COMMUNITY.communityVault.get() && !ServerConfig.PERSONAL.unlimitedVaults.get()) {
+		if (!ServerConfig.COMMUNITY.enabled.get() && !ServerConfig.PERSONAL.unlimitedVaults.get()) {
 			// get  player capabilities
 			IPlayerVaultsHandler cap = event.getEntity().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
 				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");

@@ -88,13 +88,9 @@ public class RusticVaultModel extends Model implements IVaultModel {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition chest = partdefinition.addOrReplaceChild("chest", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition chest = partdefinition.addOrReplaceChild("chest", CubeListBuilder.create(), PartPose.offset(0.0F, 24.5F, 0.0F));
 
 		PartDefinition trunk = chest.addOrReplaceChild("trunk", CubeListBuilder.create().texOffs(0, 38).addBox(-7.5F, -7.6F, -7.5F, 15.0F, 5.0F, 15.0F, new CubeDeformation(0.0F))
-				.texOffs(61, 48).addBox(6.0F, -7.5F, -8.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(61, 48).mirror().addBox(6.0F, -7.5F, 6.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false)
-				.texOffs(61, 48).mirror().addBox(-8.0F, -7.5F, -8.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false)
-				.texOffs(61, 48).addBox(-8.0F, -7.5F, 6.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
 				.texOffs(0, 68).addBox(-2.0F, -7.5F, -7.8F, 4.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
 				.texOffs(61, 56).addBox(3.5F, -5.5F, -8.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
 				.texOffs(61, 56).addBox(-4.5F, -5.5F, -8.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
@@ -105,6 +101,22 @@ public class RusticVaultModel extends Model implements IVaultModel {
 				.texOffs(20, 68).mirror().addBox(3.0F, -7.5F, 6.7F, 2.0F, 5.0F, 1.0F, new CubeDeformation(0.0F)).mirror(false)
 				.texOffs(20, 68).addBox(-5.0F, -7.5F, 6.7F, 2.0F, 5.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
+		PartDefinition leftFrontStrutJoint1 = trunk.addOrReplaceChild("leftFrontStrutJoint1", CubeListBuilder.create(), PartPose.offsetAndRotation(6.65F, -2.6F, -6.55F, 0.0873F, 0.0F, 0.0F));
+
+		PartDefinition leftFrontStrutJoint2 = leftFrontStrutJoint1.addOrReplaceChild("leftFrontStrutJoint2", CubeListBuilder.create().texOffs(61, 48).addBox(-1.0F, -5.0F, 0.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, -1.0F, 0.0F, 0.0F, 0.0873F));
+
+		PartDefinition leftBackStrutJoint1 = trunk.addOrReplaceChild("leftBackStrutJoint1", CubeListBuilder.create(), PartPose.offsetAndRotation(6.65F, -2.6F, 7.0F, 0.0F, 0.0F, 0.0873F));
+
+		PartDefinition leftBackStrutJoint2 = leftBackStrutJoint1.addOrReplaceChild("leftBackStrutJoint2", CubeListBuilder.create().texOffs(61, 48).mirror().addBox(-1.0F, -5.0F, -1.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, -0.25F, -0.0873F, 0.0F, 0.0F));
+
+		PartDefinition rightFrontStrutJoint1 = trunk.addOrReplaceChild("rightFrontStrutJoint1", CubeListBuilder.create(), PartPose.offsetAndRotation(-6.65F, -2.75F, -6.55F, 0.0873F, 0.0F, 0.0F));
+
+		PartDefinition rightFrontStrutJoint2 = rightFrontStrutJoint1.addOrReplaceChild("rightFrontStrutJoint2", CubeListBuilder.create().texOffs(61, 48).mirror().addBox(-1.35F, -4.85F, -1.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.35F, 0.0F, 0.0F, 0.0F, 0.0F, -0.0873F));
+
+		PartDefinition rightBackStrutJoint1 = trunk.addOrReplaceChild("rightBackStrutJoint1", CubeListBuilder.create(), PartPose.offsetAndRotation(-6.65F, -2.6F, 6.65F, -0.0873F, 0.0F, 0.0F));
+
+		PartDefinition rightBackStrutJoint2 = rightBackStrutJoint1.addOrReplaceChild("rightBackStrutJoint2", CubeListBuilder.create().texOffs(61, 48).addBox(-1.35F, -5.0F, -1.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.35F, 0.0F, 0.0F, 0.0F, 0.0F, -0.0873F));
+
 		PartDefinition bottom = trunk.addOrReplaceChild("bottom", CubeListBuilder.create().texOffs(61, 56).addBox(6.5F, -2.0F, -8.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
 				.texOffs(61, 56).addBox(7.5F, -2.0F, -7.3F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
 				.texOffs(61, 56).addBox(-7.5F, -2.0F, -8.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
@@ -113,36 +125,44 @@ public class RusticVaultModel extends Model implements IVaultModel {
 				.texOffs(61, 56).addBox(-7.5F, -2.0F, 7.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
 				.texOffs(61, 56).addBox(6.5F, -2.0F, 7.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
 				.texOffs(61, 56).addBox(7.5F, -2.0F, 6.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(0, 19).addBox(-8.0F, -2.5F, -8.0F, 16.0F, 2.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+				.texOffs(0, 19).addBox(-8.0F, -2.5F, -8.0F, 16.0F, 2.0F, 16.0F, new CubeDeformation(0.1F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition feet = trunk.addOrReplaceChild("feet", CubeListBuilder.create().texOffs(68, 56).addBox(5.7F, -1.0F, -7.6F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(68, 56).addBox(5.7F, -1.0F, 5.7F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(68, 56).addBox(-7.7F, -1.0F, 5.7F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(68, 56).addBox(-7.7F, -1.0F, -7.7F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition feet = trunk.addOrReplaceChild("feet", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
 		PartDefinition lid = chest.addOrReplaceChild("lid", CubeListBuilder.create(), PartPose.offset(0.0F, -7.5F, 8.0F));
 
-		PartDefinition leftLid = lid.addOrReplaceChild("leftLid", CubeListBuilder.create().texOffs(43, 59).addBox(7.5F, -12.5F, -6.0F, 0.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
-				.texOffs(65, 0).addBox(7.5F, -14.5F, -4.0F, 0.0F, 2.0F, 9.0F, new CubeDeformation(0.0F))
-				.texOffs(65, 12).addBox(6.0F, -15.95F, -1.5F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
-				.texOffs(27, 68).addBox(6.0F, -15.95F, -3.6F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F))
-				.texOffs(27, 68).addBox(-8.0F, -15.95F, 1.6F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F))
-				.texOffs(61, 56).addBox(6.5F, -16.6F, -3.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(61, 56).addBox(6.5F, -16.6F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(61, 56).addBox(7.7F, -15.6F, -3.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(61, 56).addBox(7.7F, -15.6F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(61, 56).addBox(-7.5F, -16.6F, -3.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(61, 56).addBox(-7.5F, -16.6F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(61, 56).addBox(-8.7F, -15.6F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(61, 56).addBox(-8.7F, -15.6F, -3.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F)), PartPose.offset(0.0F, 7.5F, -8.0F));
+		PartDefinition leftLid = lid.addOrReplaceChild("leftLid", CubeListBuilder.create().texOffs(43, 59).addBox(0.5F, -3.0F, 2.0F, 0.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
+				.texOffs(65, 0).addBox(0.5F, -5.0F, 4.0F, 0.0F, 2.0F, 9.0F, new CubeDeformation(0.0F))
+				.texOffs(65, 12).addBox(-1.0F, -6.45F, 6.5F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(27, 68).addBox(-1.0F, -6.45F, 4.4F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F))
+				.texOffs(27, 68).mirror().addBox(-1.0F, -6.45F, 9.6F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F)).mirror(false)
+				.texOffs(61, 56).addBox(-0.5F, -7.1F, 5.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+				.texOffs(61, 56).addBox(-0.5F, -7.1F, 10.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+				.texOffs(61, 56).addBox(0.7F, -6.1F, 5.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+				.texOffs(61, 56).addBox(0.7F, -6.1F, 10.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F)), PartPose.offset(7.0F, -2.0F, -16.0F));
 
-		PartDefinition leftFrontLidStruts = leftLid.addOrReplaceChild("leftFrontLidStruts", CubeListBuilder.create().texOffs(65, 18).addBox(-1.01F, -4.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)), PartPose.offsetAndRotation(7.0F, -9.5F, -8.0F, -0.4363F, 0.0F, 0.0F));
+		PartDefinition leftFrontLidStruts = leftLid.addOrReplaceChild("leftFrontLidStruts", CubeListBuilder.create().texOffs(65, 18).addBox(-1.01F, -4.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.4363F, 0.0F, 0.0F));
 
 		PartDefinition leftFrontLidStrut = leftFrontLidStruts.addOrReplaceChild("leftFrontLidStrut", CubeListBuilder.create().texOffs(65, 25).addBox(-1.01F, -4.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -0.3927F, 0.0F, 0.0F));
 
-		PartDefinition leftBackLidStruts = leftLid.addOrReplaceChild("leftBackLidStruts", CubeListBuilder.create().texOffs(65, 18).mirror().addBox(-1.01F, -3.5F, -2.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)).mirror(false), PartPose.offsetAndRotation(7.0F, -10.0F, 8.0F, 0.4363F, 0.0F, 0.0F));
+		PartDefinition leftBackLidStruts = leftLid.addOrReplaceChild("leftBackLidStruts", CubeListBuilder.create().texOffs(65, 18).mirror().addBox(-1.01F, -3.5F, -2.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)).mirror(false), PartPose.offsetAndRotation(0.0F, -0.5F, 16.0F, 0.4363F, 0.0F, 0.0F));
 
 		PartDefinition leftBackTopLidStrut = leftBackLidStruts.addOrReplaceChild("leftBackTopLidStrut", CubeListBuilder.create().texOffs(65, 25).mirror().addBox(-1.01F, -4.0F, -2.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, -3.5F, 0.0F, 0.3927F, 0.0F, 0.0F));
+
+		PartDefinition rightLid = lid.addOrReplaceChild("rightLid", CubeListBuilder.create().texOffs(65, 12).mirror().addBox(-15.0F, -5.95F, 3.5F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.05F)).mirror(false)
+				.texOffs(43, 59).addBox(-14.5F, -2.5F, -1.0F, 0.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
+				.texOffs(65, 0).addBox(-14.5F, -4.5F, 1.0F, 0.0F, 2.0F, 9.0F, new CubeDeformation(0.0F))
+				.texOffs(27, 68).mirror().addBox(-15.0F, -5.95F, 1.4F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F)).mirror(false)
+				.texOffs(61, 56).addBox(-15.7F, -5.6F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+				.texOffs(61, 56).addBox(-15.7F, -5.6F, 7.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+				.texOffs(61, 56).addBox(-14.5F, -6.6F, 7.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+				.texOffs(61, 56).addBox(-14.5F, -6.6F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+				.texOffs(27, 68).addBox(-15.0F, -5.95F, 6.6F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F)), PartPose.offset(7.0F, -2.5F, -13.0F));
+
+		PartDefinition rightBackLidStruts = rightLid.addOrReplaceChild("rightBackLidStruts", CubeListBuilder.create().texOffs(65, 18).addBox(-1.01F, -3.5F, -2.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)), PartPose.offsetAndRotation(-14.0F, 0.0F, 13.0F, 0.4363F, 0.0F, 0.0F));
+		PartDefinition rightBackTopLidStrut = rightBackLidStruts.addOrReplaceChild("rightBackTopLidStrut", CubeListBuilder.create().texOffs(65, 25).addBox(-1.01F, -4.0F, -2.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -3.5F, 0.0F, 0.3927F, 0.0F, 0.0F));
+		PartDefinition rightFrontLidStruts = rightLid.addOrReplaceChild("rightFrontLidStruts", CubeListBuilder.create().texOffs(65, 18).mirror().addBox(-1.01F, -4.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)).mirror(false), PartPose.offsetAndRotation(-14.0F, 0.5F, -3.0F, -0.4363F, 0.0F, 0.0F));
+		PartDefinition rightFrontLidStrut = rightFrontLidStruts.addOrReplaceChild("rightFrontLidStrut", CubeListBuilder.create().texOffs(65, 25).mirror().addBox(-1.01F, -4.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -0.3927F, 0.0F, 0.0F));
 
 		PartDefinition centerLid = lid.addOrReplaceChild("centerLid", CubeListBuilder.create().texOffs(0, 59).addBox(-7.0F, -16.7F, -3.5F, 14.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
 				.texOffs(61, 56).addBox(3.5F, -17.2F, -0.6F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
@@ -168,20 +188,6 @@ public class RusticVaultModel extends Model implements IVaultModel {
 				.texOffs(68, 60).mirror().addBox(3.0F, -3.9F, -0.8F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).mirror(false)
 				.texOffs(68, 60).addBox(-5.0F, -3.9F, -0.8F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.0F, -0.5F, 0.3927F, 0.0F, 0.0F));
 
-		PartDefinition rightLid = lid.addOrReplaceChild("rightLid", CubeListBuilder.create().texOffs(65, 12).mirror().addBox(-15.0F, -5.95F, 3.5F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.05F)).mirror(false)
-				.texOffs(43, 59).addBox(-14.5F, -2.5F, -1.0F, 0.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
-				.texOffs(65, 0).addBox(-14.5F, -4.5F, 1.0F, 0.0F, 2.0F, 9.0F, new CubeDeformation(0.0F))
-				.texOffs(27, 68).mirror().addBox(-15.0F, -5.95F, 1.4F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F)).mirror(false)
-				.texOffs(27, 68).mirror().addBox(-1.0F, -5.95F, 6.6F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F)).mirror(false), PartPose.offset(7.0F, -2.5F, -13.0F));
-
-		PartDefinition rightBackLidStruts = rightLid.addOrReplaceChild("rightBackLidStruts", CubeListBuilder.create().texOffs(65, 18).addBox(-1.01F, -3.5F, -2.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)), PartPose.offsetAndRotation(-14.0F, 0.0F, 13.0F, 0.4363F, 0.0F, 0.0F));
-
-		PartDefinition rightBackTopLidStrut = rightBackLidStruts.addOrReplaceChild("rightBackTopLidStrut", CubeListBuilder.create().texOffs(65, 25).addBox(-1.01F, -4.0F, -2.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -3.5F, 0.0F, 0.3927F, 0.0F, 0.0F));
-
-		PartDefinition rightFrontLidStruts = rightLid.addOrReplaceChild("rightFrontLidStruts", CubeListBuilder.create().texOffs(65, 18).mirror().addBox(-1.01F, -4.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.005F)).mirror(false), PartPose.offsetAndRotation(-14.0F, 0.5F, -3.0F, -0.4363F, 0.0F, 0.0F));
-
-		PartDefinition rightFrontLidStrut = rightFrontLidStruts.addOrReplaceChild("rightFrontLidStrut", CubeListBuilder.create().texOffs(65, 25).mirror().addBox(-1.01F, -4.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, -0.3927F, 0.0F, 0.0F));
-
 		PartDefinition bottomLid = lid.addOrReplaceChild("bottomLid", CubeListBuilder.create().texOffs(0, 0).addBox(-8.0F, -10.5F, -8.0F, 16.0F, 2.0F, 16.0F, new CubeDeformation(0.0F))
 				.texOffs(11, 68).addBox(6.0F, -10.5F, -7.9F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F))
 				.texOffs(51, 26).addBox(-1.5F, -11.5F, -8.1F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
@@ -195,7 +201,7 @@ public class RusticVaultModel extends Model implements IVaultModel {
 				.texOffs(61, 56).addBox(7.7F, -10.0F, 6.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
 				.texOffs(61, 56).addBox(-8.7F, -10.0F, -7.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
 				.texOffs(61, 56).addBox(-8.7F, -10.0F, 6.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
-				.texOffs(11, 68).addBox(6.0F, -10.5F, 6.1F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F)), PartPose.offset(0.0F, 8.5F, -8.0F));
+				.texOffs(11, 68).mirror().addBox(6.0F, -10.5F, 6.1F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.2F)).mirror(false), PartPose.offset(0.0F, 8.5F, -8.0F));
 
 		return LayerDefinition.create(meshdefinition, 128, 128);
 	}

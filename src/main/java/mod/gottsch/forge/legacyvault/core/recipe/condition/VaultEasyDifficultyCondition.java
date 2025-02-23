@@ -23,10 +23,12 @@ import java.util.Collection;
 
 import com.google.gson.JsonObject;
 
+import mod.gottsch.forge.legacyvault.core.item.ModItems;
 import mod.gottsch.forge.legacyvault.core.tags.ModTags;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
@@ -34,7 +36,6 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
  * @author Mark Gottschling on May 26, 2021
  *
  */
-@Deprecated
 public class VaultEasyDifficultyCondition implements ICondition {
 	public static final VaultEasyDifficultyCondition INSTANCE = new VaultEasyDifficultyCondition();
     private static final ResourceLocation NAME = new ResourceLocation("legacyvault", "vault_easy_difficulty");
@@ -47,9 +48,14 @@ public class VaultEasyDifficultyCondition implements ICondition {
 
 	@Override
 	public boolean test(IContext context) {
-		Collection<Holder<Item>> vault = context.getTag(ModTags.Items.EASY_RECIPE);
-		// TODO change to look for vaults, because not empty could have anything in it.
-        return !vault.isEmpty();
+		Collection<Holder<Item>> items = context.getTag(ModTags.Items.EASY_RECIPE);
+//        return !vault.isEmpty();
+        for(Holder<Item> holder : items) {
+            if (holder.get() == ModItems.CLASSIC_VAULT.get()) {
+                return true;
+            }
+        }
+        return false;
 	}
 	
     @Override

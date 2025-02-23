@@ -49,7 +49,7 @@ public class ItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvider {
 		 * NOTE Items.AIR is only included here to actually construct the tag during DataGen,
 		 * the air value should be removed afterwards.
 		 */
-		tag(ModTags.Items.NORMAL_RECIPE).add(ModItems.RUSTIC_VAULT.get());
+		tag(ModTags.Items.NORMAL_RECIPE).add(ModItems.CLASSIC_VAULT.get());
 		tag(ModTags.Items.EASY_RECIPE).add(Items.AIR);
 		tag(ModTags.Items.HARD_RECIPE).add(Items.AIR);
 

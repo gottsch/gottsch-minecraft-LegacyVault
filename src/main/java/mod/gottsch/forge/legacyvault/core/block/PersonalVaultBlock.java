@@ -63,7 +63,7 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
 
     @Override
     public boolean doesPlayerHaveAccess(AbstractVaultBlockEntity blockEntity, Player player) {
-        if (Config.ServerConfig.PERSONAL.personalVault.get()) {
+        if (Config.ServerConfig.PERSONAL.enabled.get()) {
             return (blockEntity.getOwnerUuid() != null && blockEntity.getOwnerUuid().equals(player.getStringUUID()));
         }
         return false;
@@ -93,7 +93,7 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
         BlockEntity blockEntity = worldIn.getBlockEntity(pos);
         if (blockEntity instanceof IVaultBlockEntity vaultBlockEntity) {
             // set the owner of the chest
-            if (Config.ServerConfig.PERSONAL.personalVault.get()) {
+            if (Config.ServerConfig.PERSONAL.enabled.get()) {
                 vaultBlockEntity.setOwnerUuid(placer.getStringUUID());
                 if (LegacyVault.LOGGER.isDebugEnabled()) {
                     LegacyVault.LOGGER.debug("setting vault owner -> {}", placer.getStringUUID());
@@ -170,7 +170,7 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
     public float getDestroyProgress(BlockState state, Player player, BlockGetter blockReader, BlockPos blockPos) {
         if (!player.isCreative()) {
             // prevent player from destroying vault if they don't have access
-            if ((Config.ServerConfig.COMMUNITY.communityVault.get())) {
+            if ((Config.ServerConfig.COMMUNITY.enabled.get())) {
                 return 0;
             }
         }

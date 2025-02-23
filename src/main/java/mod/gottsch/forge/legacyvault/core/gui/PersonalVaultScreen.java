@@ -53,7 +53,7 @@ public class PersonalVaultScreen extends VaultScreen {
 
         String vaultsRemaining = "";
 
-        if (Config.ServerConfig.PERSONAL.personalVault.get()){
+        if (Config.ServerConfig.PERSONAL.enabled.get()){
             // check for unlimited
             if (!Config.ServerConfig.PERSONAL.unlimitedVaults.get()) {
                 IPlayerVaultsHandler cap = getInventory().player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {

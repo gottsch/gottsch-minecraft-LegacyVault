@@ -23,14 +23,11 @@ import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.block.entity.CommunityVaultBlockEntity;
-import mod.gottsch.forge.legacyvault.core.block.entity.RusticVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.config.Config;
 import mod.gottsch.forge.legacyvault.core.inventory.CommunityVaultContainerMenu;
-import mod.gottsch.forge.legacyvault.core.inventory.VaultContainerMenu;
 import mod.gottsch.forge.legacyvault.core.util.ModUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -95,7 +92,7 @@ public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyV
 
     @Override
     public boolean doesPlayerHaveAccess(AbstractVaultBlockEntity blockEntity, Player player) {
-        if (Config.ServerConfig.COMMUNITY.communityVault.get()) {
+        if (Config.ServerConfig.COMMUNITY.enabled.get()) {
             return ModUtil.doesPlayerHaveCommunityAccess(player);
         }
         return false;
@@ -120,7 +117,7 @@ public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyV
     public float getDestroyProgress(BlockState state, Player player, BlockGetter blockReader, BlockPos blockPos) {
         if (!player.isCreative()) {
             // prevent player from destroying vault if they don't have access
-            if ((Config.ServerConfig.COMMUNITY.communityVault.get())) {
+            if ((Config.ServerConfig.COMMUNITY.enabled.get())) {
                 return 0;
             }
         }
@@ -137,7 +134,7 @@ public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyV
 
         LegacyVault.LOGGER.debug("player is destroying vault block");
         if (!player.isCreative()) {
-            if (Config.ServerConfig.COMMUNITY.communityVault.get()) {
+            if (Config.ServerConfig.COMMUNITY.enabled.get()) {
                 return;
             }
         }

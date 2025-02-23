@@ -4,11 +4,7 @@
     {
       "conditions": [
         {
-          "type": "forge:not",
-          "value": {
-            "type": "forge:tag_empty",
-            "tag": "legacyvault:difficulty/normal"
-          }
+          "type": "legacyvault:vault_normal_difficulty"
         }
       ],
       "recipe": {
@@ -39,11 +35,7 @@
     {
       "conditions": [
         {
-          "type": "forge:not",
-          "value": {
-            "type": "forge:tag_empty",
-            "tag": "legacyvault:difficulty/easy"
-          }
+          "type": "legacyvault:vault_easy_difficulty"
         }
       ],
       "recipe": {
@@ -71,11 +63,7 @@
     {
       "conditions": [
         {
-          "type": "forge:not",
-          "value": {
-            "type": "forge:tag_empty",
-            "tag": "legacyvault:difficulty/hard"
-          }
+          "type": "legacyvault:vault_hard_difficulty"
         }
       ],
       "recipe": {

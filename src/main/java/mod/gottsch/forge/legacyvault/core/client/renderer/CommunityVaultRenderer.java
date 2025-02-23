@@ -49,7 +49,7 @@ public class CommunityVaultRenderer implements BlockEntityRenderer<CommunityVaul
 	/*
 	 * NOTE when defining a resource location for the Atlas, you don't need to specify the /textures/ parent folder nor, the .png extension
 	 */
-	public static final ResourceLocation RUSTIC_VAULT_RENDERER_ATLAS_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "entity/vault/rustic_vault");
+	public static final ResourceLocation COMMUNITY_VAULT_RENDERER_ATLAS_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "entity/vault/community_vault");
 
 	private Material material;
 	private CommunityVaultModel vaultModel;
@@ -60,7 +60,7 @@ public class CommunityVaultRenderer implements BlockEntityRenderer<CommunityVaul
 	 */
 	public CommunityVaultRenderer(BlockEntityRendererProvider.Context context) {
 		this.vaultModel = new CommunityVaultModel(context.bakeLayer(CommunityVaultModel.LAYER_LOCATION));
-		material = new Material(TextureAtlas.LOCATION_BLOCKS, RUSTIC_VAULT_RENDERER_ATLAS_TEXTURE);
+		material = new Material(TextureAtlas.LOCATION_BLOCKS, COMMUNITY_VAULT_RENDERER_ATLAS_TEXTURE);
 	}
 	
 	@Override

@@ -29,13 +29,22 @@ import mod.gottsch.forge.legacyvault.core.config.Config;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.core.network.VaultCountMessageToClient;
+import mod.gottsch.forge.legacyvault.core.util.LangUtil;
 import mod.gottsch.forge.legacyvault.core.util.ModUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
+
+import java.util.List;
 
 /**
  * Don't necessarily need separate classes for Personal and Community Vault block items.
@@ -52,6 +61,37 @@ public class VaultBlockItem extends BlockItem {
 	 */
 	public VaultBlockItem(Block block, Properties properties) {
 		super(block, properties);
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag type) {
+		appendBaseText(stack, level, tooltip, type);
+		LangUtil.appendAdvancedHoverText(tooltip, tt -> {
+			if (stack.getItem() == ModItems.COMMUNITY_VAULT.get()) {
+				appendAdvancedText(stack, level, tooltip, type, "usage.community_vault");
+			} else {
+				appendAdvancedText(stack, level, tooltip, type, "usage.personal_vault");
+			}
+		});
+	}
+
+
+	public void appendBaseText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+
+//		tooltip.add(Component.translatable(LangUtil.tooltip("mage_flame.desc")).withStyle(ChatFormatting.YELLOW));
+//		tooltip.add(Component.literal(LangUtil.NEWLINE));
+//		tooltip.add(Component.translatable(LangUtil.tooltip("light_level"), DynamicLights.MAGE_FLAME_LUMINANCE));
+//		tooltip.add(Component.translatable(LangUtil.tooltip("lifespan"), ticksToTime(Config.SERVER.mageFlameLifespan.get())));
+	}
+
+
+	public void appendAdvancedText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag, String key) {
+		MutableComponent lore = Component.translatable(LangUtil.tooltip(key));
+		tooltip.add(Component.literal(" "));
+		for (String s : lore.getString().split("~")) {
+			tooltip.add(Component.translatable(LangUtil.INDENT2)
+					.append(Component.literal(s).withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC)));
+		}
 	}
 
 	/**
@@ -72,14 +112,14 @@ public class VaultBlockItem extends BlockItem {
 			}
 
 			if ((state.getBlock() instanceof CommunityVaultBlock)) {
-				if (Config.ServerConfig.COMMUNITY.communityVault.get()
+				if (Config.ServerConfig.COMMUNITY.enabled.get()
 						&& ModUtil.doesPlayerHaveCommunityAccess(context.getPlayer())) {
 					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 				}
 			}
 			else {
 				// only place if personal vaults are enabled
-				if (ServerConfig.PERSONAL.personalVault.get()) {
+				if (ServerConfig.PERSONAL.enabled.get()) {
 					// get  player capabilities
 					IPlayerVaultsHandler cap = ModUtil.getPlayerCapability(context.getPlayer());
 					if (LegacyVault.LOGGER.isDebugEnabled()) {

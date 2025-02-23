@@ -94,10 +94,10 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 
 		String vaultsRemaining = "";
 
-		if (ServerConfig.COMMUNITY.communityVault.get()) {
+		if (ServerConfig.COMMUNITY.enabled.get()) {
 			vaultsRemaining = Component.translatable(LangUtil.screen("community_vault")).getString();
 		}
-		else if (ServerConfig.PERSONAL.personalVault.get()){
+		else if (ServerConfig.PERSONAL.enabled.get()){
 			// check for unlimited
 			if (!ServerConfig.PERSONAL.unlimitedVaults.get()) {
 				IPlayerVaultsHandler cap = inventory.player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {

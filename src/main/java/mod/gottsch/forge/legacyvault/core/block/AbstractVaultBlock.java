@@ -19,30 +19,19 @@
  */
 package mod.gottsch.forge.legacyvault.core.block;
 
-import mod.gottsch.forge.gottschcore.spatial.Coords;
-import mod.gottsch.forge.gottschcore.spatial.ICoords;
 import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.block.entity.IVaultBlockEntity;
-import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
-import mod.gottsch.forge.legacyvault.core.inventory.VaultContainerMenu;
-import mod.gottsch.forge.legacyvault.core.network.LegacyVaultNetworking;
-import mod.gottsch.forge.legacyvault.core.network.VaultCountMessageToClient;
-import mod.gottsch.forge.legacyvault.core.util.ModUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -58,11 +47,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Mark Gottschling on May 1, 2021
@@ -164,7 +148,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 			vaultBlockEntity = (IVaultBlockEntity) blockEntity;
 
 			if (LegacyVault.LOGGER.isDebugEnabled()) {
-				LegacyVault.LOGGER.debug("community vault -> {}", ServerConfig.COMMUNITY.communityVault.get());
+				LegacyVault.LOGGER.debug("community vault -> {}", ServerConfig.COMMUNITY.enabled.get());
 				LegacyVault.LOGGER.debug("placer uuid -> {}", placer.getStringUUID());
 			}
 

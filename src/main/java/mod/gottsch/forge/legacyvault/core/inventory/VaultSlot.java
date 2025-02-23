@@ -166,7 +166,8 @@ public class VaultSlot extends SlotItemHandler {
 
 	@Override
 	public int getMaxStackSize() {
-		return ServerConfig.GENERAL.stackSize.get();
+		super.getMaxStackSize();
+		return ServerConfig.GENERAL.maxSlotStackSize.get();
 	}
 	
 	@Override

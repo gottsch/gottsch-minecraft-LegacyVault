@@ -57,6 +57,9 @@ public class LanguageGen extends LanguageProvider {
         // general
         add(LangUtil.tooltip("hold_shift"), "Hold [SHIFT] to expand");
 
+        add(LangUtil.tooltip("usage.personal_vault"), "");
+        add(LangUtil.tooltip("usage.community_vault"), "");
+
         /*
          * Screen
          */

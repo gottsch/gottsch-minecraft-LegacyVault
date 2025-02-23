@@ -79,7 +79,7 @@ public class ModUtil {
 			return false;
 		}
 
-		if (ServerConfig.COMMUNITY.communityVault.get()) {
+		if (ServerConfig.COMMUNITY.enabled.get()) {
 			if (!ServerConfig.COMMUNITY.playerWhiteList.get().isEmpty()) {
 				// check that player is part of white list
 				for (String whiteListedUUID : ServerConfig.COMMUNITY.playerWhiteList.get()) {

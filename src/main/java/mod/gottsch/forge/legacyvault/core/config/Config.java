@@ -108,15 +108,13 @@ public class Config extends AbstractConfig {
 		public ConfigValue<List<? extends String>> inventoryWhitelist;
 		public ConfigValue<List<? extends String>> inventoryBlacklist;
 
-//		public ConfigValue<List<? extends String>> tagsWhitelist;
-//		public ConfigValue<List<? extends String>> tagsBlacklist;
-
 		public List<Pattern> inventoryWhitelistPatterns = new ArrayList<>();
 		public List<Pattern> inventoryBlacklistPatterns = new ArrayList<>();
 
 		public ConfigValue<String> inventorySize;
-		public ForgeConfigSpec.IntValue stackSize;
+		public ForgeConfigSpec.IntValue maxSlotStackSize;
 
+		// an internal config property that is calculated after the config is loaded.
 		public int resolvedSize;
 
 		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
@@ -124,19 +122,18 @@ public class Config extends AbstractConfig {
 		public General(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV,
 					" GENERAL PROPERTIES",
-					" Note: As of mc1.19.2, the recipe conditions are data-driven via Tags.",
-					" Therefor, ensure to update tags at data.legacyvault.tags.items.difficult accordingly.",
-					" ie. Add legacyvault/vault to the values list in one of the difficulty tags. Default = Normal.",
 					CATEGORY_DIV).push(GENERAL_CATEGORY);
 
 			inventorySize = builder
 					.comment(" Maximum capacity of the vault inventory.",
 							" Sizes are standard/vanilla (27), large/double (54), xlarge (91).")
-					.define("inventorySize:", "standard");
+					.define("inventorySize", "standard");
 
-			stackSize = builder
-					.comment(" Maximum item stack size in a vault.")
-					.defineInRange("maxStackSize:", 64, 1, 1024);
+			maxSlotStackSize = builder
+					.comment(" Maximum item stack size in a vault slot.",
+							" NOTE this maximum will not overwrite the item's max stack size.",
+							" Ex. if the item max stack size = 64, the vault slot will max out at 64 even if it is set at 100.")
+					.defineInRange("maxStackSize", 64, 1, 1024);
 
 			inventoryWhitelist = builder
 					.comment(" Allowed Items/Blocks for vault inventory.",
@@ -149,14 +146,6 @@ public class Config extends AbstractConfig {
 							" Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs",
 							" Tags (legacyvault:items/vault_blacklist) takes precedence.")
 					.defineList("inventoryBlacklist", Arrays.asList("(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box","treasure2:milk_crate"), STRING_PREDICATE);
-
-//			tagsWhitelist = builder
-//					.comment(" Allowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
-//					.defineList("tagsWhitelist", new ArrayList<String>(), STRING_PREDICATE);
-//
-//			tagsBlacklist = builder
-//					.comment(" Disallowed Tags for vault inventory. Must match the Tag Registry Name(s). Regex is NOT supported.")
-//					.defineList("tagsBlacklist", new ArrayList<String>(), STRING_PREDICATE);
 
 			builder.pop();
 		}
@@ -183,7 +172,7 @@ public class Config extends AbstractConfig {
 	}
 
 	public static class PersonalConfig {
-		public BooleanValue personalVault;
+		public BooleanValue enabled;
 		public BooleanValue unlimitedVaults;
 		public IntValue vaultsPerPlayer;
 
@@ -191,14 +180,16 @@ public class Config extends AbstractConfig {
 			builder.comment(CATEGORY_DIV,
 					" PERSONAL VAULT PROPERTIES",
 					" Note: As of mc1.19.2, the recipe conditions are data-driven via Tags.",
-					" Therefor, ensure to update tags at data.legacyvault.tags.items.difficult accordingly.",
-					CATEGORY_DIV).push(COMMUNITY_VAULT_CATEGORY);
+					" Therefor, ensure to update tags at data.legacyvault.tags.items.difficulty accordingly.",
+					" A 'legacyvault:classic_vault' must be in one of the difficulty tags to enable the recipe.",
+					" Remove the item from all the tags to disable the recipe altogether.",
+					" Default = Normal.",
+					CATEGORY_DIV).push(PERSONAL_VAULT_CATEGORY);
 
-			personalVault = builder
-					.comment(" Enables a singular global public vault(s) that can be used by all players from the same location.",
-							" ie. a vault block is not 'owned' or 'keyed' to a specific player only.",
-							" Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
-					.define("publicVault", true);
+			enabled = builder
+					.comment(" Enables vaults exclusive to each player.",
+							" The player can access their inventory only from their owned vaults.")
+					.define("enabled", true);
 
 			unlimitedVaults = builder
 					.comment(" Enables unlimited number of vaults per player per world.",
@@ -206,7 +197,7 @@ public class Config extends AbstractConfig {
 					.define("unlimitedVaults", false);
 
 			vaultsPerPlayer = builder
-					.comment(" The number of vaults each player can place per world.", " Enable public vault' must be disabled.")
+					.comment(" The number of vaults each player can place per world.")
 					.defineInRange("vaultsPerPlayer", 3, 1, 100);
 
 			builder.pop();
@@ -214,7 +205,7 @@ public class Config extends AbstractConfig {
 	}
 
 	public static class CommunityConfig {
-		public BooleanValue communityVault;
+		public BooleanValue enabled;
 		public ConfigValue<List<? extends String>> playerWhiteList;
 		public ConfigValue<List<? extends String>> playerBlackList;
 
@@ -223,21 +214,21 @@ public class Config extends AbstractConfig {
 					" COMMUNITY VAULT PROPERTIES",
 					CATEGORY_DIV).push(COMMUNITY_VAULT_CATEGORY);
 
-			communityVault = builder
-					.comment(" Enables a singular global public vault(s) that can be used by all players from the same location.",
-							" ie. a vault block is not 'owned' or 'keyed' to a specific player only.",
-							" Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault.")
-					.define("publicVault", true);
+			enabled = builder
+					.comment(" Enables a community vault(s) that can be used by all players from the same location to access their personal inventory (much like an Ender Chest).",
+							" ie. a vault block is not 'owned' by specific player only.",
+							" Typically an admin/server owner would use this to create a central location (or set of locations) where everyone can access their vault inventory.")
+					.define("enabled", true);
 
 			// TODO add a config list of players who are allowed to place community vaults (besides OPS/Admin)
 
 			playerWhiteList = builder
-					.comment(" Allowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
+					.comment(" Allowed players for community vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
 							"If both White and Black lists are empty, then all players have access.")
 					.defineList("playerWhitelist", new ArrayList<String>(), s -> s instanceof String);
 
 			playerBlackList = builder
-					.comment(" Disallowed players for vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
+					.comment(" Disallowed players for community vault inventory. Must match the Player UUID(s). Wildcards are NOT supported.",
 							"If both White and Black lists are empty, then all players have access.")
 					.defineList("playerBlacklist", new ArrayList<String>(), s -> s instanceof String);
 
