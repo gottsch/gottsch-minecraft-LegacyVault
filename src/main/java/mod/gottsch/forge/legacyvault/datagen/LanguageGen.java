@@ -57,8 +57,8 @@ public class LanguageGen extends LanguageProvider {
         // general
         add(LangUtil.tooltip("hold_shift"), "Hold [SHIFT] to expand");
 
-        add(LangUtil.tooltip("usage.personal_vault"), "");
-        add(LangUtil.tooltip("usage.community_vault"), "");
+        add(LangUtil.tooltip("usage.personal_vault"), "A Personal Vault provides a persistent multi-world inventory~that only the owning player can access.");
+        add(LangUtil.tooltip("usage.community_vault"), "A Community Vault provides a persistent multi-world inventory~that all players can use, but can only access their own inventory.~A Community Vault can only be placed or destroy by players~with the correct privileges, ex. creative mode.");
 
         /*
          * Screen

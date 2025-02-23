@@ -40,6 +40,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
@@ -49,7 +50,12 @@ import javax.annotation.Nullable;
  */
 public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
 
-    private static final VoxelShape VAULT = Block.box(0, 0, 0, 15.9, 15.9, 15.9);
+    private static final VoxelShape MAIN = Block.box(0.1, 0, 0.1, 15.9, 9, 15.9);
+    private static final VoxelShape Z_AXIS_TOP = Block.box(0, 9, 4.5, 15.9, 15, 11.5);
+    private static final VoxelShape X_AXIS_TOP = Block.box(4.5, 9, 0.1, 11.5, 15, 15.9);
+
+    private static final VoxelShape Z_AXIS_SHAPE = Shapes.or(MAIN, Z_AXIS_TOP);
+    private static final VoxelShape X_AXIS_SHAPE = Shapes.or(MAIN, X_AXIS_TOP);
 
     /**
      * @param properties
@@ -58,10 +64,10 @@ public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyV
         super(properties);
         setBounds(
                 new VoxelShape[] {
-                        VAULT, 	// N
-                        VAULT,  	// E
-                        VAULT,  	// S
-                        VAULT		// W
+                        Z_AXIS_SHAPE, 	// N
+                        X_AXIS_SHAPE,  // E
+                        Z_AXIS_SHAPE,  // S
+                        X_AXIS_SHAPE   // W
                 });
     }
 
