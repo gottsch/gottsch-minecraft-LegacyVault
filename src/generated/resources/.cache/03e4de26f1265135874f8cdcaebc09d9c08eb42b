@@ -1,0 +1,6 @@
+// 1.19.2	2025-02-24T11:02:45.1353301	Tags for minecraft:item
+8a3b6c43de5696d22edea798ffefe18769ecd1fb data/legacyvault/tags/items/difficulty/easy.json
+8a3b6c43de5696d22edea798ffefe18769ecd1fb data/legacyvault/tags/items/difficulty/hard.json
+5bd5c1036cd8e167e2743af8ab3f47980cd1ea7f data/legacyvault/tags/items/difficulty/normal.json
+dd0531bbbe63373250101908ae18f4981cf416b9 data/legacyvault/tags/items/ingredients/vault_contracts.json
+a42e4711871c5228a3aae11e69b1c347c91c6e94 data/legacyvault/tags/items/vault_blacklist.json
