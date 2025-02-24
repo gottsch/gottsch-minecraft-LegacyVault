@@ -404,18 +404,9 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 			/*
 			 * This is a vanilla container slot so merge the stack into the tile inventory
 			 */
-			// first ensure that the sourcStack is a valid item for the container
-//			if (!displayInventory.canPlaceItem(sourceSlotIndex, sourceStack)) {
-//				return ItemStack.EMPTY;
-//			}
-			if (!this.moveItemStackTo(sourceStack, CONTAINER_INVENTORY_FIRST_SLOT_INDEX, CONTAINER_INVENTORY_FIRST_SLOT_INDEX + getMenuInventorySlotCount(), true)) {
+			if (!this.moveItemStackTo(sourceStack, CONTAINER_INVENTORY_FIRST_SLOT_INDEX, CONTAINER_INVENTORY_FIRST_SLOT_INDEX + getMenuInventorySlotCount(), false)) {
 				return ItemStack.EMPTY;
 			}
-
-//			if (!moveItemStackTo(sourceStack, CONTAINER_INVENTORY_FIRST_SLOT_INDEX,
-//					CONTAINER_INVENTORY_FIRST_SLOT_INDEX + getContainerInventorySlotCount(), false)) {
-//				return ItemStack.EMPTY;
-//			}
 		} else if (sourceSlotIndex >= CONTAINER_INVENTORY_FIRST_SLOT_INDEX
 				&& sourceSlotIndex < CONTAINER_INVENTORY_FIRST_SLOT_INDEX + getMenuInventorySlotCount()) {
 			// This is a TE slot so merge the stack into the players inventory

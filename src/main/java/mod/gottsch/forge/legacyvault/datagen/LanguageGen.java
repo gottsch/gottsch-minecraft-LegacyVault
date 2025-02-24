@@ -43,13 +43,13 @@ public class LanguageGen extends LanguageProvider {
         // item group
 
         // items
-        add(ModItems.CONTRACT.get(), "Vault Contract");
-        add(ModItems.APPLICATION.get(), "Vault Application");
+        add(ModItems.CONTRACT.get(), "Legacy Vault Contract");
+        add(ModItems.APPLICATION.get(), "Legacy Vault Application");
 
         // blocks
-        add(ModBlocks.RUSTIC_VAULT.get(), "Rustic Vault");
-        add(ModBlocks.CLASSIC_VAULT.get(), "Classic Vault");
-        add(ModBlocks.COMMUNITY_VAULT.get(), "Community Vault");
+        add(ModBlocks.RUSTIC_VAULT.get(), "Rustic Legacy Vault");
+        add(ModBlocks.CLASSIC_VAULT.get(), "Classic Legacy Vault");
+        add(ModBlocks.COMMUNITY_VAULT.get(), "Community Legacy Vault");
         
         /*
          *  Util.tooltips
@@ -68,6 +68,6 @@ public class LanguageGen extends LanguageProvider {
         add(LangUtil.screen("community_vault.name"), "Community Legacy Vault");
         add(LangUtil.screen("unlimited_vaults"), "Vaults Remaining: Unlimited");
         add(LangUtil.screen("vaults_remaining"), "Vaults Remaining: %s of %s");
-        add(LangUtil.screen("community_vault"), "Community Vault");
+        add(LangUtil.screen("community_vault"), "Community Legacy Vault");
     }
 }

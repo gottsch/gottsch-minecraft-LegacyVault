@@ -40,7 +40,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class RusticVaultBlock extends PersonalVaultBlock {
 	private static final VoxelShape MAIN = Block.box(0.1, 0, 0.1, 15.9, 9, 15.9);
-	private static final VoxelShape Z_AXIS_TOP = Block.box(0, 9, 4.5, 15.9, 15, 11.5);
+	private static final VoxelShape Z_AXIS_TOP = Block.box(0.1, 9, 4.5, 15.9, 15, 11.5);
 	private static final VoxelShape X_AXIS_TOP = Block.box(4.5, 9, 0.1, 11.5, 15, 15.9);
 
 	private static final VoxelShape Z_AXIS_SHAPE = Shapes.or(MAIN, Z_AXIS_TOP);
