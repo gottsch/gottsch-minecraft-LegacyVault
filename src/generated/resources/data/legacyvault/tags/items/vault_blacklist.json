@@ -1,0 +1,92 @@
+{
+  "values": [
+    "legacyvault:rustic_vault",
+    "legacyvault:classic_vault",
+    "legacyvault:community_vault",
+    "minecraft:shulker_box",
+    {
+      "id": "treasure2:barrel_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:cardboard_box",
+      "required": false
+    },
+    {
+      "id": "treasure2:cauldron_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:compressor_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:crate_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:crystal_skull_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:dread_pirate_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:gold_skull_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:gold_strongbox",
+      "required": false
+    },
+    {
+      "id": "treasure2:ironbound_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:iron_strongbox",
+      "required": false
+    },
+    {
+      "id": "treasure2:milk_crate",
+      "required": false
+    },
+    {
+      "id": "treasure2:crate_chest_moldy",
+      "required": false
+    },
+    {
+      "id": "treasure2:pirate_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:safe",
+      "required": false
+    },
+    {
+      "id": "treasure2:skull_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:spider_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:vanilla_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:viking_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:wood_chest",
+      "required": false
+    },
+    {
+      "id": "treasure2:wither_chest",
+      "required": false
+    }
+  ]
+}

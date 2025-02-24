@@ -1,8 +1,0 @@
-{
-    "parent": "legacyvault:block/base_vault",
-    "textures": {
-        "0": "legacyvault:block/chests/wood_chest_north",
-        "1": "legacyvault:block/chests/wood_chest_east",
-        "2": "legacyvault:block/chests/wood_chest_up"
-    }
-}

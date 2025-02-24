@@ -1,0 +1,16 @@
+{
+  "block.legacyvault.classic_vault": "Classic Legacy Vault",
+  "block.legacyvault.community_vault": "Community Legacy Vault",
+  "block.legacyvault.rustic_vault": "Rustic Legacy Vault",
+  "item.legacyvault.vault_application": "Legacy Vault Application",
+  "item.legacyvault.vault_contract": "Legacy Vault Contract",
+  "screen.legacyvault.community_vault": "Community Legacy Vault",
+  "screen.legacyvault.community_vault.name": "Community Legacy Vault",
+  "screen.legacyvault.personal_vault.name": "Personal Legacy Vault",
+  "screen.legacyvault.unlimited_vaults": "Vaults Remaining: Unlimited",
+  "screen.legacyvault.vault.name": "Legacy Vault",
+  "screen.legacyvault.vaults_remaining": "Vaults Remaining: %s of %s",
+  "tooltip.legacyvault.hold_shift": "Hold [SHIFT] to expand",
+  "tooltip.legacyvault.usage.community_vault": "A Community Vault provides a persistent multi-world inventory~that all players can use, but can only access their own inventory.~A Community Vault can only be placed or destroy by players~with the correct privileges, ex. creative mode.",
+  "tooltip.legacyvault.usage.personal_vault": "A Personal Vault provides a persistent multi-world inventory~that only the owning player can access."
+}
