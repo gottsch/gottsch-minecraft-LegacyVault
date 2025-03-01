@@ -1,0 +1,89 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "legacyvault:vault_normal_difficulty"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "key": {
+          "c": {
+            "item": "minecraft:chest"
+          },
+          "i": {
+            "item": "minecraft:iron_ingot"
+          },
+          "v": {
+            "tag": "legacyvault:ingredients/vault_contracts"
+          }
+        },
+        "pattern": [
+          "iiv",
+          "ici",
+          "iii"
+        ],
+        "result": {
+          "item": "legacyvault:rustic_vault"
+        }
+      }
+    },
+    {
+      "conditions": [
+        {
+          "type": "legacyvault:vault_easy_difficulty"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "key": {
+          "c": {
+            "item": "minecraft:chest"
+          },
+          "v": {
+            "tag": "legacyvault:ingredients/vault_contracts"
+          }
+        },
+        "pattern": [
+          "  v",
+          " c ",
+          "   "
+        ],
+        "result": {
+          "item": "legacyvault:rustic_vault"
+        }
+      }
+    },
+    {
+      "conditions": [
+        {
+          "type": "legacyvault:vault_hard_difficulty"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "key": {
+          "c": {
+            "item": "minecraft:chest"
+          },
+          "i": {
+            "item": "minecraft:iron_block"
+          },
+          "v": {
+            "tag": "legacyvault:ingredients/vault_contracts"
+          }
+        },
+        "pattern": [
+          "iiv",
+          "ici",
+          "iii"
+        ],
+        "result": {
+          "item": "legacyvault:rustic_vault"
+        }
+      }
+    }
+  ]
+}

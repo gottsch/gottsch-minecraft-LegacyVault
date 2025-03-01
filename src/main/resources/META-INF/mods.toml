@@ -10,7 +10,7 @@ issueTrackerURL="https://github.com/gottsch/gottsch-minecraft-LegacyVault/issues
 
 [[mods]] #mandatory
 modId="legacyvault" #mandatory
-version="1.4.0" #mandatory
+version="2.0.0" #mandatory
 displayName="Legacy Vault" #mandatory
 
 # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/

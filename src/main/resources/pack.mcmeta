@@ -1,6 +1,7 @@
 {
     "pack": {
         "description": "legacyvault resources",
-        "pack_format": 9
+        "pack_format": 8,
+        "_comment": ""
     }
 }
