@@ -389,7 +389,6 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 		return getHotbarYPos() + getSlotYSpacing() + 2;
 	}
 
-	// TODO fix the backwards quick move into inventory - maybe look at T2 for how these inventories are setup
 	@Override
 	public ItemStack quickMoveStack(Player player, int sourceSlotIndex) {
 		Slot sourceSlot = (Slot) slots.get(sourceSlotIndex);

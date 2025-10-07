@@ -168,12 +168,12 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
 
     @Override
     public float getDestroyProgress(BlockState state, Player player, BlockGetter blockReader, BlockPos blockPos) {
-        if (!player.isCreative()) {
-            // prevent player from destroying vault if they don't have access
-            if ((Config.ServerConfig.COMMUNITY.enabled.get())) {
-                return 0;
-            }
-        }
+//        if (!player.isCreative()) {
+//            // prevent player from destroying vault if they don't have access
+//            if ((Config.ServerConfig.COMMUNITY.enabled.get())) {
+//                return 0;
+//            }
+//        }
         return super.getDestroyProgress(state, player, blockReader, blockPos);
     }
 }
