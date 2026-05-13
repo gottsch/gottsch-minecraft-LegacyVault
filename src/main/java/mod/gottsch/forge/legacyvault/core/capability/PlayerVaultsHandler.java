@@ -1,5 +1,5 @@
 /*
- * This file is part of  Treasure2.
+ * This file is part of Legacy Vault.
  * Copyright (c) 2021 Mark Gottschling (gottsch)
  *
  * Legacy Vault is free software: you can redistribute it and/or modify
@@ -17,84 +17,49 @@
  */
 package mod.gottsch.forge.legacyvault.core.capability;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import mod.gottsch.forge.gottschcore.spatial.Coords;
-import mod.gottsch.forge.gottschcore.spatial.ICoords;
+import mod.gottsch.forge.gottschcore.spatial.DimensionCoords;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.List;
+
 /**
- * @author Mark Gottschling on May 11, 2021
+ * Forge capability wrapper for {@link PlayerVaultData}.
+ * All persistent state lives in PlayerVaultData (no loader-specific imports there).
+ * On a NeoForge port, replace this class with an AttachmentType-based holder
+ * that wraps the same PlayerVaultData — the data and NBT logic stay unchanged.
  *
+ * @author Mark Gottschling on May 11, 2021
  */
-public class PlayerVaultsHandler implements IPlayerVaultsHandler, INBTSerializable<Tag> {
-	private static final String COUNT = "count";
-	private static final String LOCATIONS = "locations";
+public class PlayerVaultsHandler implements IPlayerVaultsHandler, INBTSerializable<CompoundTag> {
 
-	private int count;
-	private List<ICoords> locations;
+    private final PlayerVaultData data = new PlayerVaultData();
 
-	@Override
-	public Tag serializeNBT() {
-		CompoundTag nbt = new CompoundTag();
-		nbt.putInt(COUNT, getCount());
+    @Override
+    public CompoundTag serializeNBT() {
+        return data.save();
+    }
 
-		ListTag list = new ListTag();
-		for (ICoords location :  getLocations()) {
-			CompoundTag coords = new CompoundTag();
-			coords.putInt("x", location.getX());
-			coords.putInt("y", location.getY());
-			coords.putInt("z", location.getZ());
-			list.add(coords);
-		}
-		nbt.put(LOCATIONS, list);
-		return nbt;
-	}
+    @Override
+    public void deserializeNBT(CompoundTag compound) {
+        data.load(compound);
+    }
 
-	@Override
-	public void deserializeNBT(Tag tag) {
-		if (tag instanceof CompoundTag) {
+    @Override
+    public int getCount() { return data.getCount(); }
 
-			CompoundTag compound = (CompoundTag)tag;
-			if (compound.contains(COUNT)) {
-				setCount(compound.getInt(COUNT));
-			}
+    @Override
+    public void setCount(int size) { data.setCount(size); }
 
-			// add locations
-			if (compound.contains(LOCATIONS)) {
-				ListTag locations = compound.getList(LOCATIONS, 10);
-				for (Tag loc : locations) {
-					ICoords coords = new Coords(((CompoundTag)loc).getInt("x"), ((CompoundTag)loc).getInt("y"), ((CompoundTag)loc).getInt("z") );
-					getLocations().add(coords);
-				}
-			}	
-		}
-	}
+    @Override
+    public List<DimensionCoords> getLocations() { return data.getLocations(); }
 
-	@Override
-	public int getCount() {
-		return count;
-	}
+    @Override
+    public void setLocations(List<DimensionCoords> locations) { data.setLocations(locations); }
 
-	@Override
-	public void setCount(int size) {
-		this.count = size;
-	}
+    @Override
+    public int getVaultTier() { return data.getVaultTier(); }
 
-	@Override
-	public List<ICoords> getLocations() {
-		if (locations == null) {
-			locations = new ArrayList<>();
-		}
-		return locations;
-	}
-
-	@Override
-	public void setLocations(List<ICoords> locations) {
-		this.locations = locations;
-	}
+    @Override
+    public void setVaultTier(int tier) { data.setVaultTier(tier); }
 }

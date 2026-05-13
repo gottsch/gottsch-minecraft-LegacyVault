@@ -19,8 +19,7 @@
  */
 package mod.gottsch.forge.legacyvault.core.item;
 
-import mod.gottsch.forge.gottschcore.spatial.Coords;
-import mod.gottsch.forge.gottschcore.spatial.ICoords;
+import mod.gottsch.forge.gottschcore.spatial.DimensionCoords;
 import mod.gottsch.forge.gottschcore.world.WorldInfo;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.CommunityVaultBlock;
@@ -108,7 +107,14 @@ public class VaultBlockItem extends BlockItem {
 			 */
 
 			if (context.getPlayer().isCreative()) {
-				return context.getLevel().setBlock(context.getClickedPos(), state, 26);
+				boolean placed = context.getLevel().setBlock(context.getClickedPos(), state, 26);
+				if (placed) {
+					IPlayerVaultsHandler cap = ModUtil.getPlayerCapability(context.getPlayer());
+					if (cap != null) {
+						cap.getLocations().add(DimensionCoords.of(context.getLevel().dimension(), context.getClickedPos()));
+					}
+				}
+				return placed;
 			}
 
 			if ((state.getBlock() instanceof CommunityVaultBlock)) {
@@ -147,8 +153,7 @@ public class VaultBlockItem extends BlockItem {
 					}
 
 					// add the vault location to capabilities
-					ICoords location = new Coords(context.getClickedPos());
-					cap.getLocations().add(location);
+					cap.getLocations().add(DimensionCoords.of(context.getLevel().dimension(), context.getClickedPos()));
 
 					return context.getLevel().setBlock(context.getClickedPos(), state, 26);
 				}

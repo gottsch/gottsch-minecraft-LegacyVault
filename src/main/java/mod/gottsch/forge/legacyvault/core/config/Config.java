@@ -24,10 +24,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import mod.gottsch.forge.gottschcore.config.AbstractConfig;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.inventory.VaultSlotSize;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -103,7 +103,10 @@ public class Config extends AbstractConfig {
 	 *
 	 */
 	public static class General {
-		public static final int MAX_INVENTORY_SIZE = 84;
+		// historical maximum slot count (old XLARGE: 7 rows x 13 cols = 91).
+		// used only as the legacy read-buffer ceiling in VaultPersistenceManager.load().
+		// live allocation is now maxTier * 9.
+		public static final int MAX_INVENTORY_SIZE = 91;
 
 		public ConfigValue<List<? extends String>> inventoryWhitelist;
 		public ConfigValue<List<? extends String>> inventoryBlacklist;
@@ -111,11 +114,7 @@ public class Config extends AbstractConfig {
 		public List<Pattern> inventoryWhitelistPatterns = new ArrayList<>();
 		public List<Pattern> inventoryBlacklistPatterns = new ArrayList<>();
 
-		public ConfigValue<String> inventorySize;
 		public ForgeConfigSpec.IntValue maxSlotStackSize;
-
-		// an internal config property that is calculated after the config is loaded.
-		public int resolvedSize;
 
 		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
 
@@ -123,11 +122,6 @@ public class Config extends AbstractConfig {
 			builder.comment(CATEGORY_DIV,
 					" GENERAL PROPERTIES",
 					CATEGORY_DIV).push(GENERAL_CATEGORY);
-
-			inventorySize = builder
-					.comment(" Maximum capacity of the vault inventory.",
-							" Sizes are standard/vanilla (27), large/double (54), xlarge (91).")
-					.define("inventorySize", "standard");
 
 			maxSlotStackSize = builder
 					.comment(" Maximum item stack size in a vault slot.",
@@ -154,20 +148,21 @@ public class Config extends AbstractConfig {
 		 *
 		 */
 		public void init() {
-			for(String name : inventoryWhitelist.get()) {
-				inventoryWhitelistPatterns.add(Pattern.compile(name));
+			for (String name : inventoryWhitelist.get()) {
+				try {
+					inventoryWhitelistPatterns.add(Pattern.compile(name));
+				} catch (PatternSyntaxException e) {
+					LegacyVault.LOGGER.warn("Skipping invalid inventoryWhitelist regex '{}': {}", name, e.getMessage());
+				}
 			}
-			for(String name : inventoryBlacklist.get()) {
-				inventoryBlacklistPatterns.add(Pattern.compile(name));
+			for (String name : inventoryBlacklist.get()) {
+				try {
+					inventoryBlacklistPatterns.add(Pattern.compile(name));
+				} catch (PatternSyntaxException e) {
+					LegacyVault.LOGGER.warn("Skipping invalid inventoryBlacklist regex '{}': {}", name, e.getMessage());
+				}
 			}
 
-			// map sizes
-			try {
-				resolvedSize = VaultSlotSize.valueOf(inventorySize.get().toUpperCase()).getSize();
-			} catch (Exception e) {
-				LegacyVault.LOGGER.warn("unrecognized 'inventorySize' value of {}. using standard size of {}", inventorySize.get(), VaultSlotSize.STANDARD.getSize());
-				resolvedSize = VaultSlotSize.STANDARD.getSize();
-			}
 		}
 	}
 
@@ -175,6 +170,8 @@ public class Config extends AbstractConfig {
 		public BooleanValue enabled;
 		public BooleanValue unlimitedVaults;
 		public IntValue vaultsPerPlayer;
+		public IntValue startingTier;
+		public IntValue maxTier;
 
 		PersonalConfig(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV,
@@ -199,6 +196,16 @@ public class Config extends AbstractConfig {
 			vaultsPerPlayer = builder
 					.comment(" The number of vaults each player can place per world.")
 					.defineInRange("vaultsPerPlayer", 3, 1, 100);
+
+			startingTier = builder
+					.comment(" The vault tier (row count) that new players start with.",
+							" Each tier adds one row of 9 slots. Tier 1 = 9 slots.")
+					.defineInRange("startingTier", 1, 1, 10);
+
+			maxTier = builder
+					.comment(" The maximum vault tier players can reach.",
+							" Each tier adds one row of 9 slots. Tier 10 = 90 slots.")
+					.defineInRange("maxTier", 10, 1, 10);
 
 			builder.pop();
 		}

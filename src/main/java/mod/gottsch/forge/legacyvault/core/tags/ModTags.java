@@ -31,9 +31,9 @@ import net.minecraft.world.item.Item;
 public class ModTags {
 	
 	public static class Items {
-		public static final TagKey<Item> EASY_RECIPE = mod(LegacyVault.MOD_ID, "difficulty/easy");
-		public static final TagKey<Item> NORMAL_RECIPE = mod(LegacyVault.MOD_ID, "difficulty/normal");
-		public static final TagKey<Item> HARD_RECIPE = mod(LegacyVault.MOD_ID, "difficulty/hard");
+		public static final TagKey<Item> EASY_RECIPE = mod(LegacyVault.MOD_ID, "recipe_tier/easy");
+		public static final TagKey<Item> NORMAL_RECIPE = mod(LegacyVault.MOD_ID, "recipe_tier/normal");
+		public static final TagKey<Item> HARD_RECIPE = mod(LegacyVault.MOD_ID, "recipe_tier/hard");
 
 		// to support legacy vault ingredients
 		public static final TagKey<Item> VAULT_CONTRACTS = mod(LegacyVault.MOD_ID, "ingredients/vault_contracts");

@@ -5,7 +5,7 @@ package mod.gottsch.forge.legacyvault.core.capability;
 
 import java.util.List;
 
-import mod.gottsch.forge.gottschcore.spatial.ICoords;
+import mod.gottsch.forge.gottschcore.spatial.DimensionCoords;
 
 
 /**
@@ -18,8 +18,12 @@ public interface IPlayerVaultsHandler {
 
 	void setCount(int size);
 
-	List<ICoords> getLocations();
+	List<DimensionCoords> getLocations();
 
-	void setLocations(List<ICoords> locations);
+	void setLocations(List<DimensionCoords> locations);
+
+	int getVaultTier();
+
+	void setVaultTier(int tier);
 
 }

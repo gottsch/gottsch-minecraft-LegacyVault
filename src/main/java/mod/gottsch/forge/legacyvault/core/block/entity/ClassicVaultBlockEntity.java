@@ -30,13 +30,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ClassicVaultBlockEntity extends AbstractVaultBlockEntity {
 
 	/*
-	 * Client updated variables
+	 * Client updated variables — lidAngle and prevLidAngle are inherited from AbstractVaultBlockEntity
 	 */
-	/** The current angle of the lid (between 0 and 1) */
-	protected float lidAngle;
-	/** The angle of the lid last tick */
-	protected float prevLidAngle;
-
 	protected float handleAngle;
 	protected float prevHandleAngle;
 
@@ -59,6 +54,7 @@ public class ClassicVaultBlockEntity extends AbstractVaultBlockEntity {
 		super(ModBlockEntities.CLASSIC_VAULT.get(), pos, state);
 	}
 
+	@Override
 	public void tickClient() {
 		// save the previous positions and angles of vault components
 		this.prevLidAngle = this.lidAngle;
@@ -194,14 +190,6 @@ public class ClassicVaultBlockEntity extends AbstractVaultBlockEntity {
 		this.boltPosition = boltPosition;
 	}
 
-	public float getPrevLidAngle() {
-		return prevLidAngle;
-	}
-
-	public void setPrevLidAngle(float prevLidAngle) {
-		this.prevLidAngle = prevLidAngle;
-	}
-
 	public float getPrevHandleAngle() {
 		return prevHandleAngle;
 	}
@@ -224,14 +212,6 @@ public class ClassicVaultBlockEntity extends AbstractVaultBlockEntity {
 
 	public void setPrevHandleAngle(float prevHandleAngle) {
 		this.prevHandleAngle = prevHandleAngle;
-	}
-
-	public float getLidAngle() {
-		return lidAngle;
-	}
-
-	public void setLidAngle(float lidAngle) {
-		this.lidAngle = lidAngle;
 	}
 
 }

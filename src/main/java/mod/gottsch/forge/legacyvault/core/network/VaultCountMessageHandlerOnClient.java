@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -60,50 +61,47 @@ public class VaultCountMessageHandlerOnClient {
 
 	private static void processMessage(Context ctx, VaultCountMessageToClient message) {
 		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-		Optional<Level> clientWorld = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
-		LegacyVault.LOGGER.debug("world -> {}", clientWorld.get());
 		if (sideReceived != LogicalSide.CLIENT) {
-			LegacyVault.LOGGER.warn("VaultCountMessageToClient received on wrong side -> {}", ctx.getDirection().getReceptionSide());
+			LegacyVault.LOGGER.warn("VaultCountMessageToClient received on wrong side -> {}", sideReceived);
 			return;
-		}		
-		Level level = clientWorld.get();
-		
-		LegacyVault.LOGGER.debug("processing message");
-		try {
-			Player player = level.getPlayerByUUID(UUID.fromString(message.getPlayerUUID()));
-			if (player != null) {
-				// get  player capabilities
-				IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
-					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-				});
-				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
-				cap.setCount(message.getVaultCount());
-				LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
-			}
 		}
-		catch(Exception e) {
-			LegacyVault.LOGGER.error("Unexpected error -> ", e);
-		}
-	}
 
-	// this message is called from the Client thread.
-	// it spawns a number of Particle particles at the target location within a short range around the target location
-	private static void processMessage(Level worldClient, VaultCountMessageToClient message) {
+		/*
+		 * UUID validation: this packet is PLAY_TO_CLIENT, so ctx.getSender() is not
+		 * available here. Instead we verify that the UUID in the packet matches the
+		 * local player — the server should only ever send a player their own count, so
+		 * a mismatch means something unexpected is happening.
+		 */
+		Player localPlayer = Minecraft.getInstance().player;
+		if (localPlayer == null || !localPlayer.getStringUUID().equals(message.getPlayerUUID())) {
+			LegacyVault.LOGGER.warn("VaultCountMessageToClient: UUID mismatch — expected {}, got {}",
+					localPlayer != null ? localPlayer.getStringUUID() : "null", message.getPlayerUUID());
+			return;
+		}
+
+		Optional<Level> clientWorld = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
+		if (!clientWorld.isPresent()) {
+			LegacyVault.LOGGER.warn("VaultCountMessageToClient: client world not available");
+			return;
+		}
+		Level level = clientWorld.get();
+
 		LegacyVault.LOGGER.debug("processing message");
 		try {
-			Player player = worldClient.getPlayerByUUID(UUID.fromString(message.getPlayerUUID()));
+			UUID uuid = UUID.fromString(message.getPlayerUUID());
+			Player player = level.getPlayerByUUID(uuid);
 			if (player != null) {
-				// get  player capabilities
-				IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
-					return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-				});
-				LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
-				cap.setCount(message.getVaultCount());
-				LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
+				IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+				if (cap != null) {
+					LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
+					cap.setCount(message.getVaultCount());
+					LegacyVault.LOGGER.debug("player new branch count -> {}", cap.getCount());
+				}
 			}
-		}
-		catch(Exception e) {
-			LegacyVault.LOGGER.error("Unexpected error -> ", e);
+		} catch (IllegalArgumentException e) {
+			LegacyVault.LOGGER.error("VaultCountMessageToClient: invalid player UUID -> {}", message.getPlayerUUID(), e);
+		} catch (Exception e) {
+			LegacyVault.LOGGER.error("Unexpected error processing VaultCountMessageToClient -> ", e);
 		}
 	}
 }

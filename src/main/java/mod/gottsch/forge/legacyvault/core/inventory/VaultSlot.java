@@ -25,6 +25,8 @@ import mod.gottsch.forge.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.tags.ModTags;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -68,11 +70,27 @@ public class VaultSlot extends SlotItemHandler {
 	}
 
 	@Override
+	public boolean mayPickup(Player player) {
+		return active;
+	}
+
+	@Override
 	public boolean mayPlace(ItemStack itemStack) {
+        if (!active) {
+            return false;
+        }
+        return isAllowed(itemStack);
+	}
+
+	/**
+	 * Core item validation — no slot-state (active/inactive) involved.
+	 * Called by mayPlace() and by VaultContainerMenu.quickMoveStack() as a safety net.
+	 */
+	public static boolean isAllowed(ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return false;
         }
-		
+
 		Item item = itemStack.getItem();
 		Block block = Block.byItem(item);
 
@@ -88,7 +106,7 @@ public class VaultSlot extends SlotItemHandler {
 
 		// check if itemStack contains more items
 		if (itemStack.hasTag()) {
-			ListTag itemsList = itemStack.getTag().getList("Items", 10);
+			ListTag itemsList = itemStack.getTag().getList("Items", Tag.TAG_COMPOUND);
 			if (!itemsList.isEmpty()) {
 				return false;
 			}
@@ -113,7 +131,7 @@ public class VaultSlot extends SlotItemHandler {
 		if (!ServerConfig.GENERAL.inventoryWhitelist.get().isEmpty()) {
 			// check against the item/block name white list
 			for(Pattern pattern : ServerConfig.GENERAL.inventoryWhitelistPatterns) {
-				if (registryName.matches(pattern.pattern())) {
+				if (pattern.matcher(registryName).matches()) {
 					return true;
 				}
 			}
@@ -122,7 +140,7 @@ public class VaultSlot extends SlotItemHandler {
 		else if (!ServerConfig.GENERAL.inventoryBlacklist.get().isEmpty()) {
 			// check against the item/block name black list
 			for(Pattern pattern : ServerConfig.GENERAL.inventoryBlacklistPatterns) {
-				if (registryName.matches(pattern.pattern())) {
+				if (pattern.matcher(registryName).matches()) {
 					return false;
 				}
 			}

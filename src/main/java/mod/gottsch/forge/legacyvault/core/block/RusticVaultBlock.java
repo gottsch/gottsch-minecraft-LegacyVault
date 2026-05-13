@@ -21,7 +21,6 @@ package mod.gottsch.forge.legacyvault.core.block;
 
 import javax.annotation.Nullable;
 
-import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.entity.RusticVaultBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -67,15 +66,7 @@ public class RusticVaultBlock extends PersonalVaultBlock {
 	 */
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		BlockEntity vaultBlockEntity = null;
-		try {
-			vaultBlockEntity = new RusticVaultBlockEntity(pos, state);
-		}
-		catch(Exception e) {
-			LegacyVault.LOGGER.error(e);
-		}
-		LegacyVault.LOGGER.debug("created block entity -> {}", vaultBlockEntity.getClass().getSimpleName());
-		return vaultBlockEntity;
+		return new RusticVaultBlockEntity(pos, state);
 	}
 
 	@Nullable

@@ -51,6 +51,7 @@ public class CommonSetup {
 			event.accept(ModItems.COMMUNITY_VAULT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
 
 			event.accept(ModItems.CONTRACT.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.accept(ModItems.VAULT_UPGRADE.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
 		}
 	}
 }

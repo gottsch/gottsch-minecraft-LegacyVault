@@ -258,7 +258,7 @@ public class CommunityVaultModel extends Model implements IVaultModel {
 	}
 
 	public void setupAnim(CommunityVaultBlockEntity entity, float ageInTicks) {
-		float lidRotation = entity.prevLidAngle + (entity.lidAngle - entity.prevLidAngle) * ageInTicks;
+		float lidRotation = entity.getPrevLidAngle() + (entity.getLidAngle() - entity.getPrevLidAngle()) * ageInTicks;
 		lidRotation = 1.0F - lidRotation;
 		lidRotation = 1.0F - lidRotation * lidRotation * lidRotation;
 		lid.xRot = -(lidRotation * (float) Math.PI / /*getAngleModifier()*/2.0F);

@@ -51,6 +51,10 @@ public class ItemModelsProvider extends ItemModelProvider {
 				ModItems.CONTRACT.getId().getPath(),
 				mcLoc("item/generated"), "layer0", modLoc("item/vault_contract"));
 
+		singleTexture(
+				ModItems.VAULT_UPGRADE.getId().getPath(),
+				mcLoc("item/generated"), "layer0", modLoc("item/vault_upgrade"));
+
 		blockItemParent(ModItems.CLASSIC_VAULT);
 		blockItemParent(ModItems.RUSTIC_VAULT);
 		blockItemParent(ModItems.COMMUNITY_VAULT);

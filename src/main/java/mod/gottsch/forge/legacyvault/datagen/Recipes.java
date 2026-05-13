@@ -22,9 +22,9 @@ package mod.gottsch.forge.legacyvault.datagen;
 
 import mod.gottsch.forge.legacyvault.core.block.ModBlocks;
 import mod.gottsch.forge.legacyvault.core.item.ModItems;
-import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultEasyDifficultyCondition;
-import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultHardDifficultyCondition;
-import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultNormalDifficultyCondition;
+import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultEasyTierCondition;
+import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultHardTierCondition;
+import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultNormalTierCondition;
 import mod.gottsch.forge.legacyvault.core.tags.ModTags;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.PackOutput;
@@ -64,7 +64,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 		// rustic vault
 		ConditionalRecipe.builder()
 				// Add the conditions for the recipe
-				.addCondition(VaultNormalDifficultyCondition.INSTANCE)
+				.addCondition(VaultNormalTierCondition.INSTANCE)
 //					not(
 //						tagEmpty(ModTags.Items.NORMAL_RECIPE)
 //					)
@@ -82,18 +82,18 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 							.save(rustic);
 				})
 //				.addCondition(not(tagEmpty(ModTags.Items.EASY_RECIPE)))
-				.addCondition(VaultEasyDifficultyCondition.INSTANCE)
-				.addRecipe(this::buildEasyDifficultyVaultRecipe)
+				.addCondition(VaultEasyTierCondition.INSTANCE)
+				.addRecipe(this::buildEasyTierVaultRecipe)
 //				.addCondition(not(tagEmpty(ModTags.Items.HARD_RECIPE)))
-				.addCondition(VaultHardDifficultyCondition.INSTANCE)
-				.addRecipe(this::buildHardDifficultyVaultRecipe)
+				.addCondition(VaultHardTierCondition.INSTANCE)
+				.addRecipe(this::buildHardTierVaultRecipe)
 				.build(recipe, ModBlocks.RUSTIC_VAULT.getId());
 
 		// classic vault
 		ConditionalRecipe.builder()
 				// Add the conditions for the recipe
 //				.addCondition(not(tagEmpty(ModTags.Items.NORMAL_RECIPE)))
-				.addCondition(VaultNormalDifficultyCondition.INSTANCE)
+				.addCondition(VaultNormalTierCondition.INSTANCE)
 				.addRecipe(classic -> {
 					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CLASSIC_VAULT.get())
 							.pattern("iiv")
@@ -107,7 +107,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 							.save(classic);
 				})
 //				.addCondition(not(tagEmpty(ModTags.Items.EASY_RECIPE)))
-				.addCondition(VaultEasyDifficultyCondition.INSTANCE)
+				.addCondition(VaultEasyTierCondition.INSTANCE)
 				.addRecipe(classic -> {
 					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CLASSIC_VAULT.get())
 						.pattern("  v")
@@ -120,7 +120,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 						.save(classic);
 				})
 //				.addCondition(not(tagEmpty(ModTags.Items.HARD_RECIPE)))
-				.addCondition(VaultHardDifficultyCondition.INSTANCE)
+				.addCondition(VaultHardTierCondition.INSTANCE)
 				.addRecipe(classic -> {
 					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CLASSIC_VAULT.get())
 							.pattern("iiv")
@@ -136,7 +136,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 				.build(recipe, ModBlocks.CLASSIC_VAULT.getId());
 	}
 
-	protected void buildNormalDifficultyVaultRecipe(Consumer<FinishedRecipe> recipe) {
+	protected void buildNormalTierVaultRecipe(Consumer<FinishedRecipe> recipe) {
 
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
 				.pattern("iiv")
@@ -150,7 +150,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 				.save(recipe);
 	}
 
-	protected void buildEasyDifficultyVaultRecipe(Consumer<FinishedRecipe> recipe) {
+	protected void buildEasyTierVaultRecipe(Consumer<FinishedRecipe> recipe) {
 
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
 				.pattern("  v")
@@ -163,7 +163,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 				.save(recipe);
 	}
 
-	protected void buildHardDifficultyVaultRecipe(Consumer<FinishedRecipe> recipe) {
+	protected void buildHardTierVaultRecipe(Consumer<FinishedRecipe> recipe) {
 
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
 				.pattern("iiv")

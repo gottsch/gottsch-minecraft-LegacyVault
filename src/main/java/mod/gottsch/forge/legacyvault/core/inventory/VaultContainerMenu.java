@@ -25,6 +25,7 @@ import mod.gottsch.forge.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.forge.legacyvault.core.config.Config;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.persistence.VaultPersistenceManager;
+import mod.gottsch.forge.legacyvault.core.util.VaultInventoryUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.SimpleContainer;
@@ -52,11 +53,12 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 	private Player playerEntity;
 	// the player's inventory
 	private IItemHandler playerInventory;
+	// the underlying container — kept so we can attach a change listener for dirty tracking
+	private SimpleContainer vaultContainer;
 	// the vault's inventory (could hold a different amount - lesser - than the items list)
 	private IItemHandler vaultInventory;
-
-	// the entire inventory from persistence
-	NonNullList<ItemStack> items = NonNullList.withSize(Config.General.MAX_INVENTORY_SIZE, ItemStack.EMPTY);
+	// true when the vault inventory has been modified since the menu was opened
+	private boolean dirty = false;
 
 	///////////////
 	protected final int HOTBAR_SLOT_COUNT = 9;
@@ -93,7 +95,9 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 
 		this.playerEntity =  player;
 		this.playerInventory = new InvWrapper(playerInventory);
-		this.vaultInventory = new InvWrapper(new SimpleContainer(ServerConfig.GENERAL.resolvedSize));
+		this.vaultContainer = new SimpleContainer(ServerConfig.PERSONAL.maxTier.get() * 9);
+		this.vaultContainer.addListener(c -> this.dirty = true);
+		this.vaultInventory = new InvWrapper(this.vaultContainer);
 
 		// load from the persistence
 		if (!player.level().isClientSide) {
@@ -104,96 +108,30 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 			 */
 			Optional<NonNullList<ItemStack>> optionalInventory = VaultPersistenceManager.get(player);
 			// copy from persisted inventory to vault inventory
-            optionalInventory.ifPresent(itemStacks -> copyInventoryTo(itemStacks, vaultInventory));
+            optionalInventory.ifPresent(itemStacks -> VaultInventoryUtil.copyToHandler(itemStacks, vaultInventory));
+            // reset dirty — the listener fires during the initial load copy, but that is not a player change
+            dirty = false;
 		}
 
 		// get the block entity
 		blockEntity = (AbstractVaultBlockEntity)player.getCommandSenderWorld().getBlockEntity(pos);
-		blockEntity.openCount++;
-
-		// setup the internal properties dependant on the size
-		if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.STANDARD.getSize()) {
-			// default
-		}
-		else if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.DOUBLE.getSize()) {
-			setMenuInventoryRowCount(6);
-			setPlayerInventoryYPos(138);
-			setHotbarYPos(196);
-		}
-		else if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.XLARGE.getSize()) {
-			setMenuInventoryColumnCount(13);
-			setMenuInventoryRowCount(7);
-			setPlayerInventoryXPos(45);
-			setPlayerInventoryYPos(156);
-			setHotbarXPos(45);
-			setHotbarYPos(214);
+		if (blockEntity != null) {
+			blockEntity.openCount++;
 		}
 
+		initLayout();
 		buildContainer(this.playerInventory);
 	}
 
 	/**
-	 *
+	 * Called before buildContainer() during construction. Subclasses override to
+	 * adjust slot Y positions (e.g. to make room for a search bar above the vault grid).
+	 * Java's dynamic dispatch means the override runs even during the super constructor.
 	 */
-	private void loadPersistedInventory(Player player) {
-
+	protected void initLayout() {
+		// default vanilla chest layout — Y positions already set by field initializers
 	}
 
-	/**
-	 * TODO this will have to be refactored if the size of the legacy vault > the block entity size. as it stands this will only read in x items from vault, and then save those x items back to the vault
-	 * overriding the current vault items, but the vault could have had a x*n size, and so those items are lost.
-	 */
-	private void savePersistedInventory() {
-
-	}
-
-	/**
-	 * TODO this can be a helper somewhere and can replace saveVaultInventory()
-	 * @param source
-	 * @param dest
-	 */
-	@Deprecated
-	private void copyInventory(IItemHandler source, IItemHandler dest) {
-		for (int index = 0; index < source.getSlots(); index++) {
-			if (index < dest.getSlots()) {
-				dest.insertItem(index, source.getStackInSlot(index), false);
-			}
-			else {
-				break;
-			}
-		}	
-	}
-
-	@Deprecated
-	private void copyInventoryTo(IItemHandler dest) {
-		for (int index = 0; index < items.size(); index++) {
-			if (index < dest.getSlots()) {
-				dest.insertItem(index, items.get(index), false);
-			}
-			else {
-				break;
-			}
-		}	
-	}
-
-	private void copyInventoryTo(NonNullList<ItemStack> source, IItemHandler dest) {
-		for (int index = 0; index < source.size(); index++) {
-			if (index < dest.getSlots()) {
-				dest.insertItem(index, source.get(index), false);
-			}
-			else {
-				break;
-			}
-		}
-	}
-
-	private void copyInventoryFrom(IItemHandler source, NonNullList<ItemStack> dest) {
-		for (int index = 0; index < source.getSlots(); index++) {
-				// NOTE cannot use add() because it will append to the end of the array,
-				// and not replace/update the existing inventory slots
-				dest.set(index, source.getStackInSlot(index));
-		}	
-	}
 
 	/**
 	 * 
@@ -257,36 +195,26 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 
 	@Override
 	public boolean stillValid(Player player) {
-//		return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), playerEntity, ModBlocks.RUSTIC_VAULT.get());
-
-		// is player within distance
-		if (blockEntity != null) {
-			BlockPos pos = this.blockEntity.getBlockPos();
-			boolean withinDistance = player.distanceToSqr((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D) <= 64.0D;
-			return withinDistance && (blockEntity != null);
+		if (blockEntity == null) {
+			return false;
 		}
-		return true;
+		BlockPos pos = this.blockEntity.getBlockPos();
+		return player.distanceToSqr((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override
 	public void removed(Player player) {
-
-		// update the open count
-		blockEntity.openCount--;
-		if (blockEntity.openCount < 0) {
-			blockEntity.openCount = 0; 
+		if (blockEntity != null) {
+			blockEntity.openCount--;
+			if (blockEntity.openCount < 0) {
+				blockEntity.openCount = 0;
+			}
 		}
 
-		// save to VaultPersistenceManager
-		if (!player.level().isClientSide) {
-			/*
-			 * save inventory to persistence manager
-			 */
+		// only persist when items actually changed — logout save in PlayerEventHandler is the authoritative final save
+		if (!player.level().isClientSide && dirty) {
 			Optional<NonNullList<ItemStack>> optionalInventory = VaultPersistenceManager.get(player);
-			// copy from persisted inventory to vault inventory
-			optionalInventory.ifPresent(itemStacks -> copyInventoryFrom(vaultInventory, itemStacks));
-
-			// save to persistence
+			optionalInventory.ifPresent(itemStacks -> VaultInventoryUtil.copyFromHandler(vaultInventory, itemStacks));
 			VaultPersistenceManager.save(player);
 		}
 		super.removed(player);
@@ -389,6 +317,22 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 		return getHotbarYPos() + getSlotYSpacing() + 2;
 	}
 
+	protected Player getPlayerEntity() {
+		return playerEntity;
+	}
+
+	public IItemHandler getVaultInventory() {
+		return vaultInventory;
+	}
+
+	protected SimpleContainer getVaultContainer() {
+		return vaultContainer;
+	}
+
+	public int getContainerFirstSlotIndex() {
+		return CONTAINER_INVENTORY_FIRST_SLOT_INDEX;
+	}
+
 	@Override
 	public ItemStack quickMoveStack(Player player, int sourceSlotIndex) {
 		Slot sourceSlot = (Slot) slots.get(sourceSlotIndex);
@@ -401,8 +345,13 @@ public abstract class VaultContainerMenu extends AbstractContainerMenu {
 		if (sourceSlotIndex >= VANILLA_FIRST_SLOT_INDEX
 				&& sourceSlotIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
 			/*
-			 * This is a vanilla container slot so merge the stack into the tile inventory
+			 * This is a vanilla container slot so merge the stack into the tile inventory.
+			 * Belt-and-suspenders: reject blacklisted items before moveItemStackTo even runs,
+			 * since some shift-click paths may not call VaultSlot.mayPlace() first.
 			 */
+			if (!VaultSlot.isAllowed(sourceStack)) {
+				return ItemStack.EMPTY;
+			}
 			if (!this.moveItemStackTo(sourceStack, CONTAINER_INVENTORY_FIRST_SLOT_INDEX, CONTAINER_INVENTORY_FIRST_SLOT_INDEX + getMenuInventorySlotCount(), false)) {
 				return ItemStack.EMPTY;
 			}

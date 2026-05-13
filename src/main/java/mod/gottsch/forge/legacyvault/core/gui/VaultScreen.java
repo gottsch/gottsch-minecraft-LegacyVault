@@ -28,7 +28,6 @@ import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.forge.legacyvault.core.inventory.VaultContainerMenu;
-import mod.gottsch.forge.legacyvault.core.inventory.VaultSlotSize;
 import mod.gottsch.forge.legacyvault.core.util.LangUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -60,29 +59,27 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 		super(containerMenu, inventory, name);
 
 		this.inventory = inventory;
-		
-		if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.STANDARD.getSize()) {
-			imageWidth = 176;
-			imageHeight = 174;//167;
-			bgTexture = BG_TEXTURE;
-		}
-		else if (ServerConfig.GENERAL.resolvedSize == VaultSlotSize.LARGE.getSize()) {
-			imageWidth = 176;
-			imageHeight = 228;
-			bgTexture = LARGE_BG_TEXTURE;
-		}
-		else {
-			imageWidth = 247;
-			imageHeight = 246;
-			bgTexture = XLARGE_BG_TEXTURE;
-		}
+
+		// placeholder dimensions — will be replaced when the scrollable upgrade GUI is built
+		imageWidth = 247;
+		imageHeight = 246;
+		bgTexture = XLARGE_BG_TEXTURE;
 	}
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        renderOverlays(guiGraphics, mouseX, mouseY);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    /**
+     * Called after slots and widgets are rendered but before the tooltip.
+     * Subclasses override to draw locked-slot overlays, search dimming, etc.
+     */
+    protected void renderOverlays(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // no-op by default
     }
 
     @Override

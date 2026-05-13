@@ -45,6 +45,7 @@ public class LanguageGen extends LanguageProvider {
         // items
         add(ModItems.CONTRACT.get(), "Legacy Vault Contract");
         add(ModItems.APPLICATION.get(), "Legacy Vault Application");
+        add(ModItems.VAULT_UPGRADE.get(), "Vault Upgrade");
 
         // blocks
         add(ModBlocks.RUSTIC_VAULT.get(), "Rustic Legacy Vault");
@@ -56,6 +57,7 @@ public class LanguageGen extends LanguageProvider {
          */
         // general
         add(LangUtil.tooltip("hold_shift"), "Hold [SHIFT] to expand");
+        add(LangUtil.tooltip("vault_upgrade"), "Right-click your vault to unlock the next tier.");
 
         add(LangUtil.tooltip("usage.personal_vault"), "A Personal Vault provides a persistent multi-world inventory~that only the owning player can access.");
         add(LangUtil.tooltip("usage.community_vault"), "A Community Vault provides a persistent multi-world inventory~that all players can use, but can only access their own inventory.~A Community Vault can only be placed or destroy by players~with the correct privileges, ex. creative mode.");
@@ -63,6 +65,9 @@ public class LanguageGen extends LanguageProvider {
         /*
          * Screen
          */
+        add(LangUtil.screen("vault.upgrade.success"), "Vault upgraded to tier %s of %s");
+        add(LangUtil.screen("vault.upgrade.maxed"), "Your vault is already at maximum tier");
+
         add(LangUtil.screen("vault.name"),"Legacy Vault");
         add(LangUtil.screen("personal_vault.name"), "Personal Legacy Vault");
         add(LangUtil.screen("community_vault.name"), "Community Legacy Vault");

@@ -4,7 +4,7 @@
     {
       "conditions": [
         {
-          "type": "legacyvault:vault_normal_difficulty"
+          "type": "legacyvault:vault_normal_tier"
         }
       ],
       "recipe": {
@@ -35,7 +35,7 @@
     {
       "conditions": [
         {
-          "type": "legacyvault:vault_easy_difficulty"
+          "type": "legacyvault:vault_easy_tier"
         }
       ],
       "recipe": {
@@ -63,7 +63,7 @@
     {
       "conditions": [
         {
-          "type": "legacyvault:vault_hard_difficulty"
+          "type": "legacyvault:vault_hard_tier"
         }
       ],
       "recipe": {
