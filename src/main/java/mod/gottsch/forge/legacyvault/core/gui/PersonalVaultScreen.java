@@ -30,6 +30,7 @@ import mod.gottsch.forge.legacyvault.core.inventory.VaultSlot;
 import mod.gottsch.forge.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.forge.legacyvault.core.network.SortVaultPacket;
 import mod.gottsch.forge.legacyvault.core.util.LangUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -41,7 +42,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -57,7 +60,7 @@ public class PersonalVaultScreen extends VaultScreen {
     private static final int SCROLLBAR_X = 172;
     private static final int SCROLLBAR_Y = 42;
     private static final int SCROLLBAR_WIDTH = 12;
-    private static final int SCROLLBAR_HEIGHT = PersonalVaultContainerMenu.VISIBLE_ROWS * 18; // 90
+    private static final int SCROLLBAR_HEIGHT = PersonalVaultContainerMenu.VISIBLE_ROWS * 18 - 2; // 90
     private static final int THUMB_HEIGHT = 15;
 
     // UV coordinates of the scrollbar thumb sprite within the texture sheet
@@ -77,7 +80,7 @@ public class PersonalVaultScreen extends VaultScreen {
     public PersonalVaultScreen(VaultContainerMenu containerMenu, Inventory inventory, Component name) {
         super(containerMenu, inventory, name);
         imageWidth = 195;
-        imageHeight = 228;
+        imageHeight = 238;
     }
 
     @Override
@@ -259,6 +262,33 @@ public class PersonalVaultScreen extends VaultScreen {
                 }
             }
         }
+    }
+
+    @Override
+    protected List<Component> getTooltipFromContainerItem(ItemStack stack) {
+        List<Component> tooltip = new ArrayList<>(super.getTooltipFromContainerItem(stack));
+        if (hoveredSlot != null
+                && hoveredSlot.index >= personalMenu().getContainerFirstSlotIndex()
+                && !stack.isEmpty()) {
+            int total = countItemTotal(stack);
+            if (total > stack.getCount()) {
+                tooltip.add(Component.literal("× " + total + " in vault")
+                        .withStyle(ChatFormatting.GRAY));
+            }
+        }
+        return tooltip;
+    }
+
+    private int countItemTotal(ItemStack target) {
+        int total = 0;
+        int activeSlots = personalMenu().getVaultTier() * 9;
+        for (int i = 0; i < activeSlots; i++) {
+            ItemStack s = personalMenu().getVaultInventory().getStackInSlot(i);
+            if (!s.isEmpty() && ItemStack.isSameItemSameTags(target, s)) {
+                total += s.getCount();
+            }
+        }
+        return total;
     }
 
     private void sendSortRequest() {

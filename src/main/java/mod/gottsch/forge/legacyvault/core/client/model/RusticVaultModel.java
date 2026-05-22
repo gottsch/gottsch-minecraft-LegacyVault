@@ -208,8 +208,7 @@ public class RusticVaultModel extends Model implements IVaultModel {
 
 	public void setupAnim(RusticVaultBlockEntity entity, float ageInTicks) {
 		float lidRotation = entity.getPrevLidAngle() + (entity.getLidAngle() - entity.getPrevLidAngle()) * ageInTicks;
-		lidRotation = 1.0F - lidRotation;
-		lidRotation = 1.0F - lidRotation * lidRotation * lidRotation;
+		lidRotation = lidRotation * lidRotation * (3.0F - 2.0F * lidRotation);  // smoothstep ease-in-out
 		lid.xRot = -(lidRotation * (float) Math.PI / /*getAngleModifier()*/2.0F);
 	}
 

@@ -49,5 +49,7 @@ public class LegacyVaultCommands {
 		TransferVaultCommand.register(event.getDispatcher());
 		// /legacyvault tier inspect|set_tier|reset|max ...
 		TierCommand.register(event.getDispatcher());
+		// /legacyvault encryption status|on|off
+		EncryptionCommand.register(event.getDispatcher());
 	}
 }

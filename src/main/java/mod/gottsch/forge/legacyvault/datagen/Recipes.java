@@ -74,7 +74,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 							.pattern(	"iiv")
 							.pattern("ici")
 							.pattern("iii")
-							.define('i', Items.IRON_INGOT)
+							.define('i', ModTags.Items.NORMAL_RECIPE_BASE_MATERIALS)// Items.IRON_INGOT)
 							.define('v', ModTags.Items.VAULT_CONTRACTS)
 							.define('c', Items.CHEST)
 							.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
@@ -99,7 +99,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 							.pattern("iiv")
 							.pattern("ici")
 							.pattern("iii")
-							.define('i', Items.IRON_INGOT)
+							.define('i', ModTags.Items.NORMAL_RECIPE_BASE_MATERIALS)//Items.IRON_INGOT)
 							.define('v', ModTags.Items.VAULT_CONTRACTS)
 							.define('c', Items.BARREL)
 							.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
@@ -110,9 +110,10 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 				.addCondition(VaultEasyTierCondition.INSTANCE)
 				.addRecipe(classic -> {
 					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CLASSIC_VAULT.get())
-						.pattern("  v")
-						.pattern(" c ")
-						.pattern("   ")
+							.pattern("iiv")
+							.pattern("ici")
+							.pattern("iii")
+							.define('i', ModTags.Items.EASY_RECIPE_BASE_MATERIALS)
 						.define('v', ModTags.Items.VAULT_CONTRACTS)
 						.define('c', Items.BARREL)
 						.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
@@ -126,7 +127,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 							.pattern("iiv")
 							.pattern("ici")
 							.pattern("iii")
-							.define('i', Items.IRON_BLOCK)
+							.define('i', ModTags.Items.HARD_RECIPE_BASE_MATERIALS)//Items.IRON_BLOCK)
 							.define('v', ModTags.Items.VAULT_CONTRACTS)
 							.define('c', Items.BARREL)
 							.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
@@ -153,9 +154,10 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 	protected void buildEasyTierVaultRecipe(Consumer<FinishedRecipe> recipe) {
 
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RUSTIC_VAULT.get())
-				.pattern("  v")
-				.pattern(" c ")
-				.pattern("   ")
+				.pattern("iiv")
+				.pattern("ici")
+				.pattern("iii")
+				.define('i', ModTags.Items.EASY_RECIPE_BASE_MATERIALS)
 				.define('v', ModTags.Items.VAULT_CONTRACTS)
 				.define('c', Items.CHEST)
 				.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(
@@ -169,7 +171,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
 				.pattern("iiv")
 				.pattern("ici")
 				.pattern("iii")
-				.define('i', Items.IRON_BLOCK)
+				.define('i', ModTags.Items.HARD_RECIPE_BASE_MATERIALS) //Items.IRON_BLOCK)
 				.define('v', ModTags.Items.VAULT_CONTRACTS)
 				.define('c', Items.CHEST)
 				.unlockedBy("has", InventoryChangeTrigger.TriggerInstance.hasItems(

@@ -15,7 +15,7 @@
             "item": "minecraft:chest"
           },
           "i": {
-            "item": "minecraft:iron_ingot"
+            "tag": "legacyvault:ingredients/recipe_tier/normal"
           },
           "v": {
             "tag": "legacyvault:ingredients/vault_contracts"
@@ -45,14 +45,17 @@
           "c": {
             "item": "minecraft:chest"
           },
+          "i": {
+            "tag": "legacyvault:ingredients/recipe_tier/easy"
+          },
           "v": {
             "tag": "legacyvault:ingredients/vault_contracts"
           }
         },
         "pattern": [
-          "  v",
-          " c ",
-          "   "
+          "iiv",
+          "ici",
+          "iii"
         ],
         "result": {
           "item": "legacyvault:rustic_vault"
@@ -74,7 +77,7 @@
             "item": "minecraft:chest"
           },
           "i": {
-            "item": "minecraft:iron_block"
+            "tag": "legacyvault:ingredients/recipe_tier/hard"
           },
           "v": {
             "tag": "legacyvault:ingredients/vault_contracts"

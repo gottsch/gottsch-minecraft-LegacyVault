@@ -20,6 +20,7 @@
 package mod.gottsch.forge.legacyvault.core.network;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
+import mod.gottsch.forge.legacyvault.core.inventory.CommunityVaultContainerMenu;
 import mod.gottsch.forge.legacyvault.core.inventory.PersonalVaultContainerMenu;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -45,7 +46,10 @@ public class SortVaultPacketHandler {
             }
             if (player.containerMenu instanceof PersonalVaultContainerMenu menu) {
                 menu.sortInventory(player);
-                LegacyVault.LOGGER.debug("SortVaultPacket: sorted vault for player {}", player.getScoreboardName());
+                LegacyVault.LOGGER.debug("SortVaultPacket: sorted personal vault for player {}", player.getScoreboardName());
+            } else if (player.containerMenu instanceof CommunityVaultContainerMenu menu) {
+                menu.sortInventory(player);
+                LegacyVault.LOGGER.debug("SortVaultPacket: sorted community vault for player {}", player.getScoreboardName());
             } else {
                 LegacyVault.LOGGER.debug("SortVaultPacket: player {} does not have a vault open", player.getScoreboardName());
             }

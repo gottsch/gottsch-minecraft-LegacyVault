@@ -37,6 +37,9 @@ public class ModTags {
 
 		// to support legacy vault ingredients
 		public static final TagKey<Item> VAULT_CONTRACTS = mod(LegacyVault.MOD_ID, "ingredients/vault_contracts");
+		public static final TagKey<Item> EASY_RECIPE_BASE_MATERIALS = mod(LegacyVault.MOD_ID, "ingredients/recipe_tier/easy");
+		public static final TagKey<Item> NORMAL_RECIPE_BASE_MATERIALS = mod(LegacyVault.MOD_ID, "ingredients/recipe_tier/normal");
+		public static final TagKey<Item> HARD_RECIPE_BASE_MATERIALS = mod(LegacyVault.MOD_ID, "ingredients/recipe_tier/hard");
 
 		public static final TagKey<Item> VAULT_ITEMS_WHITELIST = mod(LegacyVault.MOD_ID, "vault_whitelist");
 		public static final TagKey<Item> VAULT_ITEMS_BLACKLIST = mod(LegacyVault.MOD_ID, "vault_blacklist");

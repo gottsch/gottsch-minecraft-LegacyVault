@@ -53,6 +53,16 @@ public class ItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvider {
 		tag(ModTags.Items.EASY_RECIPE).add(Items.AIR);
 		tag(ModTags.Items.HARD_RECIPE).add(Items.AIR);
 
+		tag(ModTags.Items.EASY_RECIPE_BASE_MATERIALS)
+				.add(Items.IRON_NUGGET)
+				.add(Items.GOLD_NUGGET);
+		tag(ModTags.Items.NORMAL_RECIPE_BASE_MATERIALS)
+				.add(Items.IRON_INGOT)
+				.add(Items.GOLD_INGOT);
+		tag(ModTags.Items.HARD_RECIPE_BASE_MATERIALS)
+				.add(Items.IRON_BLOCK)
+				.add(Items.GOLD_INGOT);
+
 		// vault ingredients
 		tag(ModTags.Items.VAULT_CONTRACTS)
 				.add(ModItems.CONTRACT.get())

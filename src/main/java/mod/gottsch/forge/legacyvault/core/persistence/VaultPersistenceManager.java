@@ -24,15 +24,19 @@ import mod.gottsch.forge.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.forge.legacyvault.core.capability.LegacyVaultCapabilities;
 import mod.gottsch.forge.legacyvault.core.config.Config;
 import mod.gottsch.forge.legacyvault.core.config.Config.ServerConfig;
+import mod.gottsch.forge.legacyvault.core.crypto.MasterSecretManager;
+import mod.gottsch.forge.legacyvault.core.crypto.VaultCrypto;
 import mod.gottsch.forge.legacyvault.core.enums.GameType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.loading.FMLPaths;
 
+import javax.crypto.SecretKey;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -53,15 +57,21 @@ public class VaultPersistenceManager {
 
     /** NBT key for the player's current vault tier inside the persisted file. */
     public static final String VAULT_TIER_KEY = "vaultTier";
+    /** NBT key for the per-world tier map (used when resetTierPerWorld is enabled). */
+    public static final String PER_WORLD_TIERS_KEY = "perWorldTiers";
 
     private static final Map<String, NonNullList<ItemStack>> REGISTRY = new ConcurrentHashMap<>();
+    /** Caches the perWorldTiers compound per player key so it survives save/load cycles. */
+    private static final Map<String, CompoundTag> WORLD_TIERS_CACHE = new ConcurrentHashMap<>();
 
     public static void clear() {
         REGISTRY.clear();
+        WORLD_TIERS_CACHE.clear();
     }
 
     public static void remove(String key) {
         REGISTRY.remove(key);
+        WORLD_TIERS_CACHE.remove(key);
     }
 
     public static void register(String key, NonNullList<ItemStack> inventory) {
@@ -85,6 +95,11 @@ public class VaultPersistenceManager {
         Path filePath = Paths.get(FMLPaths.CONFIGDIR.get().toString(), LegacyVault.MOD_ID)
                 .toAbsolutePath().resolve(key);
         return Files.exists(filePath) && !Files.isDirectory(filePath);
+    }
+
+    /** Stable world key: level name + overworld seed. */
+    private static String generateWorldKey(MinecraftServer server) {
+        return server.getWorldData().getLevelName() + "_" + server.overworld().getSeed();
     }
 
     /*
@@ -116,8 +131,8 @@ public class VaultPersistenceManager {
             Files.createDirectories(directoryPath);
             Path filePath = directoryPath.resolve(key);
             if (Files.exists(filePath) && !Files.isDirectory(filePath)) {
-                try (DataInputStream dis = new DataInputStream(new FileInputStream(filePath.toFile()))) {
-                    CompoundTag compound = NbtIo.readCompressed(dis);
+                try {
+                    CompoundTag compound = readVaultFile(filePath, player.getStringUUID());
                     if (Config.General.MAX_INVENTORY_SIZE > targetSize) {
                         // legacy file may have up to MAX_INVENTORY_SIZE slots; load into a full buffer
                         // so ContainerHelper doesn't silently drop items beyond targetSize
@@ -136,11 +151,29 @@ public class VaultPersistenceManager {
                         ContainerHelper.loadAllItems(compound, persistedInventory);
                     }
 
-                    // tier — present means upgrade-system file, absent means pre-upgrade legacy file
-                    resolvedTier = compound.contains(VAULT_TIER_KEY)
-                            ? compound.getInt(VAULT_TIER_KEY)
-                            : ServerConfig.PERSONAL.maxTier.get();
-                } catch (IOException e) {
+                    // always cache perWorldTiers so they survive a config toggle
+                    if (compound.contains(PER_WORLD_TIERS_KEY)) {
+                        WORLD_TIERS_CACHE.put(key, compound.getCompound(PER_WORLD_TIERS_KEY).copy());
+                    }
+
+                    if (compound.contains(VAULT_TIER_KEY)) {
+                        if (ServerConfig.PERSONAL.resetTierPerWorld.get()) {
+                            MinecraftServer server = player.getServer();
+                            if (server != null) {
+                                CompoundTag perWorld = WORLD_TIERS_CACHE.getOrDefault(key, new CompoundTag());
+                                String worldKey = generateWorldKey(server);
+                                resolvedTier = perWorld.contains(worldKey)
+                                        ? perWorld.getInt(worldKey)
+                                        : ServerConfig.PERSONAL.startingTier.get();
+                            }
+                        } else {
+                            resolvedTier = compound.getInt(VAULT_TIER_KEY);
+                        }
+                    } else {
+                        // legacy file (pre-upgrade system) → max tier regardless of per-world setting
+                        resolvedTier = ServerConfig.PERSONAL.maxTier.get();
+                    }
+                } catch (Exception e) {
                     LegacyVault.LOGGER.error("an error occurred attempting to load vault inventory from persistence ->", e);
                 }
             }
@@ -174,7 +207,32 @@ public class VaultPersistenceManager {
             int tier = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
                     .map(IPlayerVaultsHandler::getVaultTier)
                     .orElse(ServerConfig.PERSONAL.startingTier.get());
-            compound.putInt(VAULT_TIER_KEY, tier);
+
+            if (ServerConfig.PERSONAL.resetTierPerWorld.get()) {
+                MinecraftServer server = player.getServer();
+                if (server != null) {
+                    String worldKey = generateWorldKey(server);
+                    CompoundTag perWorld = WORLD_TIERS_CACHE.getOrDefault(key, new CompoundTag());
+                    perWorld.putInt(worldKey, tier);
+                    WORLD_TIERS_CACHE.put(key, perWorld);
+                    compound.put(PER_WORLD_TIERS_KEY, perWorld);
+                    // global tier = best across all worlds so toggling off doesn't lose progress
+                    int globalTier = perWorld.getAllKeys().stream()
+                            .mapToInt(perWorld::getInt)
+                            .max()
+                            .orElse(tier);
+                    compound.putInt(VAULT_TIER_KEY, globalTier);
+                } else {
+                    compound.putInt(VAULT_TIER_KEY, tier);
+                }
+            } else {
+                compound.putInt(VAULT_TIER_KEY, tier);
+                // preserve any cached perWorldTiers so they survive a config toggle
+                CompoundTag cached = WORLD_TIERS_CACHE.get(key);
+                if (cached != null && !cached.isEmpty()) {
+                    compound.put(PER_WORLD_TIERS_KEY, cached);
+                }
+            }
 
             // write to a temp file first, then atomically rename to prevent corruption on crash
             Path dbDir = Paths.get(FMLPaths.CONFIGDIR.get().toString(), LegacyVault.MOD_ID).toAbsolutePath();
@@ -186,9 +244,7 @@ public class VaultPersistenceManager {
                 try (FileChannel lockChannel = FileChannel.open(lockPath,
                              StandardOpenOption.CREATE, StandardOpenOption.WRITE);
                      FileLock ignored = lockChannel.lock()) {
-                    try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempPath.toFile()))) {
-                        NbtIo.writeCompressed(compound, dos);
-                    }
+                    writeVaultFile(compound, tempPath, player.getStringUUID());
                     try {
                         Files.move(tempPath, dbPath, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
                     } catch (AtomicMoveNotSupportedException e) {
@@ -197,6 +253,56 @@ public class VaultPersistenceManager {
                 }
             } catch (Exception e) {
                 LegacyVault.LOGGER.error("an error occurred attempting to save vault inventory to persistence -> {}", key, e);
+            }
+        }
+    }
+
+    /**
+     * Reads a vault file, transparently handling both legacy GZipped NBT
+     * (first byte 0x1F) and encrypted blobs (first byte = {@link VaultCrypto#VERSION_BYTE}).
+     * The config encryptVaultData flag only controls writes -- reads always honor
+     * whatever format is on disk so toggling the option is non-destructive.
+     */
+    private static CompoundTag readVaultFile(Path filePath, String playerUUID) throws Exception {
+        byte[] fileBytes = Files.readAllBytes(filePath);
+        if (fileBytes.length == 0) {
+            return new CompoundTag();
+        }
+        if (fileBytes[0] == VaultCrypto.VERSION_BYTE) {
+            byte[] secret = MasterSecretManager.getSecretIfExists();
+            if (secret == null) {
+                throw new IOException("vault file is encrypted but master secret is missing at config/" + LegacyVault.MOD_ID + "/" + MasterSecretManager.SECRET_FILENAME + " -- restore the secret file or the vault cannot be read");
+            }
+            SecretKey key = VaultCrypto.deriveKey(secret, playerUUID);
+            byte[] gzippedNbt = VaultCrypto.decrypt(fileBytes, key);
+            try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(gzippedNbt))) {
+                return NbtIo.readCompressed(dis);
+            }
+        }
+        // legacy plaintext (GZipped NBT)
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(fileBytes))) {
+            return NbtIo.readCompressed(dis);
+        }
+    }
+
+    /**
+     * Writes a vault file. If encryptVaultData is enabled, gzips the NBT, encrypts the
+     * compressed bytes with AES-256-GCM, and writes the encrypted blob. Otherwise writes
+     * gzipped NBT directly (legacy format).
+     */
+    private static void writeVaultFile(CompoundTag compound, Path tempPath, String playerUUID) throws Exception {
+        if (ServerConfig.GENERAL.encryptVaultData.get()) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (DataOutputStream dos = new DataOutputStream(baos)) {
+                NbtIo.writeCompressed(compound, dos);
+            }
+            byte[] secret = MasterSecretManager.getOrCreateSecret();
+            SecretKey key = VaultCrypto.deriveKey(secret, playerUUID);
+            byte[] blob = VaultCrypto.encrypt(baos.toByteArray(), key);
+            Files.write(tempPath, blob);
+        } else {
+            try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempPath.toFile()))) {
+                NbtIo.writeCompressed(compound, dos);
             }
         }
     }

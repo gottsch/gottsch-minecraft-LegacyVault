@@ -115,6 +115,7 @@ public class Config extends AbstractConfig {
 		public List<Pattern> inventoryBlacklistPatterns = new ArrayList<>();
 
 		public ForgeConfigSpec.IntValue maxSlotStackSize;
+		public BooleanValue encryptVaultData;
 
 		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
 
@@ -129,6 +130,15 @@ public class Config extends AbstractConfig {
 							" Ex. if the item max stack size = 64, the vault slot will max out at 64 even if it is set at 100.")
 					.defineInRange("maxStackSize", 64, 1, 1024);
 
+			encryptVaultData = builder
+					.comment(" Encrypts vault data files on disk using AES-256-GCM.",
+							" Protects against file theft and UUID spoofing from outside the server.",
+							" A master secret is generated on first use and stored beside the vault files",
+							" at config/legacyvault/legacyvault-secret.dat -- BACK THIS UP.",
+							" Losing the secret means all encrypted vaults become unreadable.",
+							" Toggling this off later is safe: encrypted files will still be read; new saves write plaintext.")
+					.define("encryptVaultData", false);
+
 			inventoryWhitelist = builder
 					.comment(" Allowed Items/Blocks for vault inventory.",
 							" Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs",
@@ -139,7 +149,18 @@ public class Config extends AbstractConfig {
 					.comment(" Disallowed Items/Blocks for vault inventory.",
 							" Must match the Item/Block Registry Name(s). Regex IS supported.  ex. minecraft:dirt, (minecraft:)+([a-z0-9_]+)stairs",
 							" Tags (legacyvault:items/vault_blacklist) takes precedence.")
-					.defineList("inventoryBlacklist", Arrays.asList("(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box","treasure2:milk_crate"), STRING_PREDICATE);
+					.defineList("inventoryBlacklist", Arrays.asList(
+							// Treasure2
+							"(treasure2:)+([a-z0-9_]+)(chest)+([a-z0-9_]?)", "(treasure2:)+([a-z0-9_]+)(strongbox)+", "treasure2:cardboard_box", "treasure2:milk_crate",
+							// Iron Chests
+							"(ironchest:)+([a-z0-9_]+)(chest|shulker_box)+([a-z0-9_]?)",
+							// Sophisticated Backpacks
+							"(sophisticatedbackpacks:)+([a-z0-9_]+)(backpack)+([a-z0-9_]?)",
+							// Sophisticated Storage
+							"(sophisticatedstorage:)+([a-z0-9_]+)(chest|barrel)+([a-z0-9_]?)",
+							// Traveler's Backpack
+							"(travelersbackpack:)+([a-z0-9_]+)(backpack)+([a-z0-9_]?)"
+					), STRING_PREDICATE);
 
 			builder.pop();
 		}
@@ -172,6 +193,7 @@ public class Config extends AbstractConfig {
 		public IntValue vaultsPerPlayer;
 		public IntValue startingTier;
 		public IntValue maxTier;
+		public BooleanValue resetTierPerWorld;
 
 		PersonalConfig(final ForgeConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV,
@@ -206,6 +228,12 @@ public class Config extends AbstractConfig {
 					.comment(" The maximum vault tier players can reach.",
 							" Each tier adds one row of 9 slots. Tier 10 = 90 slots.")
 					.defineInRange("maxTier", 10, 1, 10);
+
+			resetTierPerWorld = builder
+					.comment(" When true, vault tier resets to startingTier on each new world.",
+							" Your items always carry over (that is the point of this mod).",
+							" Turning this off later restores your best global tier.")
+					.define("resetTierPerWorld", false);
 
 			builder.pop();
 		}
