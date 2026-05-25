@@ -117,6 +117,10 @@ public class Config extends AbstractConfig {
 		public ForgeConfigSpec.IntValue maxSlotStackSize;
 		public BooleanValue encryptVaultData;
 
+		public BooleanValue vaultUpgradeLootEnabled;
+		public ForgeConfigSpec.DoubleValue vaultUpgradeLootChance;
+		public ForgeConfigSpec.IntValue vaultUpgradeLootCount;
+
 		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
 
 		public General(final ForgeConfigSpec.Builder builder) {
@@ -129,6 +133,21 @@ public class Config extends AbstractConfig {
 							" NOTE this maximum will not overwrite the item's max stack size.",
 							" Ex. if the item max stack size = 64, the vault slot will max out at 64 even if it is set at 100.")
 					.defineInRange("maxStackSize", 64, 1, 1024);
+
+			vaultUpgradeLootEnabled = builder
+					.comment(" When true, Vault Upgrade items have a chance to drop from the loot tables defined in",
+							" the datapack file data/legacyvault/upgrade_loot_tables/drops.json (or any datapack",
+							" that overrides it).",
+							" Turn off if you'd rather control upgrade distribution manually (rewards, shops, etc.).")
+					.define("vaultUpgradeLootEnabled", true);
+
+			vaultUpgradeLootChance = builder
+					.comment(" Chance for a Vault Upgrade to appear in a matching loot table roll. 0.0 = never, 1.0 = always.")
+					.defineInRange("vaultUpgradeLootChance", 0.02D, 0.0D, 1.0D);
+
+			vaultUpgradeLootCount = builder
+					.comment(" Number of Vault Upgrade items to drop on a successful roll.")
+					.defineInRange("vaultUpgradeLootCount", 1, 1, 64);
 
 			encryptVaultData = builder
 					.comment(" Encrypts vault data files on disk using AES-256-GCM.",

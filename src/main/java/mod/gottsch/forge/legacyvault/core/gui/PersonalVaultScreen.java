@@ -122,6 +122,10 @@ public class PersonalVaultScreen extends VaultScreen {
                 Component.translatable(LangUtil.screen("personal_vault.name")).getString(),
                 LABEL_X, 6, Color.DARK_GRAY.getRGB(), false);
 
+        gui.drawString(this.font, this.playerInventoryTitle,
+                LABEL_X, personalMenu().getPlayerInventoryYPos() - 12,
+                Color.DARK_GRAY.getRGB(), false);
+
         if (Config.ServerConfig.PERSONAL.enabled.get()) {
             String vaultsRemaining;
             if (!Config.ServerConfig.PERSONAL.unlimitedVaults.get()) {

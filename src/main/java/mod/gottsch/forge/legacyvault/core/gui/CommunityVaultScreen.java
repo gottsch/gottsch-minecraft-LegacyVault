@@ -117,6 +117,10 @@ public class CommunityVaultScreen extends VaultScreen {
         gui.drawString(this.font,
                 Component.translatable(LangUtil.screen("community_vault.name")).getString(),
                 LABEL_X, 6, Color.DARK_GRAY.getRGB(), false);
+
+        gui.drawString(this.font, this.playerInventoryTitle,
+                LABEL_X, communityMenu().getPlayerInventoryYPos() - 12,
+                Color.DARK_GRAY.getRGB(), false);
     }
 
     @Override
