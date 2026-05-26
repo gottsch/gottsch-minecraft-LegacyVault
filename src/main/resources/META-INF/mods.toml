@@ -63,7 +63,7 @@ side="BOTH"
 [[dependencies.legacyvault]]
 modId="gottschcore"
 mandatory=true
-# This version range declares a minimum of the current minecraft version up to but not including the next major version
-versionRange="[2.1.0,)"
+# Requires GottschCore 2.8.x; will not load with 3.0.0 or higher
+versionRange="[2.8.0,3.0.0)"
 ordering="BEFORE"
 side="BOTH"

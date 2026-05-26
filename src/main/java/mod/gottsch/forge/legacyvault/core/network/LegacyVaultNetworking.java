@@ -21,6 +21,8 @@ package mod.gottsch.forge.legacyvault.core.network;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -56,7 +58,8 @@ public class LegacyVaultNetworking {
 		// register messages
 		channel.registerMessage(VAULT_COUNT_MESSAGE_ID, VaultCountMessageToClient.class,
 	            VaultCountMessageToClient::encode, VaultCountMessageToClient::decode,
-	            VaultCountMessageHandlerOnClient::onMessageReceived,
+	            (msg, ctx) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+	                    () -> () -> VaultCountMessageHandlerOnClient.onMessageReceived(msg, ctx)),
 	            Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
 		channel.registerMessage(SORT_VAULT_MESSAGE_ID, SortVaultPacket.class,
