@@ -17,17 +17,21 @@
  */
 package mod.gottsch.forge.legacyvault.core.setup;
 
+import com.mojang.serialization.Codec;
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.ModBlocks;
 import mod.gottsch.forge.legacyvault.core.block.entity.ModBlockEntities;
 import mod.gottsch.forge.legacyvault.core.inventory.ModContainers;
 import mod.gottsch.forge.legacyvault.core.item.ModItems;
+import mod.gottsch.forge.legacyvault.core.loot.VaultUpgradeLootModifier;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * 
@@ -42,6 +46,12 @@ public class Registration {
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, LegacyVault.MOD_ID);
 	public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, LegacyVault.MOD_ID);
 
+	public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
+			DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, LegacyVault.MOD_ID);
+
+	public static final RegistryObject<Codec<VaultUpgradeLootModifier>> VAULT_UPGRADE_LOOT_MODIFIER =
+			LOOT_MODIFIERS.register("vault_upgrade_drop", () -> VaultUpgradeLootModifier.CODEC);
+
 	/**
 	 * 
 	 */
@@ -51,8 +61,9 @@ public class Registration {
 		ModItems.register(eventBus);
 		ModBlockEntities.register(eventBus);
 		ModContainers.register(eventBus);
-		ENTITIES.register(eventBus);		
-		PARTICLES.register(eventBus);		
+		ENTITIES.register(eventBus);
+		PARTICLES.register(eventBus);
+		LOOT_MODIFIERS.register(eventBus);
 	}
 
 }

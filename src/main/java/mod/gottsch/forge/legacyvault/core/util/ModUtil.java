@@ -35,27 +35,7 @@ import net.minecraft.world.level.Level;
 public class ModUtil {
 
 	public static IPlayerVaultsHandler getPlayerCapability(Player player) {
-		IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
-			return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-		});
-		return cap;
-	}
-
-	/**
-	 * 
-	 * @param world
-	 * @param playerUUID
-	 * @return
-	 */
-	public static IPlayerVaultsHandler getPlayerCapability(Level world, String playerUUID) {
-		Player player = world.getPlayerByUUID(UUID.fromString(playerUUID));
-		if (player != null) {
-			IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElseThrow(() -> {
-				return new RuntimeException("player does not have PlayerVaultsHandler capability.'");
-			});
-			return cap;
-		}
-		return null;
+		return player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
 	}
 
 	/**
@@ -90,7 +70,7 @@ public class ModUtil {
 			}
 			else if (!ServerConfig.COMMUNITY.playerBlackList.get().isEmpty()) {
 				// check that player is not part of black list
-				for (String blackListedUUID : ServerConfig.COMMUNITY.playerWhiteList.get()) {
+				for (String blackListedUUID : ServerConfig.COMMUNITY.playerBlackList.get()) {
 					if (blackListedUUID.equalsIgnoreCase(player.getStringUUID())) {
 						return false;
 					}

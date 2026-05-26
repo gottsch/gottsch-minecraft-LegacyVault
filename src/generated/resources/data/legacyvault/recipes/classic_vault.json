@@ -4,7 +4,7 @@
     {
       "conditions": [
         {
-          "type": "legacyvault:vault_normal_difficulty"
+          "type": "legacyvault:vault_normal_tier"
         }
       ],
       "recipe": {
@@ -15,7 +15,7 @@
             "item": "minecraft:barrel"
           },
           "i": {
-            "item": "minecraft:iron_ingot"
+            "tag": "legacyvault:ingredients/recipe_tier/normal"
           },
           "v": {
             "tag": "legacyvault:ingredients/vault_contracts"
@@ -35,35 +35,7 @@
     {
       "conditions": [
         {
-          "type": "legacyvault:vault_easy_difficulty"
-        }
-      ],
-      "recipe": {
-        "type": "minecraft:crafting_shaped",
-        "category": "misc",
-        "key": {
-          "c": {
-            "item": "minecraft:barrel"
-          },
-          "v": {
-            "tag": "legacyvault:ingredients/vault_contracts"
-          }
-        },
-        "pattern": [
-          "  v",
-          " c ",
-          "   "
-        ],
-        "result": {
-          "item": "legacyvault:classic_vault"
-        },
-        "show_notification": true
-      }
-    },
-    {
-      "conditions": [
-        {
-          "type": "legacyvault:vault_hard_difficulty"
+          "type": "legacyvault:vault_easy_tier"
         }
       ],
       "recipe": {
@@ -74,7 +46,38 @@
             "item": "minecraft:barrel"
           },
           "i": {
-            "item": "minecraft:iron_block"
+            "tag": "legacyvault:ingredients/recipe_tier/easy"
+          },
+          "v": {
+            "tag": "legacyvault:ingredients/vault_contracts"
+          }
+        },
+        "pattern": [
+          "iiv",
+          "ici",
+          "iii"
+        ],
+        "result": {
+          "item": "legacyvault:classic_vault"
+        },
+        "show_notification": true
+      }
+    },
+    {
+      "conditions": [
+        {
+          "type": "legacyvault:vault_hard_tier"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "c": {
+            "item": "minecraft:barrel"
+          },
+          "i": {
+            "tag": "legacyvault:ingredients/recipe_tier/hard"
           },
           "v": {
             "tag": "legacyvault:ingredients/vault_contracts"

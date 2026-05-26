@@ -19,14 +19,15 @@
  */
 package mod.gottsch.forge.legacyvault.core.network;
 
-import static net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT;
-
-import java.util.Optional;
-
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
+
+import java.util.Optional;
 
 
 /**
@@ -36,7 +37,8 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public class LegacyVaultNetworking {
 	
 	public static final String PROTOCOL_VERSION = "1.0";
-	public static final int VAULT_COUNT_MESSAGE_ID = 14;	
+	public static final int VAULT_COUNT_MESSAGE_ID = 14;
+	public static final int SORT_VAULT_MESSAGE_ID = 15;
 	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MOD_ID, "legacy_vault_channel");
 	
 	public static SimpleChannel channel;    // used to transmit your network messages
@@ -53,10 +55,16 @@ public class LegacyVaultNetworking {
 				.serverAcceptedVersions(PROTOCOL_VERSION::equals)
 				.simpleChannel();
 		
-		// register the message
+		// register messages
 		channel.registerMessage(VAULT_COUNT_MESSAGE_ID, VaultCountMessageToClient.class,
 	            VaultCountMessageToClient::encode, VaultCountMessageToClient::decode,
-	            VaultCountMessageHandlerOnClient::onMessageReceived,
-	            Optional.of(PLAY_TO_CLIENT));
+	            (msg, ctx) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+	                    () -> () -> VaultCountMessageHandlerOnClient.onMessageReceived(msg, ctx)),
+	            Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
+		channel.registerMessage(SORT_VAULT_MESSAGE_ID, SortVaultPacket.class,
+				SortVaultPacket::encode, SortVaultPacket::decode,
+				SortVaultPacketHandler::onMessageReceived,
+				Optional.of(NetworkDirection.PLAY_TO_SERVER));
 	}
 }

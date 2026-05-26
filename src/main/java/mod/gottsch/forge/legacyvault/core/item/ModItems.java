@@ -42,6 +42,8 @@ public class ModItems {
 
     public static final RegistryObject<Item> CONTRACT = ITEMS.register("vault_contract", () -> new Item(new Item.Properties()));
 
+    public static final RegistryObject<Item> VAULT_UPGRADE = ITEMS.register("vault_upgrade", () -> new VaultUpgradeItem(new Item.Properties()));
+
     @Deprecated
     public static final RegistryObject<Item> APPLICATION = ITEMS.register("vault_application", () -> new Item(new Item.Properties()));
 

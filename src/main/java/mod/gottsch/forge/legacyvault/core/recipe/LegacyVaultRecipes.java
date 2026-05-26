@@ -18,9 +18,9 @@
 package mod.gottsch.forge.legacyvault.core.recipe;
 
 import mod.gottsch.forge.legacyvault.core.LegacyVault;
-import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultEasyDifficultyCondition;
-import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultHardDifficultyCondition;
-import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultNormalDifficultyCondition;
+import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultEasyTierCondition;
+import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultHardTierCondition;
+import mod.gottsch.forge.legacyvault.core.recipe.condition.VaultNormalTierCondition;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,13 +40,13 @@ public class LegacyVaultRecipes {
 		if (event.getRegistryKey() == ForgeRegistries.Keys.RECIPE_SERIALIZERS) {
 			LegacyVault.LOGGER.info("in recipe subscribe event");
 			event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
-					helper -> CraftingHelper.register(VaultEasyDifficultyCondition.Serializer.INSTANCE)        		
+					helper -> CraftingHelper.register(VaultEasyTierCondition.Serializer.INSTANCE)
 					);
 			event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
-					helper -> CraftingHelper.register(VaultNormalDifficultyCondition.Serializer.INSTANCE)
+					helper -> CraftingHelper.register(VaultNormalTierCondition.Serializer.INSTANCE)
 					);
 			event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
-					helper -> CraftingHelper.register(VaultHardDifficultyCondition.Serializer.INSTANCE)
+					helper -> CraftingHelper.register(VaultHardTierCondition.Serializer.INSTANCE)
 					);
 		}
 	}

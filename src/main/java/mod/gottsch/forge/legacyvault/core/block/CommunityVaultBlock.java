@@ -73,14 +73,7 @@ public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyV
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        BlockEntity vaultBlockEntity = null;
-        try {
-            vaultBlockEntity = new CommunityVaultBlockEntity(pos, state);
-        }
-        catch(Exception e) {
-            LegacyVault.LOGGER.error(e);
-        }
-        return vaultBlockEntity;
+        return new CommunityVaultBlockEntity(pos, state);
     }
 
     @Nullable

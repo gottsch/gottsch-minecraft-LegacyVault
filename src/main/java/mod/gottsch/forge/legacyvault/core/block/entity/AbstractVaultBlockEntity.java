@@ -19,10 +19,10 @@
  */
 package mod.gottsch.forge.legacyvault.core.block.entity;
 
-import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -60,6 +60,15 @@ public class AbstractVaultBlockEntity extends BlockEntity implements IVaultBlock
     public int ticksSinceSync;
 
     /*
+     * Client updated variables — shared by all vault types with a simple lid animation.
+     * ClassicVaultBlockEntity overrides tickClient() for its more complex handle/bolt sequence.
+     */
+    /** The current angle of the lid (between 0 and 1) */
+    protected float lidAngle;
+    /** The angle of the lid last tick */
+    protected float prevLidAngle;
+
+    /*
      * The Vault block entity does NOT contain an IItemHandler as it will never hold
      * any real inventory. The inventory is pulled from the registry/file system per player and
      * the changes in the client container screen do not need to be reflected to the
@@ -89,38 +98,74 @@ public class AbstractVaultBlockEntity extends BlockEntity implements IVaultBlock
     }
 
     /**
-     *
+     * Default lid animation — open when players are present, close when empty.
+     * ClassicVaultBlockEntity overrides this with its handle/bolt sequence.
      */
-    @Override
-    public void load(CompoundTag compound) {
-        try {
-            if (compound.contains(FACING_TAG)) {
-                this.setFacing(compound.getInt(FACING_TAG));
-            }
-            if (compound.contains(OWNER_UUID_TAG)) {
-                this.setOwnerUuid(compound.getString(OWNER_UUID_TAG));
-            }
-            super.load(compound);
-        } catch (Exception e) {
-            LegacyVault.LOGGER.error("Error reading to NBT:", e);
+    public void tickClient() {
+        this.prevLidAngle = this.lidAngle;
+        if (this.openCount > 0 && this.lidAngle == 0.0F) {
+            this.playSound(SoundEvents.CHEST_OPEN);
         }
+
+        if (this.openCount == 0 && this.lidAngle > 0.0F || this.openCount > 0 && this.lidAngle < 1.0F) {
+            float prevAngle = this.lidAngle;
+
+            if (this.openCount > 0) {
+                this.lidAngle += 0.1F;
+            } else {
+                this.lidAngle -= 0.1F;
+            }
+
+            if (this.lidAngle > 1.0F) {
+                this.lidAngle = 1.0F;
+            }
+            if (this.lidAngle < 0.5F && prevAngle >= 0.5F) {
+                this.playSound(SoundEvents.CHEST_CLOSE);
+            }
+            if (this.lidAngle < 0.0F) {
+                this.lidAngle = 0.0F;
+            }
+        }
+    }
+
+    public float getLidAngle() {
+        return lidAngle;
+    }
+
+    public void setLidAngle(float lidAngle) {
+        this.lidAngle = lidAngle;
+    }
+
+    public float getPrevLidAngle() {
+        return prevLidAngle;
+    }
+
+    public void setPrevLidAngle(float prevLidAngle) {
+        this.prevLidAngle = prevLidAngle;
     }
 
     /**
      *
      */
     @Override
+    public void load(CompoundTag compound) {
+        if (compound.contains(FACING_TAG)) {
+            this.setFacing(compound.getInt(FACING_TAG));
+        }
+        if (compound.contains(OWNER_UUID_TAG)) {
+            this.setOwnerUuid(compound.getString(OWNER_UUID_TAG));
+        }
+        super.load(compound);
+    }
+
+    @Override
     public void saveAdditional(CompoundTag compound) {
         super.saveAdditional(compound);
-        try {
-            if (getFacing() != null) {
-                compound.putInt(FACING_TAG, getFacing().get3DDataValue());
-            }
-            if (getOwnerUuid() !=null) {
-                compound.putString(OWNER_UUID_TAG, getOwnerUuid());
-            }
-        } catch (Exception e) {
-            LegacyVault.LOGGER.error("Error writing to NBT:", e);
+        if (getFacing() != null) {
+            compound.putInt(FACING_TAG, getFacing().get3DDataValue());
+        }
+        if (getOwnerUuid() != null) {
+            compound.putString(OWNER_UUID_TAG, getOwnerUuid());
         }
     }
 

@@ -19,7 +19,6 @@
  */
 package mod.gottsch.forge.legacyvault.core.block;
 
-import mod.gottsch.forge.legacyvault.core.LegacyVault;
 import mod.gottsch.forge.legacyvault.core.block.entity.ClassicVaultBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -92,15 +91,7 @@ public class ClassicVaultBlock extends PersonalVaultBlock {
 	 */
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		BlockEntity vaultBlockEntity = null;
-		try {
-			vaultBlockEntity = new ClassicVaultBlockEntity(pos, state);
-		}
-		catch(Exception e) {
-			LegacyVault.LOGGER.error(e);
-		}
-		LegacyVault.LOGGER.debug("created block entity -> {}", vaultBlockEntity.getClass().getSimpleName());
-		return vaultBlockEntity;
+		return new ClassicVaultBlockEntity(pos, state);
 	}
 
 	@Nullable

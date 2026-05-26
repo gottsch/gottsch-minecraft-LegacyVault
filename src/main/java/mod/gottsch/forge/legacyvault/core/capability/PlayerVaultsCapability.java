@@ -51,7 +51,7 @@ public class PlayerVaultsCapability implements ICapabilitySerializable<CompoundT
 
 	@Override
 	public CompoundTag serializeNBT() {
-		return (CompoundTag)handler.serializeNBT();
+		return handler.serializeNBT();
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 /*
  * This file is part of Legacy Vault.
  * Copyright (c) 2021 Mark Gottschling (gottsch)
- * 
+ *
  * All rights reserved.
  *
  * Legacy Vault is free software: you can redistribute it and/or modify
@@ -28,7 +28,6 @@ import mod.gottsch.forge.legacyvault.core.tags.ModTags;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
@@ -36,10 +35,9 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
  * @author Mark Gottschling on May 26, 2021
  *
  */
-public class VaultEasyDifficultyCondition implements ICondition {
-	public static final VaultEasyDifficultyCondition INSTANCE = new VaultEasyDifficultyCondition();
-    private static final ResourceLocation NAME = new ResourceLocation("legacyvault", "vault_easy_difficulty");
-
+public class VaultNormalTierCondition implements ICondition {
+	public static final VaultNormalTierCondition INSTANCE = new VaultNormalTierCondition();
+    private static final ResourceLocation NAME = new ResourceLocation("legacyvault", "vault_normal_tier");
 
 	@Override
 	public ResourceLocation getID() {
@@ -48,8 +46,7 @@ public class VaultEasyDifficultyCondition implements ICondition {
 
 	@Override
 	public boolean test(IContext context) {
-		Collection<Holder<Item>> items = context.getTag(ModTags.Items.EASY_RECIPE);
-//        return !vault.isEmpty();
+		Collection<Holder<Item>> items = context.getTag(ModTags.Items.NORMAL_RECIPE);
         for(Holder<Item> holder : items) {
             if (holder.get() == ModItems.CLASSIC_VAULT.get()) {
                 return true;
@@ -57,26 +54,26 @@ public class VaultEasyDifficultyCondition implements ICondition {
         }
         return false;
 	}
-	
+
     @Override
     public String toString() {
-        return "easy";
+        return "normal";
     }
-    
-    public static class Serializer implements IConditionSerializer<VaultEasyDifficultyCondition> {
+
+    public static class Serializer implements IConditionSerializer<VaultNormalTierCondition> {
         public static final Serializer INSTANCE = new Serializer();
 
         @Override
-        public void write(JsonObject json, VaultEasyDifficultyCondition value) { }
+        public void write(JsonObject json, VaultNormalTierCondition value) { }
 
         @Override
-        public VaultEasyDifficultyCondition read(JsonObject json) {
-            return VaultEasyDifficultyCondition.INSTANCE;
+        public VaultNormalTierCondition read(JsonObject json) {
+            return VaultNormalTierCondition.INSTANCE;
         }
 
         @Override
         public ResourceLocation getID() {
-            return VaultEasyDifficultyCondition.NAME;
+            return VaultNormalTierCondition.NAME;
         }
     }
 }

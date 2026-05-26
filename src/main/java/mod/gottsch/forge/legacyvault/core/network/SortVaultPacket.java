@@ -1,7 +1,7 @@
 /*
  * This file is part of Legacy Vault.
- * Copyright (c) 2021 Mark Gottschling (gottsch)
- * 
+ * Copyright (c) 2025 Mark Gottschling (gottsch)
+ *
  * All rights reserved.
  *
  * Legacy Vault is free software: you can redistribute it and/or modify
@@ -17,27 +17,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Legacy Vault.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
-package mod.gottsch.forge.legacyvault.core.inventory;
+package mod.gottsch.forge.legacyvault.core.network;
+
+import net.minecraft.network.FriendlyByteBuf;
 
 /**
- * @author Mark Gottschling on May 23, 2021
+ * Client → Server: requests the server to sort the sending player's vault inventory.
+ * No payload — the server identifies the player from the network context.
  *
+ * @author Mark Gottschling on 2026
  */
-public enum VaultSlotSize {
-	STANDARD(27),
-	VANILLA(27),
-	LARGE(54),
-	DOUBLE(54),
-	XLARGE(91);
+public class SortVaultPacket {
 
-	private int size;
-	
-	VaultSlotSize(int size) {
-		this.size = size;
-	}
+    public SortVaultPacket() {}
 
-	public int getSize() {
-		return size;
-	}
-	
+    public static SortVaultPacket decode(FriendlyByteBuf buf) {
+        return new SortVaultPacket();
+    }
+
+    public void encode(FriendlyByteBuf buf) {
+        // no payload
+    }
 }

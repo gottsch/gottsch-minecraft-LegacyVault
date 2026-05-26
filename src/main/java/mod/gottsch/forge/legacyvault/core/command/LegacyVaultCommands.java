@@ -32,9 +32,24 @@ import net.minecraftforge.fml.common.Mod;
 public class LegacyVaultCommands {
 	@SubscribeEvent
 	public static void register(RegisterCommandsEvent event) {
-		ResetVaultCountCommand.register(event.getDispatcher());
-		GetVaultLocationsCommand.register(event.getDispatcher());
-		ClearVaultLocationsCommand.register(event.getDispatcher());
-		SpawnVaultCommand.register(event.getDispatcher()	);
+		// /legacyvault locations <player>
+		// /legacyvault locations clear <player>
+		LocationsCommand.register(event.getDispatcher());
+		// /legacyvault count <targets> [value]
+		CountCommand.register(event.getDispatcher());
+		// /legacyvault spawn <pos> [targets] [direction]
+		SpawnVaultCommand.register(event.getDispatcher());
+		// /legacyvault inspect <player>
+		InspectVaultCommand.register(event.getDispatcher());
+		// /legacyvault reload <player>
+		ReloadVaultCommand.register(event.getDispatcher());
+		// /legacyvault clear <player> [confirm]
+		ClearVaultCommand.register(event.getDispatcher());
+		// /legacyvault transfer <from> <to>
+		TransferVaultCommand.register(event.getDispatcher());
+		// /legacyvault tier inspect|set_tier|reset|max ...
+		TierCommand.register(event.getDispatcher());
+		// /legacyvault encryption status|on|off
+		EncryptionCommand.register(event.getDispatcher());
 	}
 }

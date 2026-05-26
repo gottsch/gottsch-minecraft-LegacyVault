@@ -133,8 +133,7 @@ public class ClassicVaultModel extends Model implements IVaultModel {
 			bolt.x = getBoltStartingX() + entity.getBoltPosition();
 		}
 		float lidRotation = entity.getPrevLidAngle() + (entity.getLidAngle() - entity.getPrevLidAngle()) * partialTicks;
-		lidRotation = 1.0F - lidRotation;
-		lidRotation = 1.0F - lidRotation * lidRotation * lidRotation;
+		lidRotation = lidRotation * lidRotation * (3.0F - 2.0F * lidRotation);  // smoothstep ease-in-out
 		doorGroup.yRot = (lidRotation * (float)Math.PI / /*getAngleModifier()*/ 2.0F);
 	}
 

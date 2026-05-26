@@ -44,8 +44,8 @@ public class ItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvider {
 	@Override
 	protected void addTags(Provider provider) {
 		/*
-		 * recipe difficulty selector tags
-		 * NOTE only 1 of these tags should contain a value.
+		 * recipe tier selector tags — controls which crafting cost variant is active.
+		 * NOTE only 1 of these tags should contain a value at a time.
 		 * NOTE Items.AIR is only included here to actually construct the tag during DataGen,
 		 * the air value should be removed afterwards.
 		 */
@@ -53,13 +53,26 @@ public class ItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvider {
 		tag(ModTags.Items.EASY_RECIPE).add(Items.AIR);
 		tag(ModTags.Items.HARD_RECIPE).add(Items.AIR);
 
+		tag(ModTags.Items.EASY_RECIPE_BASE_MATERIALS)
+				.add(Items.IRON_NUGGET)
+				.add(Items.GOLD_NUGGET);
+		tag(ModTags.Items.NORMAL_RECIPE_BASE_MATERIALS)
+				.add(Items.IRON_INGOT)
+				.add(Items.GOLD_INGOT);
+		tag(ModTags.Items.HARD_RECIPE_BASE_MATERIALS)
+				.add(Items.IRON_BLOCK)
+				.add(Items.GOLD_INGOT);
+
 		// vault ingredients
 		tag(ModTags.Items.VAULT_CONTRACTS)
 				.add(ModItems.CONTRACT.get())
 				.add(ModItems.APPLICATION.get());
 
+		// vault items whitelist — empty by default (disabled); admins populate via datapack
+		tag(ModTags.Items.VAULT_ITEMS_WHITELIST);
+
 		// vault items blacklist
-		// NOTE blacklistis the default as only certain items need to be restricted
+		// NOTE blacklist is the default as only certain items need to be restricted
 		tag(ModTags.Items.VAULT_ITEMS_BLACKLIST)
 				.add(ModItems.RUSTIC_VAULT.get())
 				.add(ModItems.CLASSIC_VAULT.get())
