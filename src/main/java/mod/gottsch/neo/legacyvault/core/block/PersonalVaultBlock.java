@@ -37,6 +37,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -68,32 +69,32 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player,
-                                 InteractionHand hand, BlockHitResult result) {
-        if (hand == InteractionHand.MAIN_HAND && player.getItemInHand(hand).is(ModItems.VAULT_UPGRADE.get())) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player,
+                                              InteractionHand hand, BlockHitResult result) {
+        if (hand == InteractionHand.MAIN_HAND && stack.is(ModItems.VAULT_UPGRADE.get())) {
             if (WorldInfo.isClientSide(world)) {
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
             AbstractVaultBlockEntity blockEntity = (AbstractVaultBlockEntity) world.getBlockEntity(pos);
             if (!doesPlayerHaveAccess(blockEntity, player)) {
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
-            return applyUpgrade(player, player.getItemInHand(hand));
+            return applyUpgrade(player, stack);
         }
-        return super.use(state, world, pos, player, hand, result);
+        return super.useItemOn(stack, state, world, pos, player, hand, result);
     }
 
-    private InteractionResult applyUpgrade(Player player, ItemStack upgradeItem) {
+    private ItemInteractionResult applyUpgrade(Player player, ItemStack upgradeItem) {
         IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player).orElse(null);
         if (cap == null) {
             LegacyVault.LOGGER.warn("applyUpgrade: player {} missing vault capability", player.getScoreboardName());
-            return InteractionResult.FAIL;
+            return ItemInteractionResult.FAIL;
         }
         int maxTier = Config.ServerConfig.PERSONAL.maxTier.get();
         if (cap.getVaultTier() >= maxTier) {
             player.displayClientMessage(
                     Component.translatable(LangUtil.screen("vault.upgrade.maxed")), true);
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
         cap.setVaultTier(cap.getVaultTier() + 1);
         if (!player.isCreative()) {
@@ -105,7 +106,7 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
         player.displayClientMessage(
                 Component.translatable(LangUtil.screen("vault.upgrade.success"), cap.getVaultTier(), maxTier), true);
         LegacyVault.LOGGER.debug("vault upgrade: player {} now at tier {}/{}", player.getScoreboardName(), cap.getVaultTier(), maxTier);
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override

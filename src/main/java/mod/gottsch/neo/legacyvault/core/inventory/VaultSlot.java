@@ -25,11 +25,13 @@ import mod.gottsch.neo.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.neo.legacyvault.core.tags.ModTags;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BundleContents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -104,11 +106,11 @@ public class VaultSlot extends SlotItemHandler {
 		}
 
 		// check if itemStack contains more items
-		if (itemStack.hasTag()) {
-			ListTag itemsList = itemStack.getTag().getList("Items", Tag.TAG_COMPOUND);
-			if (!itemsList.isEmpty()) {
-				return false;
-			}
+		// (1.20.1 checked a top-level "Items" NBT list, which is where bundles and some modded containers kept contents)
+		if (itemStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyStream().findAny().isPresent()
+				|| !itemStack.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY).isEmpty()
+				|| itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).contains("Items")) {
+			return false;
 		}
 
 		// check white/blacklist tags first

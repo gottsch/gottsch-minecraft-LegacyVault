@@ -21,6 +21,7 @@ package mod.gottsch.neo.legacyvault.core.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.Connection;
@@ -148,19 +149,19 @@ public class AbstractVaultBlockEntity extends BlockEntity implements IVaultBlock
      *
      */
     @Override
-    public void load(CompoundTag compound) {
+    protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
         if (compound.contains(FACING_TAG)) {
             this.setFacing(compound.getInt(FACING_TAG));
         }
         if (compound.contains(OWNER_UUID_TAG)) {
             this.setOwnerUuid(compound.getString(OWNER_UUID_TAG));
         }
-        super.load(compound);
+        super.loadAdditional(compound, registries);
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
+    public void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+        super.saveAdditional(compound, registries);
         if (getFacing() != null) {
             compound.putInt(FACING_TAG, getFacing().get3DDataValue());
         }
@@ -173,16 +174,16 @@ public class AbstractVaultBlockEntity extends BlockEntity implements IVaultBlock
     // it hasn't seen before. i.e. the chunk is loaded
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
+        saveAdditional(tag, registries);
         return tag;
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         if (tag != null) {
-            load(tag);
+            loadAdditional(tag, registries);
         }
     }
 
@@ -193,9 +194,9 @@ public class AbstractVaultBlockEntity extends BlockEntity implements IVaultBlock
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         CompoundTag tag = pkt.getTag();
-        handleUpdateTag(tag);
+        handleUpdateTag(tag, registries);
     }
 
     public Direction getFacing() {

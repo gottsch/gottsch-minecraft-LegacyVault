@@ -25,9 +25,8 @@ import mod.gottsch.neo.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.neo.legacyvault.core.block.entity.IVaultBlockEntity;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,7 +45,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 
 /**
  * @author Mark Gottschling on May 1, 2021
@@ -70,8 +68,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 	 * 
 	 */
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player,
-		InteractionHand hand, BlockHitResult result) {
+	protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult result) {
 
 		LegacyVault.LOGGER.debug("using vault...");
 		AbstractVaultBlockEntity blockEntity = (AbstractVaultBlockEntity) world.getBlockEntity(pos);
@@ -120,7 +117,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 //				return new VaultContainerMenu(windowId, pos, playerInventory, playerEntity);
 //            }
 //        };
-        NetworkHooks.openScreen((ServerPlayer) player, getMenuProvider(pos), blockEntity.getBlockPos());
+        player.openMenu(getMenuProvider(pos), blockEntity.getBlockPos());
 
 		return InteractionResult.SUCCESS;
 	}
@@ -153,7 +150,7 @@ public abstract class AbstractVaultBlock extends BaseEntityBlock implements ILeg
 			}
 
 			// set the name of the chest
-			if (stack.hasCustomHoverName()) {
+			if (stack.has(DataComponents.CUSTOM_NAME)) {
 				vaultBlockEntity.setCustomName(stack.getDisplayName());
 			}
 
