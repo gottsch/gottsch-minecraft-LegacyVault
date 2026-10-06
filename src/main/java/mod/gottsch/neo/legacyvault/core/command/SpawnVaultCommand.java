@@ -33,7 +33,6 @@ import mod.gottsch.neo.legacyvault.core.block.entity.IVaultBlockEntity;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
-import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.VaultCountMessageToClient;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -48,7 +47,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Collection;
 import java.util.List;
@@ -157,7 +156,7 @@ public class SpawnVaultCommand {
                     LegacyVault.LOGGER.debug("spawn: new vault count for {} -> {}", player.getDisplayName().getString(), count);
                     ServerPlayer serverPlayer = (ServerPlayer) entity;
                     VaultCountMessageToClient message = new VaultCountMessageToClient(serverPlayer.getStringUUID(), count);
-                    LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message);
+                    PacketDistributor.sendToPlayer(serverPlayer, message);
                 }
                 cap.getLocations().add(DimensionCoords.of(world.dimension(), pos));
             }

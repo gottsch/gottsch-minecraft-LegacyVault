@@ -19,7 +19,11 @@
  */
 package mod.gottsch.neo.legacyvault.core.network;
 
+import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Client → Server: requests the server to sort the sending player's vault inventory.
@@ -27,15 +31,18 @@ import net.minecraft.network.FriendlyByteBuf;
  *
  * @author Mark Gottschling on 2026
  */
-public class SortVaultPacket {
+public class SortVaultPacket implements CustomPacketPayload {
+    public static final SortVaultPacket INSTANCE = new SortVaultPacket();
 
-    public SortVaultPacket() {}
+    public static final CustomPacketPayload.Type<SortVaultPacket> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "sort_vault"));
 
-    public static SortVaultPacket decode(FriendlyByteBuf buf) {
-        return new SortVaultPacket();
-    }
+    public static final StreamCodec<FriendlyByteBuf, SortVaultPacket> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
-    public void encode(FriendlyByteBuf buf) {
-        // no payload
+    private SortVaultPacket() {}
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

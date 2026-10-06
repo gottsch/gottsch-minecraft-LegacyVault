@@ -19,11 +19,11 @@
  */
 package mod.gottsch.neo.legacyvault.core.gui;
 
+import net.neoforged.neoforge.network.PacketDistributor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.inventory.CommunityVaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.inventory.VaultContainerMenu;
-import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.SortVaultPacket;
 import mod.gottsch.neo.legacyvault.core.util.LangUtil;
 import net.minecraft.ChatFormatting;
@@ -276,7 +276,7 @@ public class CommunityVaultScreen extends VaultScreen {
     }
 
     private void sendSortRequest() {
-        LegacyVaultNetworking.channel.sendToServer(new SortVaultPacket());
+        PacketDistributor.sendToServer(SortVaultPacket.INSTANCE);
     }
 
     private CommunityVaultContainerMenu communityMenu() {

@@ -20,51 +20,34 @@
 package mod.gottsch.neo.legacyvault.core.network;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
-
-import java.util.Optional;
-
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 /**
  * @author Mark Gottschling on Jun 3, 2021
  *
  */
 public class LegacyVaultNetworking {
-	
 	public static final String PROTOCOL_VERSION = "1.0";
-	public static final int VAULT_COUNT_MESSAGE_ID = 14;
-	public static final int SORT_VAULT_MESSAGE_ID = 15;
-	public static final ResourceLocation CHANNEL_NAME = ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "legacy_vault_channel");
-	
-	public static SimpleChannel channel;    // used to transmit your network messages
 
-	/**
-	 * 
-	 * @param event
-	 */
-	public static void register() {
-		// register the channel
-		channel = NetworkRegistry.ChannelBuilder.named(CHANNEL_NAME)
-				.networkProtocolVersion(() -> PROTOCOL_VERSION)
-				.clientAcceptedVersions(PROTOCOL_VERSION::equals)
-				.serverAcceptedVersions(PROTOCOL_VERSION::equals)
-				.simpleChannel();
-		
-		// register messages
-		channel.registerMessage(VAULT_COUNT_MESSAGE_ID, VaultCountMessageToClient.class,
-	            VaultCountMessageToClient::encode, VaultCountMessageToClient::decode,
-	            (msg, ctx) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-	                    () -> () -> VaultCountMessageHandlerOnClient.onMessageReceived(msg, ctx)),
-	            Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+	public static void register(IEventBus modEventBus) {
+		modEventBus.addListener(LegacyVaultNetworking::onRegisterPayloads);
+	}
 
-		channel.registerMessage(SORT_VAULT_MESSAGE_ID, SortVaultPacket.class,
-				SortVaultPacket::encode, SortVaultPacket::decode,
-				SortVaultPacketHandler::onMessageReceived,
-				Optional.of(NetworkDirection.PLAY_TO_SERVER));
+	private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
+		PayloadRegistrar registrar = event.registrar(LegacyVault.MOD_ID).versioned(PROTOCOL_VERSION);
+
+		// lambda (not a method ref) so the client-only handler class is never loaded on a dedicated server
+		registrar.playToClient(
+				VaultCountMessageToClient.TYPE,
+				VaultCountMessageToClient.STREAM_CODEC,
+				(message, ctx) -> VaultCountMessageHandlerOnClient.onMessageReceived(message, ctx)
+		);
+		registrar.playToServer(
+				SortVaultPacket.TYPE,
+				SortVaultPacket.STREAM_CODEC,
+				SortVaultPacketHandler::onMessageReceived
+		);
 	}
 }

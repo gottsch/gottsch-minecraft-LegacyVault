@@ -23,9 +23,7 @@ import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.inventory.CommunityVaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.inventory.PersonalVaultContainerMenu;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server-side handler for {@link SortVaultPacket}.
@@ -36,24 +34,22 @@ import java.util.function.Supplier;
  */
 public class SortVaultPacketHandler {
 
-    public static void onMessageReceived(SortVaultPacket message, Supplier<NetworkEvent.Context> ctxSupplier) {
-        NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
-            if (player == null) {
-                LegacyVault.LOGGER.warn("SortVaultPacket: received with no sender");
-                return;
-            }
-            if (player.containerMenu instanceof PersonalVaultContainerMenu menu) {
-                menu.sortInventory(player);
-                LegacyVault.LOGGER.debug("SortVaultPacket: sorted personal vault for player {}", player.getScoreboardName());
-            } else if (player.containerMenu instanceof CommunityVaultContainerMenu menu) {
-                menu.sortInventory(player);
-                LegacyVault.LOGGER.debug("SortVaultPacket: sorted community vault for player {}", player.getScoreboardName());
-            } else {
-                LegacyVault.LOGGER.debug("SortVaultPacket: player {} does not have a vault open", player.getScoreboardName());
-            }
-        });
-        ctx.setPacketHandled(true);
+    /**
+     * Payload handlers run on the main thread by default in NeoForge 21.1.
+     */
+    public static void onMessageReceived(SortVaultPacket message, IPayloadContext ctx) {
+        if (!(ctx.player() instanceof ServerPlayer player)) {
+            LegacyVault.LOGGER.warn("SortVaultPacket: received with no server player");
+            return;
+        }
+        if (player.containerMenu instanceof PersonalVaultContainerMenu menu) {
+            menu.sortInventory(player);
+            LegacyVault.LOGGER.debug("SortVaultPacket: sorted personal vault for player {}", player.getScoreboardName());
+        } else if (player.containerMenu instanceof CommunityVaultContainerMenu menu) {
+            menu.sortInventory(player);
+            LegacyVault.LOGGER.debug("SortVaultPacket: sorted community vault for player {}", player.getScoreboardName());
+        } else {
+            LegacyVault.LOGGER.debug("SortVaultPacket: player {} does not have a vault open", player.getScoreboardName());
+        }
     }
 }

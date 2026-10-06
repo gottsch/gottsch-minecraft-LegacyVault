@@ -19,89 +19,29 @@ package mod.gottsch.neo.legacyvault.core.network;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /**
+ * Server → Client: the player's current personal vault count.
+ *
  * @author Mark Gottschling on Jun 2, 2021
  *
  */
-public class VaultCountMessageToClient {
-	
-	private String playerUUID;
-	private int vaultCount = 0;
-	private boolean messageIsValid;
-	
-	public VaultCountMessageToClient() {
-		messageIsValid = false;
-	}
-	
-	public VaultCountMessageToClient(String playerUUID, int count) {
-		this.playerUUID = playerUUID;
-		this.vaultCount = count;
-		messageIsValid = true;
-	}
-	
-	/**
-	 * 
-	 * @param buf
-	 * @return
-	 */
-	public static VaultCountMessageToClient decode(FriendlyByteBuf buf) {
-		VaultCountMessageToClient message = new VaultCountMessageToClient();
-		try {
-			message.playerUUID = buf.readUtf();
-			message.vaultCount = buf.readInt();
-		}
-		catch(Exception e) {
-			LegacyVault.LOGGER.error("An error occurred attempting to read message: ", e);
-			return message;
-		}
-		message.setMessageIsValid( true);
-		return message;
-	}
-	
-	/**
-	 * 
-	 * @param buf
-	 */
-	public void encode(FriendlyByteBuf buf) {
-		if (!messageIsValid) {
-			return;
-		}
-		buf.writeUtf(getPlayerUUID());
-		buf.writeInt(getVaultCount());
-	}
-	
-	public boolean isMessageValid() {
-	    return messageIsValid;
-	  }
+public record VaultCountMessageToClient(String playerUUID, int vaultCount) implements CustomPacketPayload {
 
-	public String getPlayerUUID() {
-		return playerUUID;
-	}
+	public static final CustomPacketPayload.Type<VaultCountMessageToClient> TYPE =
+			new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "vault_count"));
 
-	public void setPlayerUUID(String playerUUID) {
-		this.playerUUID = playerUUID;
-	}
-
-	public int getVaultCount() {
-		return vaultCount;
-	}
-
-	public void setVaultCount(int vaultCount) {
-		this.vaultCount = vaultCount;
-	}
-
-	public boolean isMessageIsValid() {
-		return messageIsValid;
-	}
-
-	public void setMessageIsValid(boolean messageIsValid) {
-		this.messageIsValid = messageIsValid;
-	}
+	public static final StreamCodec<FriendlyByteBuf, VaultCountMessageToClient> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8, VaultCountMessageToClient::playerUUID,
+			ByteBufCodecs.INT, VaultCountMessageToClient::vaultCount,
+			VaultCountMessageToClient::new);
 
 	@Override
-	public String toString() {
-		return "VaultCountMessageToClient [playerUUID=" + playerUUID + ", vaultCount=" + vaultCount
-				+ ", messageIsValid=" + messageIsValid + "]";
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

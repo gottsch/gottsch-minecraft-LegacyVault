@@ -22,7 +22,6 @@ package mod.gottsch.neo.legacyvault.core.setup;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.config.Config;
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
-import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -40,7 +39,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 public class CommonSetup {
 	
 	public static void init(final FMLCommonSetupEvent event) {
-		event.enqueueWork(LegacyVaultNetworking::register);
 		Config.instance.addRollingFileAppender(LegacyVault.MOD_ID);
 	}
 

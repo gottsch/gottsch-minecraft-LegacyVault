@@ -19,6 +19,7 @@
  */
 package mod.gottsch.neo.legacyvault.core.gui;
 
+import net.neoforged.neoforge.network.PacketDistributor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.config.Config;
@@ -27,7 +28,6 @@ import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.inventory.PersonalVaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.inventory.VaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.inventory.VaultSlot;
-import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.SortVaultPacket;
 import mod.gottsch.neo.legacyvault.core.util.LangUtil;
 import net.minecraft.ChatFormatting;
@@ -295,7 +295,7 @@ public class PersonalVaultScreen extends VaultScreen {
     }
 
     private void sendSortRequest() {
-        LegacyVaultNetworking.channel.sendToServer(new SortVaultPacket());
+        PacketDistributor.sendToServer(SortVaultPacket.INSTANCE);
     }
 
     private PersonalVaultContainerMenu personalMenu() {

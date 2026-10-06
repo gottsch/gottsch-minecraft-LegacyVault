@@ -19,14 +19,13 @@
  */
 package mod.gottsch.neo.legacyvault.core;
 
-import mod.gottsch.neo.legacyvault.core.eventhandler.PlayerEventHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mod.gottsch.neo.legacyvault.core.config.Config;
+import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.setup.CommonSetup;
 import mod.gottsch.neo.legacyvault.core.setup.Registration;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -59,6 +58,7 @@ public class LegacyVault {
 		
 		// register deferred registries
 		Registration.init(modEventBus);
+		LegacyVaultNetworking.register(modEventBus);
 		
 		// register config
 		Config.register(container);
@@ -69,7 +69,6 @@ public class LegacyVault {
         modEventBus.addListener(ModConfigEvent.Reloading.class, this::config);
         
 //        NeoForge.EVENT_BUS.addListener(LegacyVaultSetup::serverStopping);
-        NeoForge.EVENT_BUS.register(new PlayerEventHandler());
         // client setup is registered by ClientSetup's @EventBusSubscriber(value = Dist.CLIENT)
 	}
 

@@ -29,7 +29,6 @@ import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config;
 import mod.gottsch.neo.legacyvault.core.inventory.PersonalVaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
-import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.VaultCountMessageToClient;
 import mod.gottsch.neo.legacyvault.core.persistence.VaultPersistenceManager;
 import mod.gottsch.neo.legacyvault.core.util.LangUtil;
@@ -49,7 +48,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,7 +180,7 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
                                     cap.setCount(count);
                                     if (owner instanceof ServerPlayer serverPlayer) {
                                         VaultCountMessageToClient message = new VaultCountMessageToClient(serverPlayer.getStringUUID(), count);
-                                        LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message);
+                                        PacketDistributor.sendToPlayer(serverPlayer, message);
                                     }
                                 }
                             } else {

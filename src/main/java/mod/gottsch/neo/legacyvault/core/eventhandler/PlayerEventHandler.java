@@ -26,7 +26,6 @@ import mod.gottsch.neo.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
-import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.VaultCountMessageToClient;
 import mod.gottsch.neo.legacyvault.core.persistence.VaultPersistenceManager;
 import net.minecraft.server.MinecraftServer;
@@ -36,7 +35,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,17 +64,32 @@ public class PlayerEventHandler {
 		validateVaultLocations((ServerPlayer) event.getEntity());
 
 		// update client players capabilities
+		syncVaultCount((ServerPlayer) event.getEntity());
+	}
+
+	/*
+	 * respawn creates a new client player with an empty attachment, so resend the count
+	 * (the server copy survives via copyOnDeath). Also covers returning from the End.
+	 */
+	@SubscribeEvent
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			syncVaultCount(player);
+		}
+	}
+
+	private static void syncVaultCount(ServerPlayer player) {
 		if (!ServerConfig.COMMUNITY.enabled.get() && !ServerConfig.PERSONAL.unlimitedVaults.get()) {
-			IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(event.getEntity()).orElse(null);
+			IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player).orElse(null);
 			if (cap == null) {
-				LegacyVault.LOGGER.warn("player {} is missing PlayerVaultsHandler capability on login", event.getEntity().getStringUUID());
+				LegacyVault.LOGGER.warn("player {} is missing PlayerVaultsHandler capability", player.getStringUUID());
 			} else {
 				LegacyVault.LOGGER.debug("player cap branch count -> {}", cap.getCount());
-				VaultCountMessageToClient message = new VaultCountMessageToClient(event.getEntity().getStringUUID(), cap.getCount());
+				VaultCountMessageToClient message = new VaultCountMessageToClient(player.getStringUUID(), cap.getCount());
 				LegacyVault.LOGGER.debug("sending message to client -> {}", message);
-				LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getEntity()), message);
+				PacketDistributor.sendToPlayer(player, message);
 			}
-		}		
+		}
 	}
 
 	private static void validateVaultLocations(ServerPlayer player) {

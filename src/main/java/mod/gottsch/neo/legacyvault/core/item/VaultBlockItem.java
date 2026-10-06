@@ -26,7 +26,6 @@ import mod.gottsch.neo.legacyvault.core.block.CommunityVaultBlock;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
 import mod.gottsch.neo.legacyvault.core.config.Config;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
-import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.VaultCountMessageToClient;
 import mod.gottsch.neo.legacyvault.core.util.LangUtil;
 import mod.gottsch.neo.legacyvault.core.util.ModUtil;
@@ -41,7 +40,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -145,7 +144,7 @@ public class VaultBlockItem extends BlockItem {
 
 							// send state message to client
 							VaultCountMessageToClient message = new VaultCountMessageToClient(context.getPlayer().getStringUUID(), count);
-							LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), message);
+							PacketDistributor.sendToPlayer((ServerPlayer) context.getPlayer(), message);
 						} else {
 							LegacyVault.LOGGER.debug("player branch count greater than config-> {}", ServerConfig.PERSONAL.vaultsPerPlayer.get());
 							return false;
