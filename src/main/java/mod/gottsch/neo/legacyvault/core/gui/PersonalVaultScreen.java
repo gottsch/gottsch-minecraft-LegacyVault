@@ -23,7 +23,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.config.Config;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.inventory.PersonalVaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.inventory.VaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.inventory.VaultSlot;
@@ -129,8 +129,7 @@ public class PersonalVaultScreen extends VaultScreen {
         if (Config.ServerConfig.PERSONAL.enabled.get()) {
             String vaultsRemaining;
             if (!Config.ServerConfig.PERSONAL.unlimitedVaults.get()) {
-                IPlayerVaultsHandler cap = getInventory().player
-                        .getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+                IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(getInventory().player)
                         .orElseThrow(() -> new RuntimeException("player does not have PlayerVaultsHandler capability"));
                 vaultsRemaining = Component.translatable(LangUtil.screen("vaults_remaining"),
                         String.valueOf(Config.ServerConfig.PERSONAL.vaultsPerPlayer.get() - cap.getCount()),

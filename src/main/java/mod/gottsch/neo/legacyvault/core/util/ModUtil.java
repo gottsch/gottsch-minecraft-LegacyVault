@@ -22,7 +22,7 @@ package mod.gottsch.neo.legacyvault.core.util;
 import java.util.UUID;
 
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -35,7 +35,7 @@ import net.minecraft.world.level.Level;
 public class ModUtil {
 
 	public static IPlayerVaultsHandler getPlayerCapability(Player player) {
-		return player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+		return ModAttachments.getPlayerVaults(player).orElse(null);
 	}
 
 	/**

@@ -24,7 +24,7 @@ import mod.gottsch.neo.gottschcore.command.CommandResponseFormatter;
 import mod.gottsch.neo.gottschcore.spatial.DimensionCoords;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -57,7 +57,7 @@ public class LocationsCommand {
     }
 
     private static int listLocations(CommandSourceStack source, ServerPlayer target) {
-        IPlayerVaultsHandler cap = target.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+        IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(target)
                 .orElse(null);
         if (cap == null) {
             LegacyVault.LOGGER.warn("locations: player {} has no vault capability", target.getScoreboardName());
@@ -83,7 +83,7 @@ public class LocationsCommand {
     }
 
     private static int clearLocations(CommandSourceStack source, ServerPlayer target) {
-        IPlayerVaultsHandler cap = target.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+        IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(target)
                 .orElse(null);
         if (cap == null) {
             LegacyVault.LOGGER.warn("locations clear: player {} has no vault capability", target.getScoreboardName());

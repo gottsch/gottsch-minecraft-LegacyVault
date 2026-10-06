@@ -25,7 +25,7 @@ import mod.gottsch.neo.gottschcore.command.CommandResponseFormatter;
 import mod.gottsch.neo.gottschcore.command.ReportBuilder;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -82,7 +82,7 @@ public class TierCommand {
     }
 
     private static int inspect(CommandSourceStack source, ServerPlayer target) {
-        IPlayerVaultsHandler cap = target.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+        IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(target)
                 .orElse(null);
         if (cap == null) {
             List<Component> lines = CommandResponseFormatter.formatFailure(
@@ -116,7 +116,7 @@ public class TierCommand {
         for (Entity entity : entities) {
             if (!(entity instanceof Player player)) continue;
 
-            IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+            IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player)
                     .orElse(null);
             if (cap == null) {
                 LegacyVault.LOGGER.warn("tier {}: player {} has no vault capability", label, player.getName().getString());

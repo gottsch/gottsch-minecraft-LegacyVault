@@ -24,7 +24,7 @@ import mod.gottsch.neo.gottschcore.world.WorldInfo;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.VaultCountMessageToClient;
@@ -66,7 +66,7 @@ public class PlayerEventHandler {
 
 		// update client players capabilities
 		if (!ServerConfig.COMMUNITY.enabled.get() && !ServerConfig.PERSONAL.unlimitedVaults.get()) {
-			IPlayerVaultsHandler cap = event.getEntity().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+			IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(event.getEntity()).orElse(null);
 			if (cap == null) {
 				LegacyVault.LOGGER.warn("player {} is missing PlayerVaultsHandler capability on login", event.getEntity().getStringUUID());
 			} else {
@@ -79,7 +79,7 @@ public class PlayerEventHandler {
 	}
 
 	private static void validateVaultLocations(ServerPlayer player) {
-		IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+		IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player).orElse(null);
 		if (cap == null || cap.getLocations().isEmpty()) {
 			return;
 		}

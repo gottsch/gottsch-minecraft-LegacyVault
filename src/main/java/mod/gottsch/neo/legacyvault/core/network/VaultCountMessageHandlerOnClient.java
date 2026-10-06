@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -91,7 +91,7 @@ public class VaultCountMessageHandlerOnClient {
 			UUID uuid = UUID.fromString(message.getPlayerUUID());
 			Player player = level.getPlayerByUUID(uuid);
 			if (player != null) {
-				IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+				IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player).orElse(null);
 				if (cap != null) {
 					LegacyVault.LOGGER.debug("player branch count -> {}", cap.getCount());
 					cap.setCount(message.getVaultCount());

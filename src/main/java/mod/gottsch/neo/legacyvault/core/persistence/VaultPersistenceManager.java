@@ -21,7 +21,7 @@ package mod.gottsch.neo.legacyvault.core.persistence;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.neo.legacyvault.core.crypto.MasterSecretManager;
@@ -183,7 +183,7 @@ public class VaultPersistenceManager {
 
         // push resolved tier into the player's capability (session cache)
         final int finalTier = resolvedTier;
-        player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+        ModAttachments.getPlayerVaults(player)
                 .ifPresent(cap -> cap.setVaultTier(finalTier));
     }
 
@@ -204,7 +204,7 @@ public class VaultPersistenceManager {
             ContainerHelper.saveAllItems(compound, persistedInventory);
 
             // tier — pulled from the session capability cache
-            int tier = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+            int tier = ModAttachments.getPlayerVaults(player)
                     .map(IPlayerVaultsHandler::getVaultTier)
                     .orElse(ServerConfig.PERSONAL.startingTier.get());
 

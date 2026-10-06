@@ -31,7 +31,7 @@ import mod.gottsch.neo.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.neo.legacyvault.core.block.ModBlocks;
 import mod.gottsch.neo.legacyvault.core.block.entity.IVaultBlockEntity;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import mod.gottsch.neo.legacyvault.core.network.VaultCountMessageToClient;
@@ -146,7 +146,7 @@ public class SpawnVaultCommand {
         blockEntity.setFacing(direction);
 
         if (!isCommunity) {
-            IPlayerVaultsHandler cap = entity.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY)
+            IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player)
                     .orElse(null);
             if (cap == null) {
                 LegacyVault.LOGGER.warn("spawn: player {} has no vault capability", player.getDisplayName().getString());

@@ -18,16 +18,15 @@
 package mod.gottsch.neo.legacyvault.core.capability;
 
 import mod.gottsch.neo.gottschcore.spatial.DimensionCoords;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.List;
 
 /**
- * Forge capability wrapper for {@link PlayerVaultData}.
+ * NeoForge attachment holder for {@link PlayerVaultData} (registered in {@link ModAttachments}).
  * All persistent state lives in PlayerVaultData (no loader-specific imports there).
- * On a NeoForge port, replace this class with an AttachmentType-based holder
- * that wraps the same PlayerVaultData — the data and NBT logic stay unchanged.
  *
  * @author Mark Gottschling on May 11, 2021
  */
@@ -36,12 +35,12 @@ public class PlayerVaultsHandler implements IPlayerVaultsHandler, INBTSerializab
     private final PlayerVaultData data = new PlayerVaultData();
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         return data.save();
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compound) {
         data.load(compound);
     }
 

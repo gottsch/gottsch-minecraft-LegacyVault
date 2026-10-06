@@ -21,6 +21,7 @@ import com.mojang.serialization.MapCodec;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.block.ModBlocks;
 import mod.gottsch.neo.legacyvault.core.block.entity.ModBlockEntities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.inventory.ModContainers;
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
 import mod.gottsch.neo.legacyvault.core.loot.VaultUpgradeLootModifier;
@@ -60,6 +61,7 @@ public class Registration {
 		ModItems.register(eventBus);
 		ModBlockEntities.register(eventBus);
 		ModContainers.register(eventBus);
+		ModAttachments.register(eventBus);
 		ENTITIES.register(eventBus);
 		PARTICLES.register(eventBus);
 		LOOT_MODIFIERS.register(eventBus);

@@ -25,7 +25,7 @@ import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.block.entity.AbstractVaultBlockEntity;
 import mod.gottsch.neo.legacyvault.core.block.entity.IVaultBlockEntity;
 import mod.gottsch.neo.legacyvault.core.capability.IPlayerVaultsHandler;
-import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
+import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.config.Config;
 import mod.gottsch.neo.legacyvault.core.inventory.PersonalVaultContainerMenu;
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
@@ -85,7 +85,7 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
     }
 
     private InteractionResult applyUpgrade(Player player, ItemStack upgradeItem) {
-        IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+        IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player).orElse(null);
         if (cap == null) {
             LegacyVault.LOGGER.warn("applyUpgrade: player {} missing vault capability", player.getScoreboardName());
             return InteractionResult.FAIL;
@@ -165,7 +165,7 @@ public abstract class PersonalVaultBlock extends AbstractVaultBlock implements I
                     try {
                         Player owner = level.getPlayerByUUID(UUID.fromString(ownerUuid));
                         if (owner != null) {
-                            IPlayerVaultsHandler cap = owner.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+                            IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(owner).orElse(null);
                             if (cap != null) {
                                 DimensionCoords vaultLocation = DimensionCoords.of(level.dimension(), pos);
                                 List<DimensionCoords> newLocations = new ArrayList<>();
