@@ -27,10 +27,10 @@ import mod.gottsch.neo.legacyvault.core.capability.LegacyVaultCapabilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
+import net.neoforged.api.distmarker.Dist;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkEvent.Context;
 

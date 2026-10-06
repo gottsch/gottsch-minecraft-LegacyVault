@@ -19,7 +19,7 @@ package mod.gottsch.neo.legacyvault.core.capability;
 
 import mod.gottsch.neo.gottschcore.spatial.DimensionCoords;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.List;
 

@@ -43,9 +43,9 @@ import net.minecraft.world.entity.player.Inventory;
  */
 public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 	// the resource locations for the background images of the GUI
-	private static final ResourceLocation BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/standard_vault.png");
-	private static final ResourceLocation LARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/large_vault.png");
-	private static final ResourceLocation XLARGE_BG_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/xlarge_vault.png");
+	private static final ResourceLocation BG_TEXTURE = ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "textures/gui/container/standard_vault.png");
+	private static final ResourceLocation LARGE_BG_TEXTURE = ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "textures/gui/container/large_vault.png");
+	private static final ResourceLocation XLARGE_BG_TEXTURE = ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "textures/gui/container/xlarge_vault.png");
 
 	private ResourceLocation bgTexture;
 	private Inventory inventory;
@@ -68,7 +68,6 @@ public class VaultScreen extends AbstractContainerScreen<VaultContainerMenu> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderOverlays(guiGraphics, mouseX, mouseY);
         this.renderTooltip(guiGraphics, mouseX, mouseY);

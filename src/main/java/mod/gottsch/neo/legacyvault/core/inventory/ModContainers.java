@@ -21,24 +21,24 @@ package mod.gottsch.neo.legacyvault.core.inventory;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.bus.api.IEventBus;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * @author Mark Gottschling on 2/18/2025
  */
 public class ModContainers {
-    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, LegacyVault.MOD_ID);
+    private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, LegacyVault.MOD_ID);
 
     // containers
-    public static final RegistryObject<MenuType<VaultContainerMenu>> COMMUNITY_VAULT_CONTAINER = MENUS.register("community_vault",
-            () -> IForgeMenuType.create((windowId, inventory, data) -> new CommunityVaultContainerMenu(windowId, data.readBlockPos(), inventory, inventory.player)));
+    public static final DeferredHolder<MenuType<?>, MenuType<VaultContainerMenu>> COMMUNITY_VAULT_CONTAINER = MENUS.register("community_vault",
+            () -> IMenuTypeExtension.create((windowId, inventory, data) -> new CommunityVaultContainerMenu(windowId, data.readBlockPos(), inventory, inventory.player)));
 
-    public static final RegistryObject<MenuType<VaultContainerMenu>> PERSONAL_VAULT_CONTAINER = MENUS.register("personal_vault",
-            () -> IForgeMenuType.create((windowId, inventory, data) -> new PersonalVaultContainerMenu(windowId, data.readBlockPos(), inventory, inventory.player)));
+    public static final DeferredHolder<MenuType<?>, MenuType<VaultContainerMenu>> PERSONAL_VAULT_CONTAINER = MENUS.register("personal_vault",
+            () -> IMenuTypeExtension.create((windowId, inventory, data) -> new PersonalVaultContainerMenu(windowId, data.readBlockPos(), inventory, inventory.player)));
 
     public static void register(IEventBus eventBus) {
         MENUS.register(eventBus);

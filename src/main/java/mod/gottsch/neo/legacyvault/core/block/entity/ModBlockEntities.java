@@ -22,25 +22,25 @@ package mod.gottsch.neo.legacyvault.core.block.entity;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.block.ModBlocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * @author Mark Gottschling on 2/17/2025
  */
 public class ModBlockEntities {
 
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, LegacyVault.MOD_ID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, LegacyVault.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<RusticVaultBlockEntity>> RUSTIC_VAULT =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RusticVaultBlockEntity>> RUSTIC_VAULT =
             BLOCK_ENTITIES.register("rustic_vault", () -> BlockEntityType.Builder.of(RusticVaultBlockEntity::new, ModBlocks.RUSTIC_VAULT.get()).build(null));
 
-    public static final RegistryObject<BlockEntityType<ClassicVaultBlockEntity>> CLASSIC_VAULT =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ClassicVaultBlockEntity>> CLASSIC_VAULT =
             BLOCK_ENTITIES.register("classic_vault", () -> BlockEntityType.Builder.of(ClassicVaultBlockEntity::new, ModBlocks.CLASSIC_VAULT.get()).build(null));
 
-    public static final RegistryObject<BlockEntityType<CommunityVaultBlockEntity>> COMMUNITY_VAULT =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CommunityVaultBlockEntity>> COMMUNITY_VAULT =
             BLOCK_ENTITIES.register("community_vault", () -> BlockEntityType.Builder.of(CommunityVaultBlockEntity::new, ModBlocks.COMMUNITY_VAULT.get()).build(null));
 
     public static void register(IEventBus eventBus) {

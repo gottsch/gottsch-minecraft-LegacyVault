@@ -19,6 +19,8 @@
  */
 package mod.gottsch.neo.legacyvault.core.block;
 
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import mod.gottsch.neo.legacyvault.core.block.entity.ClassicVaultBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -41,6 +43,8 @@ import javax.annotation.Nullable;
  *
  */
 public class ClassicVaultBlock extends PersonalVaultBlock {
+	public static final MapCodec<ClassicVaultBlock> CODEC = simpleCodec(ClassicVaultBlock::new);
+
 	private static final VoxelShape NORTH_MAIN = Block.box(1, 1, 2, 15, 16, 15);
 	private static final VoxelShape NORTH_FOOT1 = Block.box(1, 0, 2, 3, 1, 4);
 	private static final VoxelShape NORTH_FOOT2 = Block.box(13, 0, 2, 15, 1, 4);
@@ -69,6 +73,11 @@ public class ClassicVaultBlock extends PersonalVaultBlock {
 	private static final VoxelShape SOUTH_VAULT = Shapes.or(SOUTH_MAIN, SOUTH_FOOT1, SOUTH_FOOT2, SOUTH_FOOT3, SOUTH_FOOT4);
 	private static final VoxelShape EAST_VAULT = Shapes.or(EAST_MAIN, EAST_FOOT1, EAST_FOOT2, EAST_FOOT3, EAST_FOOT4);
 	private static final VoxelShape WEST_VAULT = Shapes.or(WEST_MAIN, WEST_FOOT1, WEST_FOOT2, WEST_FOOT3, WEST_FOOT4);
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
+	}
 
 	/**
 	 *

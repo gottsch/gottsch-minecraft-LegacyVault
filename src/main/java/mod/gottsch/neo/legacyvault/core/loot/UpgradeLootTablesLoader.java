@@ -29,9 +29,10 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -55,11 +56,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Mark Gottschling on May 24, 2026
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID)
+@EventBusSubscriber(modid = LegacyVault.MOD_ID)
 public class UpgradeLootTablesLoader extends SimplePreparableReloadListener<Set<String>> {
 
     /** Resource path read on reload. Files at this path from every datapack contribute. */
-    public static final ResourceLocation FILE_PATH = new ResourceLocation(LegacyVault.MOD_ID, "upgrade_loot_tables/drops.json");
+    public static final ResourceLocation FILE_PATH = ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "upgrade_loot_tables/drops.json");
 
     /** Currently-active set, queried by the loot modifier on every loot roll. */
     private static final Set<String> ACTIVE = ConcurrentHashMap.newKeySet();

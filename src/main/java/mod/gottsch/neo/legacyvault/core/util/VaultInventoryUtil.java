@@ -21,7 +21,7 @@ package mod.gottsch.neo.legacyvault.core.util;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 /**
  * Shared utility methods for copying and clearing vault inventories.

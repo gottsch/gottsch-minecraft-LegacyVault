@@ -17,7 +17,7 @@
  */
 package mod.gottsch.neo.legacyvault.core.setup;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.block.ModBlocks;
 import mod.gottsch.neo.legacyvault.core.block.entity.ModBlockEntities;
@@ -25,13 +25,13 @@ import mod.gottsch.neo.legacyvault.core.inventory.ModContainers;
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
 import mod.gottsch.neo.legacyvault.core.loot.VaultUpgradeLootModifier;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
  * 
@@ -43,20 +43,19 @@ public class Registration {
 	/*
 	 * deferred registries
 	 */
-	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, LegacyVault.MOD_ID);
-	public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, LegacyVault.MOD_ID);
+	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, LegacyVault.MOD_ID);
+	public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(Registries.PARTICLE_TYPE, LegacyVault.MOD_ID);
 
-	public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
-			DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, LegacyVault.MOD_ID);
+	public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIERS =
+			DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, LegacyVault.MOD_ID);
 
-	public static final RegistryObject<Codec<VaultUpgradeLootModifier>> VAULT_UPGRADE_LOOT_MODIFIER =
+	public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<VaultUpgradeLootModifier>> VAULT_UPGRADE_LOOT_MODIFIER =
 			LOOT_MODIFIERS.register("vault_upgrade_drop", () -> VaultUpgradeLootModifier.CODEC);
 
 	/**
 	 * 
 	 */
-	public static void init() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public static void init(IEventBus eventBus) {
 		ModBlocks.register(eventBus);
 		ModItems.register(eventBus);
 		ModBlockEntities.register(eventBus);

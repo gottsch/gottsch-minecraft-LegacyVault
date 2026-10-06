@@ -20,7 +20,7 @@
 package mod.gottsch.neo.legacyvault.core.crypto;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.IOException;
 import java.nio.file.Files;

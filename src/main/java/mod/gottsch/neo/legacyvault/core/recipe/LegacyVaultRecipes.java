@@ -22,9 +22,9 @@ import mod.gottsch.neo.legacyvault.core.recipe.condition.VaultEasyTierCondition;
 import mod.gottsch.neo.legacyvault.core.recipe.condition.VaultHardTierCondition;
 import mod.gottsch.neo.legacyvault.core.recipe.condition.VaultNormalTierCondition;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -32,7 +32,7 @@ import net.minecraftforge.registries.RegisterEvent;
  * @author Mark Gottschling on May 26, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class LegacyVaultRecipes {
 
 	@SubscribeEvent

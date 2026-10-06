@@ -28,13 +28,13 @@ import java.util.regex.PatternSyntaxException;
 
 import mod.gottsch.neo.gottschcore.config.AbstractConfig;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.config.ModConfig;
 
 /**
  *
@@ -52,8 +52,8 @@ public class Config extends AbstractConfig {
 
 	public static Config instance = new Config();
 
-	public static ForgeConfigSpec SERVER_SPEC;
-	public static ForgeConfigSpec COMMON_SPEC;
+	public static ModConfigSpec SERVER_SPEC;
+	public static ModConfigSpec COMMON_SPEC;
 
 	public static class ServerConfig {
 		public static General GENERAL;
@@ -73,28 +73,28 @@ public class Config extends AbstractConfig {
 	/**
 	 *
 	 */
-	public static void register() {
-		registerServerConfigs();
-		registerCommonConfigs();
+	public static void register(ModContainer container) {
+		registerServerConfigs(container);
+		registerCommonConfigs(container);
 	}
 
 	/**
 	 *
 	 */
-	private static void registerServerConfigs() {
-		ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
+	private static void registerServerConfigs(ModContainer container) {
+		ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
 		ServerConfig.GENERAL = new General(SERVER_BUILDER);
 		ServerConfig.PERSONAL = new PersonalConfig(SERVER_BUILDER);
 		ServerConfig.COMMUNITY = new CommunityConfig(SERVER_BUILDER);
 		SERVER_SPEC = SERVER_BUILDER.build();
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
+		container.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
 	}
 
-	private static void registerCommonConfigs() {
-		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+	private static void registerCommonConfigs(ModContainer container) {
+		ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 		CommonConfig.LOGGING = new Logging(COMMON_BUILDER);
 		COMMON_SPEC = COMMON_BUILDER.build();
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
+		container.registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
 	}
 
 	/**
@@ -114,16 +114,16 @@ public class Config extends AbstractConfig {
 		public List<Pattern> inventoryWhitelistPatterns = new ArrayList<>();
 		public List<Pattern> inventoryBlacklistPatterns = new ArrayList<>();
 
-		public ForgeConfigSpec.IntValue maxSlotStackSize;
+		public ModConfigSpec.IntValue maxSlotStackSize;
 		public BooleanValue encryptVaultData;
 
 		public BooleanValue vaultUpgradeLootEnabled;
-		public ForgeConfigSpec.DoubleValue vaultUpgradeLootChance;
-		public ForgeConfigSpec.IntValue vaultUpgradeLootCount;
+		public ModConfigSpec.DoubleValue vaultUpgradeLootChance;
+		public ModConfigSpec.IntValue vaultUpgradeLootCount;
 
 		private static final Predicate<Object> STRING_PREDICATE = s -> s instanceof String;
 
-		public General(final ForgeConfigSpec.Builder builder) {
+		public General(final ModConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV,
 					" GENERAL PROPERTIES",
 					CATEGORY_DIV).push(GENERAL_CATEGORY);
@@ -214,7 +214,7 @@ public class Config extends AbstractConfig {
 		public IntValue maxTier;
 		public BooleanValue resetTierPerWorld;
 
-		PersonalConfig(final ForgeConfigSpec.Builder builder) {
+		PersonalConfig(final ModConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV,
 					" PERSONAL VAULT PROPERTIES",
 					" Note: As of mc1.19.2, the recipe conditions are data-driven via Tags.",
@@ -263,7 +263,7 @@ public class Config extends AbstractConfig {
 		public ConfigValue<List<? extends String>> playerWhiteList;
 		public ConfigValue<List<? extends String>> playerBlackList;
 
-		CommunityConfig(final ForgeConfigSpec.Builder builder) {
+		CommunityConfig(final ModConfigSpec.Builder builder) {
 			builder.comment(CATEGORY_DIV,
 					" COMMUNITY VAULT PROPERTIES",
 					CATEGORY_DIV).push(COMMUNITY_VAULT_CATEGORY);

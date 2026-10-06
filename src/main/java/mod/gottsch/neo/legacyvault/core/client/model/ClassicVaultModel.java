@@ -43,7 +43,7 @@ import net.minecraft.resources.ResourceLocation;
  * @param <T>
  */
 public class ClassicVaultModel extends Model implements IVaultModel {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(LegacyVault.MOD_ID, "vault"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "vault"), "main");
 	
 	private final ModelPart mainGroup;
 	private final ModelPart doorGroup;
@@ -109,9 +109,9 @@ public class ClassicVaultModel extends Model implements IVaultModel {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		mainGroup.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		doorGroup.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+		mainGroup.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+		doorGroup.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 	}
 
 	/**

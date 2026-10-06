@@ -19,6 +19,8 @@
  */
 package mod.gottsch.neo.legacyvault.core.block;
 
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import javax.annotation.Nullable;
 
 import mod.gottsch.neo.legacyvault.core.block.entity.RusticVaultBlockEntity;
@@ -38,12 +40,19 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  *
  */
 public class RusticVaultBlock extends PersonalVaultBlock {
+	public static final MapCodec<RusticVaultBlock> CODEC = simpleCodec(RusticVaultBlock::new);
+
 	private static final VoxelShape MAIN = Block.box(0.1, 0, 0.1, 15.9, 9, 15.9);
 	private static final VoxelShape Z_AXIS_TOP = Block.box(0.1, 9, 4.5, 15.9, 15, 11.5);
 	private static final VoxelShape X_AXIS_TOP = Block.box(4.5, 9, 0.1, 11.5, 15, 15.9);
 
 	private static final VoxelShape Z_AXIS_SHAPE = Shapes.or(MAIN, Z_AXIS_TOP);
 	private static final VoxelShape X_AXIS_SHAPE = Shapes.or(MAIN, X_AXIS_TOP);
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
+	}
 
 	/**
 	 *

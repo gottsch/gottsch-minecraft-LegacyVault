@@ -20,15 +20,16 @@
 package mod.gottsch.neo.legacyvault.core.command;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 
 /**
  * @author Mark Gottschling on Jun 5, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID)
+@EventBusSubscriber(modid = LegacyVault.MOD_ID)
 public class LegacyVaultCommands {
 	@SubscribeEvent
 	public static void register(RegisterCommandsEvent event) {

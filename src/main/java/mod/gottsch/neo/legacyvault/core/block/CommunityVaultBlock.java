@@ -19,6 +19,8 @@
  */
 package mod.gottsch.neo.legacyvault.core.block;
 
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import mod.gottsch.neo.gottschcore.world.WorldInfo;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.block.entity.AbstractVaultBlockEntity;
@@ -49,6 +51,7 @@ import javax.annotation.Nullable;
  * Created by Mark Gottschling on 2/20/2025
  */
 public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyVaultBlock {
+	public static final MapCodec<CommunityVaultBlock> CODEC = simpleCodec(CommunityVaultBlock::new);
 
     private static final VoxelShape MAIN = Block.box(0.1, 0, 0.1, 15.9, 9, 15.9);
     private static final VoxelShape Z_AXIS_TOP = Block.box(0.1, 9, 4.5, 15.9, 15, 11.5);
@@ -56,6 +59,11 @@ public class CommunityVaultBlock extends AbstractVaultBlock  implements ILegacyV
 
     private static final VoxelShape Z_AXIS_SHAPE = Shapes.or(MAIN, Z_AXIS_TOP);
     private static final VoxelShape X_AXIS_SHAPE = Shapes.or(MAIN, X_AXIS_TOP);
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return CODEC;
+	}
 
     /**
      * @param properties

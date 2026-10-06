@@ -24,18 +24,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mod.gottsch.neo.legacyvault.core.config.Config;
-import mod.gottsch.neo.legacyvault.core.setup.ClientSetup;
 import mod.gottsch.neo.legacyvault.core.setup.CommonSetup;
 import mod.gottsch.neo.legacyvault.core.setup.Registration;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.IConfigSpec;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig.Type;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.config.ModConfig.Type;
 
 /**
  * 
@@ -49,7 +45,8 @@ public class LegacyVault {
 
 	public static final String MOD_ID = "legacyvault";
 	// TODO don't like that this is here - how to access from the mods.toml file
-	public static final String MC_VERSION = "1.20";
+	// part of the vault file name: each MC line keeps its own vault files
+	public static final String MC_VERSION = "1.21";
 
 	public static LegacyVault instance;
 	private boolean  hardCore = false;
@@ -57,25 +54,23 @@ public class LegacyVault {
 	/**
 	 * 
 	 */
-	public LegacyVault() {
+	public LegacyVault(IEventBus modEventBus, ModContainer container) {
 		instance = this;
 		
 		// register deferred registries
-		Registration.init();
+		Registration.init(modEventBus);
 		
 		// register config
-		Config.register();
+		Config.register(container);
 
         // register the setup method for mod loading
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(CommonSetup::init);
-        modEventBus.addListener(this::config);
+        modEventBus.addListener(ModConfigEvent.Loading.class, this::config);
+        modEventBus.addListener(ModConfigEvent.Reloading.class, this::config);
         
-//        MinecraftForge.EVENT_BUS.addListener(LegacyVaultSetup::serverStopping);
-        MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
-        
-        // register 'ClientSetup::init' to be called at mod setup time (client only)
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modEventBus.addListener(ClientSetup::init)); 	
+//        NeoForge.EVENT_BUS.addListener(LegacyVaultSetup::serverStopping);
+        NeoForge.EVENT_BUS.register(new PlayerEventHandler());
+        // client setup is registered by ClientSetup's @EventBusSubscriber(value = Dist.CLIENT)
 	}
 
 	/**
@@ -85,9 +80,7 @@ public class LegacyVault {
 	private void config(final ModConfigEvent event) {
 		if (event.getConfig().getModId().equals(MOD_ID)) {
 			if (event.getConfig().getType() == Type.SERVER) {
-				IConfigSpec<?> spec = event.getConfig().getSpec();
-
-				if (spec == Config.SERVER_SPEC) {
+				if (event.getConfig().getSpec() == Config.SERVER_SPEC) {
 					// prepare/format config values
 					Config.init();
 				} 

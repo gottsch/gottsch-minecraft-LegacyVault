@@ -44,7 +44,7 @@ public class VaultUpgradeItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         LangUtil.appendAdvancedHoverText(tooltip, t ->
                 t.add(Component.translatable(LangUtil.tooltip("vault_upgrade")).withStyle(ChatFormatting.GRAY))
         );

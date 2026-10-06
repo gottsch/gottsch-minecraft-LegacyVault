@@ -22,21 +22,20 @@ package mod.gottsch.neo.legacyvault.core.block;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * @author Mark Gottschling on Apr 29, 2021
  *
  */
 public class ModBlocks {
-	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, LegacyVault.MOD_ID);
+	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(LegacyVault.MOD_ID);
 
-	public static final RegistryObject<RusticVaultBlock> RUSTIC_VAULT = BLOCKS.register("rustic_vault", () -> new RusticVaultBlock(Block.Properties.of().mapColor(MapColor.WOOD).strength(2.5F)));
-	public static final RegistryObject<ClassicVaultBlock>CLASSIC_VAULT = BLOCKS.register("classic_vault", () -> new ClassicVaultBlock(Block.Properties.of().mapColor(MapColor.METAL).strength(2.5F)));
-	public static final RegistryObject<CommunityVaultBlock>COMMUNITY_VAULT = BLOCKS.register("community_vault", () -> new CommunityVaultBlock(Block.Properties.of().mapColor(MapColor.METAL).strength(2.5F)));
+	public static final DeferredBlock<RusticVaultBlock> RUSTIC_VAULT = BLOCKS.register("rustic_vault", () -> new RusticVaultBlock(Block.Properties.of().mapColor(MapColor.WOOD).strength(2.5F)));
+	public static final DeferredBlock<ClassicVaultBlock> CLASSIC_VAULT = BLOCKS.register("classic_vault", () -> new ClassicVaultBlock(Block.Properties.of().mapColor(MapColor.METAL).strength(2.5F)));
+	public static final DeferredBlock<CommunityVaultBlock> COMMUNITY_VAULT = BLOCKS.register("community_vault", () -> new CommunityVaultBlock(Block.Properties.of().mapColor(MapColor.METAL).strength(2.5F)));
 
 	public static void register(IEventBus eventBus) {
 		BLOCKS.register(eventBus);

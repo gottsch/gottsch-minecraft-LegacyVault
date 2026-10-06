@@ -21,7 +21,7 @@ package mod.gottsch.neo.legacyvault.core.network;
 
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
+import net.neoforged.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -39,7 +39,7 @@ public class LegacyVaultNetworking {
 	public static final String PROTOCOL_VERSION = "1.0";
 	public static final int VAULT_COUNT_MESSAGE_ID = 14;
 	public static final int SORT_VAULT_MESSAGE_ID = 15;
-	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(LegacyVault.MOD_ID, "legacy_vault_channel");
+	public static final ResourceLocation CHANNEL_NAME = ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "legacy_vault_channel");
 	
 	public static SimpleChannel channel;    // used to transmit your network messages
 

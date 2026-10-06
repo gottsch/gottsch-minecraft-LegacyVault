@@ -25,17 +25,18 @@ import mod.gottsch.neo.legacyvault.core.item.ModItems;
 import mod.gottsch.neo.legacyvault.core.network.LegacyVaultNetworking;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
 /**
  * 
  * @author Mark Gottschling on Jun 15, 2022
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class CommonSetup {
 	
 	public static void init(final FMLCommonSetupEvent event) {

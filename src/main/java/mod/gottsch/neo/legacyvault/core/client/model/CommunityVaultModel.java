@@ -35,7 +35,7 @@ import net.minecraft.resources.ResourceLocation;
  * @author Mark Gottschling on Feb 21, 2025
  */
 public class CommunityVaultModel extends Model implements IVaultModel {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(LegacyVault.MOD_ID, "community_vault"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "community_vault"), "main");
 
 	private final ModelPart chest;
 	private final ModelPart trunk;
@@ -264,7 +264,7 @@ public class CommunityVaultModel extends Model implements IVaultModel {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		chest.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+		chest.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 	}
 }

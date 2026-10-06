@@ -37,7 +37,7 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
  */
 public class VaultEasyTierCondition implements ICondition {
 	public static final VaultEasyTierCondition INSTANCE = new VaultEasyTierCondition();
-    private static final ResourceLocation NAME = new ResourceLocation("legacyvault", "vault_easy_tier");
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("legacyvault", "vault_easy_tier");
 
 	@Override
 	public ResourceLocation getID() {

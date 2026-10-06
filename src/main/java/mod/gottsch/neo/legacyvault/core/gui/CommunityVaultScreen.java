@@ -50,7 +50,7 @@ import java.util.Set;
 public class CommunityVaultScreen extends VaultScreen {
 
     private static final ResourceLocation BG_TEXTURE =
-            new ResourceLocation(LegacyVault.MOD_ID, "textures/gui/container/personal_vault.png");
+            ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "textures/gui/container/personal_vault.png");
 
     // Scrollbar geometry (panel-relative)
     private static final int SCROLLBAR_X = 172;
@@ -186,7 +186,7 @@ public class CommunityVaultScreen extends VaultScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
         if (!isScrollBarActive()) return false;
         int scrollableRows = communityMenu().getMaxTier() - CommunityVaultContainerMenu.VISIBLE_ROWS;
         scrollOffs = Mth.clamp(scrollOffs - (float) (delta / scrollableRows), 0.0f, 1.0f);
@@ -268,7 +268,7 @@ public class CommunityVaultScreen extends VaultScreen {
         int activeSlots = communityMenu().getVaultTier() * 9;
         for (int i = 0; i < activeSlots; i++) {
             ItemStack s = communityMenu().getVaultInventory().getStackInSlot(i);
-            if (!s.isEmpty() && ItemStack.isSameItemSameTags(target, s)) {
+            if (!s.isEmpty() && ItemStack.isSameItemSameComponents(target, s)) {
                 total += s.getCount();
             }
         }

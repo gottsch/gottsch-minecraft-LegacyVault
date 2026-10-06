@@ -49,7 +49,7 @@ public class CommunityVaultRenderer implements BlockEntityRenderer<CommunityVaul
 	/*
 	 * NOTE when defining a resource location for the Atlas, you don't need to specify the /textures/ parent folder nor, the .png extension
 	 */
-	public static final ResourceLocation COMMUNITY_VAULT_RENDERER_ATLAS_TEXTURE = new ResourceLocation(LegacyVault.MOD_ID, "entity/vault/community_vault");
+	public static final ResourceLocation COMMUNITY_VAULT_RENDERER_ATLAS_TEXTURE = ResourceLocation.fromNamespaceAndPath(LegacyVault.MOD_ID, "entity/vault/community_vault");
 
 	private Material material;
 	private CommunityVaultModel vaultModel;
@@ -96,7 +96,7 @@ public class CommunityVaultRenderer implements BlockEntityRenderer<CommunityVaul
 		this.vaultModel.setupAnim(vaultBlockEntity, partialTicks);
 		
 		VertexConsumer renderBuffer = material.buffer(bufferSource, RenderType::entitySolid);		
-		vaultModel.renderToBuffer(poseStack, renderBuffer, combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+		vaultModel.renderToBuffer(poseStack, renderBuffer, combinedLight, combinedOverlay, 0xFFFFFFFF);
         poseStack.popPose();
 	}
 

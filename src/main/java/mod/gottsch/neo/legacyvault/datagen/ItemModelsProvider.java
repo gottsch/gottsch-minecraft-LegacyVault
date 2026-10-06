@@ -24,10 +24,10 @@ import mod.gottsch.neo.legacyvault.core.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 /**
  * 
@@ -60,11 +60,11 @@ public class ItemModelsProvider extends ItemModelProvider {
 		blockItemParent(ModItems.COMMUNITY_VAULT);
 	}
 
-	public ItemModelBuilder blockItemParent(RegistryObject<Item> item) {
+	public ItemModelBuilder blockItemParent(DeferredItem<Item> item) {
 		return withExistingParent(item.getId().getPath(), modLoc("block/" + item.getId().getPath()));
 	}
 
-	public ItemModelBuilder withExistingParent(RegistryObject<Item> item, ResourceLocation parent) {
+	public ItemModelBuilder withExistingParent(DeferredItem<Item> item, ResourceLocation parent) {
 		return withExistingParent(item.getId().getPath(), parent);
 	}
 }

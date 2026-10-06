@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import mod.gottsch.neo.legacyvault.core.block.ILegacyVaultBlock;
 import mod.gottsch.neo.legacyvault.core.config.Config.ServerConfig;
 import mod.gottsch.neo.legacyvault.core.tags.ModTags;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
@@ -31,10 +32,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 /**
  * @author Mark Gottschling on May 4, 2021
@@ -116,8 +115,9 @@ public class VaultSlot extends SlotItemHandler {
 		if (itemStack.is(ModTags.Items.VAULT_ITEMS_BLACKLIST)) {
 			return false;
 		} else {
-			ITag<Item> whitelistTag = ForgeRegistries.ITEMS.tags().getTag(ModTags.Items.VAULT_ITEMS_WHITELIST);
-			if (!whitelistTag.isEmpty()) {
+			boolean whitelistEmpty = BuiltInRegistries.ITEM.getTag(ModTags.Items.VAULT_ITEMS_WHITELIST)
+					.map(set -> set.size() == 0).orElse(true);
+			if (!whitelistEmpty) {
 				if ((itemStack.is(ModTags.Items.VAULT_ITEMS_WHITELIST))) {
 					return true;
 				}
@@ -125,7 +125,7 @@ public class VaultSlot extends SlotItemHandler {
 		}
 
 		// get the registry name of the item
-		String registryName = ForgeRegistries.ITEMS.getKey(item).toString();
+		String registryName = BuiltInRegistries.ITEM.getKey(item).toString();
 
 		// determine if using white lists or black lists
 		if (!ServerConfig.GENERAL.inventoryWhitelist.get().isEmpty()) {
@@ -151,7 +151,7 @@ public class VaultSlot extends SlotItemHandler {
 		// check against the tags lists
 //		if (!ServerConfig.GENERAL.tagsWhitelist.get().isEmpty()) {
 //			for (String tagName : ServerConfig.GENERAL.tagsWhitelist.get()) {
-//				ResourceLocation location = new ResourceLocation(tagName);
+//				ResourceLocation location = ResourceLocation.fromNamespaceAndPath(tagName);
 //				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
 //				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
 //				if ((ForgeRegistries.BLOCKS.tags().getTag(blockTag) != null &&
@@ -166,7 +166,7 @@ public class VaultSlot extends SlotItemHandler {
 //		}
 //		else if (!ServerConfig.GENERAL.tagsBlacklist.get().isEmpty()){
 //			for (String tagName : ServerConfig.GENERAL.tagsBlacklist.get()) {
-//				ResourceLocation location = new ResourceLocation(tagName);
+//				ResourceLocation location = ResourceLocation.fromNamespaceAndPath(tagName);
 //				TagKey<Block> blockTag = ForgeRegistries.BLOCKS.tags().createTagKey(location);
 //				TagKey<Item> itemTag = ForgeRegistries.ITEMS.tags().createTagKey(location);
 //				if ((ForgeRegistries.BLOCKS.tags().getTag(blockTag) != null &&

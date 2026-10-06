@@ -31,31 +31,31 @@ import mod.gottsch.neo.legacyvault.core.client.renderer.RusticVaultRenderer;
 import mod.gottsch.neo.legacyvault.core.gui.CommunityVaultScreen;
 import mod.gottsch.neo.legacyvault.core.gui.PersonalVaultScreen;
 import mod.gottsch.neo.legacyvault.core.inventory.ModContainers;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
 /**
  * 
  * @author Mark Gottschling
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = LegacyVault.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
 	
 	/**
 	 * 
 	 * @param event
 	 */
+    @SubscribeEvent
     public static void init(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MenuScreens.register(ModContainers.COMMUNITY_VAULT_CONTAINER.get(), CommunityVaultScreen::new);  // attach our container to the screen
-			MenuScreens.register(ModContainers.PERSONAL_VAULT_CONTAINER.get(), PersonalVaultScreen::new);  // attach our container to the screen
 
 			ItemBlockRenderTypes.setRenderLayer(ModBlocks.RUSTIC_VAULT.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(ModBlocks.CLASSIC_VAULT.get(), RenderType.cutoutMipped());
@@ -67,6 +67,12 @@ public class ClientSetup {
 	 * register renderers
 	 * @param event
 	 */
+	@SubscribeEvent
+	public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
+		event.register(ModContainers.COMMUNITY_VAULT_CONTAINER.get(), CommunityVaultScreen::new);  // attach our container to the screen
+		event.register(ModContainers.PERSONAL_VAULT_CONTAINER.get(), PersonalVaultScreen::new);  // attach our container to the screen
+	}
+
 	@SubscribeEvent
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerBlockEntityRenderer(ModBlockEntities.RUSTIC_VAULT.get(), RusticVaultRenderer::new);

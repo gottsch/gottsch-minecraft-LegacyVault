@@ -45,7 +45,7 @@ public class ModTags {
 		public static final TagKey<Item> VAULT_ITEMS_BLACKLIST = mod(LegacyVault.MOD_ID, "vault_blacklist");
 
 		public static TagKey<Item> mod(String domain, String path) {
-			return ItemTags.create(new ResourceLocation(domain, path));
+			return ItemTags.create(ResourceLocation.fromNamespaceAndPath(domain, path));
 		}
 	}
 }

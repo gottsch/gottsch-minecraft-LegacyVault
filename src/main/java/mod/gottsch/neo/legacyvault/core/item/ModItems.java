@@ -23,10 +23,10 @@ import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.block.ModBlocks;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * @author Mark Gottschling on May 3, 2021
@@ -34,18 +34,18 @@ import net.minecraftforge.registries.RegistryObject;
  */
 public class ModItems {
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, LegacyVault.MOD_ID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(LegacyVault.MOD_ID);
 
-    public static final RegistryObject<Item> RUSTIC_VAULT = fromBlock(ModBlocks.RUSTIC_VAULT);
-    public static final RegistryObject<Item> CLASSIC_VAULT = fromBlock(ModBlocks.CLASSIC_VAULT);
-    public static final RegistryObject<Item> COMMUNITY_VAULT = fromBlock(ModBlocks.COMMUNITY_VAULT);
+    public static final DeferredItem<Item> RUSTIC_VAULT = fromBlock(ModBlocks.RUSTIC_VAULT);
+    public static final DeferredItem<Item> CLASSIC_VAULT = fromBlock(ModBlocks.CLASSIC_VAULT);
+    public static final DeferredItem<Item> COMMUNITY_VAULT = fromBlock(ModBlocks.COMMUNITY_VAULT);
 
-    public static final RegistryObject<Item> CONTRACT = ITEMS.register("vault_contract", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CONTRACT = ITEMS.register("vault_contract", () -> new Item(new Item.Properties()));
 
-    public static final RegistryObject<Item> VAULT_UPGRADE = ITEMS.register("vault_upgrade", () -> new VaultUpgradeItem(new Item.Properties()));
+    public static final DeferredItem<Item> VAULT_UPGRADE = ITEMS.register("vault_upgrade", () -> new VaultUpgradeItem(new Item.Properties()));
 
     @Deprecated
-    public static final RegistryObject<Item> APPLICATION = ITEMS.register("vault_application", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> APPLICATION = ITEMS.register("vault_application", () -> new Item(new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
@@ -53,9 +53,9 @@ public class ModItems {
 
     /*
      * author: McJty
-     *  conveniance method: take a RegistryObject<Block> and make a corresponding RegistryObject<Item> from it
+     *  conveniance method: take a DeferredBlock<Block> and make a corresponding DeferredItem<Item> from it
      */
-    public static <B extends Block> RegistryObject<Item> fromBlock(RegistryObject<B> block) {
+    public static <B extends Block> DeferredItem<Item> fromBlock(DeferredBlock<B> block) {
         return ITEMS.register(block.getId().getPath(), () -> new VaultBlockItem(block.get(), new Item.Properties()));
     }
 }

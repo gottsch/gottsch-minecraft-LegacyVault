@@ -32,10 +32,10 @@ import mod.gottsch.neo.legacyvault.core.persistence.VaultPersistenceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import java.util.List;
  * @author Mark Gottschling on May 12, 2021
  *
  */
-@Mod.EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class PlayerEventHandler {
 
 	// player vault files will be loaded when player joins level

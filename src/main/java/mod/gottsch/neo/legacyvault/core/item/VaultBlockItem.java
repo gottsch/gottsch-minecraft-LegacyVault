@@ -63,19 +63,19 @@ public class VaultBlockItem extends BlockItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag type) {
-		appendBaseText(stack, level, tooltip, type);
+	public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag type) {
+		appendBaseText(stack, tooltipContext, tooltip, type);
 		LangUtil.appendAdvancedHoverText(tooltip, tt -> {
 			if (stack.getItem() == ModItems.COMMUNITY_VAULT.get()) {
-				appendAdvancedText(stack, level, tooltip, type, "usage.community_vault");
+				appendAdvancedText(stack, tooltipContext, tooltip, type, "usage.community_vault");
 			} else {
-				appendAdvancedText(stack, level, tooltip, type, "usage.personal_vault");
+				appendAdvancedText(stack, tooltipContext, tooltip, type, "usage.personal_vault");
 			}
 		});
 	}
 
 
-	public void appendBaseText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+	public void appendBaseText(ItemStack stack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag flag) {
 
 //		tooltip.add(Component.translatable(LangUtil.tooltip("mage_flame.desc")).withStyle(ChatFormatting.YELLOW));
 //		tooltip.add(Component.literal(LangUtil.NEWLINE));
@@ -84,7 +84,7 @@ public class VaultBlockItem extends BlockItem {
 	}
 
 
-	public void appendAdvancedText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag, String key) {
+	public void appendAdvancedText(ItemStack stack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag flag, String key) {
 		MutableComponent lore = Component.translatable(LangUtil.tooltip(key));
 		tooltip.add(Component.literal(" "));
 		for (String s : lore.getString().split("~")) {

@@ -24,7 +24,7 @@ import mod.gottsch.neo.legacyvault.core.block.ModBlocks;
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
 import mod.gottsch.neo.legacyvault.core.util.LangUtil;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
  * 
