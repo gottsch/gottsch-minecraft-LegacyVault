@@ -29,7 +29,9 @@ import mod.gottsch.neo.legacyvault.core.crypto.VaultCrypto;
 import mod.gottsch.neo.legacyvault.core.enums.GameType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
@@ -137,7 +139,7 @@ public class VaultPersistenceManager {
                         // legacy file may have up to MAX_INVENTORY_SIZE slots; load into a full buffer
                         // so ContainerHelper doesn't silently drop items beyond targetSize
                         NonNullList<ItemStack> buffer = NonNullList.withSize(Config.General.MAX_INVENTORY_SIZE, ItemStack.EMPTY);
-                        ContainerHelper.loadAllItems(compound, buffer);
+                        ContainerHelper.loadAllItems(compound, buffer, player.registryAccess());
                         for (int i = targetSize; i < Config.General.MAX_INVENTORY_SIZE; i++) {
                             if (!buffer.get(i).isEmpty()) {
                                 LegacyVault.LOGGER.warn("legacy vault load: item '{}' in slot {} exceeds current maxTier slots ({}); item cannot be recovered",
@@ -148,7 +150,7 @@ public class VaultPersistenceManager {
                             persistedInventory.set(i, buffer.get(i));
                         }
                     } else {
-                        ContainerHelper.loadAllItems(compound, persistedInventory);
+                        ContainerHelper.loadAllItems(compound, persistedInventory, player.registryAccess());
                     }
 
                     // always cache perWorldTiers so they survive a config toggle
@@ -201,7 +203,10 @@ public class VaultPersistenceManager {
             NonNullList<ItemStack> persistedInventory = optionalInventory.get();
             CompoundTag compound = new CompoundTag();
             // copy items list to nbt
-            ContainerHelper.saveAllItems(compound, persistedInventory);
+            ContainerHelper.saveAllItems(compound, persistedInventory, player.registryAccess());
+            // record the item format version; 1.21 never reads other versions' files (MC_VERSION is in the key),
+            // but this lets a future import/upgrade run the vanilla DataFixers
+            NbtUtils.addCurrentDataVersion(compound);
 
             // tier — pulled from the session capability cache
             int tier = ModAttachments.getPlayerVaults(player)
@@ -276,12 +281,12 @@ public class VaultPersistenceManager {
             SecretKey key = VaultCrypto.deriveKey(secret, playerUUID);
             byte[] gzippedNbt = VaultCrypto.decrypt(fileBytes, key);
             try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(gzippedNbt))) {
-                return NbtIo.readCompressed(dis);
+                return NbtIo.readCompressed(dis, NbtAccounter.unlimitedHeap());
             }
         }
         // legacy plaintext (GZipped NBT)
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(fileBytes))) {
-            return NbtIo.readCompressed(dis);
+            return NbtIo.readCompressed(dis, NbtAccounter.unlimitedHeap());
         }
     }
 
