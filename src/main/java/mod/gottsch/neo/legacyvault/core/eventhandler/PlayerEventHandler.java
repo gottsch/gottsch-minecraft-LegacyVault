@@ -78,6 +78,16 @@ public class PlayerEventHandler {
 		}
 	}
 
+	/*
+	 * a dimension change also sends a respawn packet, so the client gets a new LocalPlayer here too
+	 */
+	@SubscribeEvent
+	public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			syncVaultCount(player);
+		}
+	}
+
 	private static void syncVaultCount(ServerPlayer player) {
 		if (!ServerConfig.COMMUNITY.enabled.get() && !ServerConfig.PERSONAL.unlimitedVaults.get()) {
 			IPlayerVaultsHandler cap = ModAttachments.getPlayerVaults(player).orElse(null);
