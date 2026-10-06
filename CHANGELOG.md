@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   screen showed the wrong number of vaults left until you logged out and back in. It now
   updates as soon as you respawn or change dimension.
 
+### ⚙️ Changed
+
+- **Easy and Hard vault recipes have new IDs (datapack makers only)** — on NeoForge, each
+  vault recipe tier is now its own recipe: `legacyvault:rustic_vault_easy`,
+  `legacyvault:rustic_vault_hard`, `legacyvault:classic_vault_easy` and
+  `legacyvault:classic_vault_hard`. The Normal recipes keep their old IDs
+  (`legacyvault:rustic_vault`, `legacyvault:classic_vault`). Crafting works exactly the
+  same, and only one tier's recipe is ever active per vault. If your datapack replaced the
+  Easy or Hard recipe, point it at the new ID.
+
 ## [3.0.0] - 2026-05-24
 
 ### 🐛 Fixed
