@@ -19,7 +19,7 @@
  */
 package mod.gottsch.neo.legacyvault.core.loot;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mod.gottsch.neo.legacyvault.core.config.Config;
@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class VaultUpgradeLootModifier extends LootModifier {
 
-    public static final Codec<VaultUpgradeLootModifier> CODEC = RecordCodecBuilder.create(inst ->
+    public static final MapCodec<VaultUpgradeLootModifier> CODEC = RecordCodecBuilder.mapCodec(inst ->
             LootModifier.codecStart(inst).apply(inst, VaultUpgradeLootModifier::new));
 
     public VaultUpgradeLootModifier(LootItemCondition[] conditionsIn) {
@@ -74,7 +74,7 @@ public class VaultUpgradeLootModifier extends LootModifier {
     }
 
     @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
+    public MapCodec<? extends IGlobalLootModifier> codec() {
         return CODEC;
     }
 }
