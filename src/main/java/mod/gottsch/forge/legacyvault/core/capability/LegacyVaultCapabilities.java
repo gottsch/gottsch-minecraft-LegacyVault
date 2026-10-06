@@ -28,6 +28,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -63,6 +64,25 @@ public class LegacyVaultCapabilities {
 				return;
 			}
 			event.addCapability(PlayerVaultsCapability.ID, new PlayerVaultsCapability());
+		}
+
+		/*
+		 * NOTE Forge creates a new player with a fresh capability on respawn after death
+		 * and on returning from the End, so the vault data must be copied over from the
+		 * original player, otherwise count, locations and tier are reset (and then saved).
+		 */
+		@SubscribeEvent
+		public static void onPlayerClone(PlayerEvent.Clone event) {
+			Player original = event.getOriginal();
+			original.reviveCaps();
+			original.getCapability(PLAYER_VAULTS_CAPABILITY).ifPresent(oldCap ->
+				event.getEntity().getCapability(PLAYER_VAULTS_CAPABILITY).ifPresent(newCap -> {
+					if (oldCap instanceof PlayerVaultsHandler oldHandler && newCap instanceof PlayerVaultsHandler newHandler) {
+						newHandler.deserializeNBT(oldHandler.serializeNBT());
+					}
+				})
+			);
+			original.invalidateCaps();
 		}
 	}
 }

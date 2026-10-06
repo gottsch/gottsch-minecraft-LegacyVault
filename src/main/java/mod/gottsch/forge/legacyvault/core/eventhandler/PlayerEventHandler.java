@@ -65,17 +65,40 @@ public class PlayerEventHandler {
 		validateVaultLocations((ServerPlayer) event.getEntity());
 
 		// update client players capabilities
-		if (!ServerConfig.COMMUNITY.enabled.get() && !ServerConfig.PERSONAL.unlimitedVaults.get()) {
-			IPlayerVaultsHandler cap = event.getEntity().getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
-			if (cap == null) {
-				LegacyVault.LOGGER.warn("player {} is missing PlayerVaultsHandler capability on login", event.getEntity().getStringUUID());
-			} else {
-				LegacyVault.LOGGER.debug("player cap branch count -> {}", cap.getCount());
-				VaultCountMessageToClient message = new VaultCountMessageToClient(event.getEntity().getStringUUID(), cap.getCount());
-				LegacyVault.LOGGER.debug("sending message to client -> {}", message);
-				LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getEntity()), message);
-			}
-		}		
+		sendVaultCountToClient((ServerPlayer) event.getEntity());
+	}
+
+	/*
+	 * NOTE the client creates a new LocalPlayer (with a fresh capability) on respawn
+	 * and on dimension change, so the vault count must be resent.
+	 */
+	@SubscribeEvent
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			sendVaultCountToClient(player);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
+			sendVaultCountToClient(player);
+		}
+	}
+
+	private static void sendVaultCountToClient(ServerPlayer player) {
+		if (ServerConfig.COMMUNITY.enabled.get() || ServerConfig.PERSONAL.unlimitedVaults.get()) {
+			return;
+		}
+		IPlayerVaultsHandler cap = player.getCapability(LegacyVaultCapabilities.PLAYER_VAULTS_CAPABILITY).orElse(null);
+		if (cap == null) {
+			LegacyVault.LOGGER.warn("player {} is missing PlayerVaultsHandler capability", player.getStringUUID());
+		} else {
+			LegacyVault.LOGGER.debug("player cap branch count -> {}", cap.getCount());
+			VaultCountMessageToClient message = new VaultCountMessageToClient(player.getStringUUID(), cap.getCount());
+			LegacyVault.LOGGER.debug("sending message to client -> {}", message);
+			LegacyVaultNetworking.channel.send(PacketDistributor.PLAYER.with(() -> player), message);
+		}
 	}
 
 	private static void validateVaultLocations(ServerPlayer player) {
