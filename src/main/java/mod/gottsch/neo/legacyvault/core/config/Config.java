@@ -33,7 +33,6 @@ import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
 import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
 import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 
 /**
@@ -41,7 +40,6 @@ import net.neoforged.fml.config.ModConfig;
  * @author Mark Gottschling on Apr 28, 2021
  *
  */
-@EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Config extends AbstractConfig {
 
 	public static final String GENERAL_CATEGORY = "general";

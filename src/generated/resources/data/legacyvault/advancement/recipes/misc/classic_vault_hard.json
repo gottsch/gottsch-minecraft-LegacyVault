@@ -1,0 +1,55 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "legacyvault:vault_hard_tier"
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "legacyvault:vault_normal_tier"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "legacyvault:vault_easy_tier"
+      }
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:barrel"
+          },
+          {
+            "items": "minecraft:iron_block"
+          },
+          {
+            "items": "legacyvault:vault_contract"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "legacyvault:classic_vault_hard"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "legacyvault:classic_vault_hard"
+    ]
+  }
+}

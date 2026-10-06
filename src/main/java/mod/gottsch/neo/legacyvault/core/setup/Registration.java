@@ -25,6 +25,7 @@ import mod.gottsch.neo.legacyvault.core.capability.ModAttachments;
 import mod.gottsch.neo.legacyvault.core.inventory.ModContainers;
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
 import mod.gottsch.neo.legacyvault.core.loot.VaultUpgradeLootModifier;
+import mod.gottsch.neo.legacyvault.core.recipe.LegacyVaultRecipes;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -62,6 +63,7 @@ public class Registration {
 		ModBlockEntities.register(eventBus);
 		ModContainers.register(eventBus);
 		ModAttachments.register(eventBus);
+		LegacyVaultRecipes.register(eventBus);
 		ENTITIES.register(eventBus);
 		PARTICLES.register(eventBus);
 		LOOT_MODIFIERS.register(eventBus);

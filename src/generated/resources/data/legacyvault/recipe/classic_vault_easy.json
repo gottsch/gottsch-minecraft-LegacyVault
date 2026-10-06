@@ -1,0 +1,35 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "legacyvault:vault_easy_tier"
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "legacyvault:vault_normal_tier"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "item": "minecraft:barrel"
+    },
+    "i": {
+      "tag": "legacyvault:ingredients/recipe_tier/easy"
+    },
+    "v": {
+      "tag": "legacyvault:ingredients/vault_contracts"
+    }
+  },
+  "pattern": [
+    "iiv",
+    "ici",
+    "iii"
+  ],
+  "result": {
+    "count": 1,
+    "id": "legacyvault:classic_vault"
+  }
+}

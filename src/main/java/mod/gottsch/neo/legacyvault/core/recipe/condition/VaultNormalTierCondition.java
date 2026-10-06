@@ -21,15 +21,13 @@ package mod.gottsch.neo.legacyvault.core.recipe.condition;
 
 import java.util.Collection;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
 
 import mod.gottsch.neo.legacyvault.core.item.ModItems;
 import mod.gottsch.neo.legacyvault.core.tags.ModTags;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 /**
  * @author Mark Gottschling on May 26, 2021
@@ -37,18 +35,19 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
  */
 public class VaultNormalTierCondition implements ICondition {
 	public static final VaultNormalTierCondition INSTANCE = new VaultNormalTierCondition();
-    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("legacyvault", "vault_normal_tier");
+	// registered as legacyvault:vault_normal_tier in LegacyVaultRecipes
+	public static final MapCodec<VaultNormalTierCondition> CODEC = MapCodec.unit(INSTANCE);
 
 	@Override
-	public ResourceLocation getID() {
-		return NAME;
+	public MapCodec<? extends ICondition> codec() {
+		return CODEC;
 	}
 
 	@Override
 	public boolean test(IContext context) {
 		Collection<Holder<Item>> items = context.getTag(ModTags.Items.NORMAL_RECIPE);
         for(Holder<Item> holder : items) {
-            if (holder.get() == ModItems.CLASSIC_VAULT.get()) {
+            if (holder.value() == ModItems.CLASSIC_VAULT.get()) {
                 return true;
             }
         }
@@ -60,20 +59,4 @@ public class VaultNormalTierCondition implements ICondition {
         return "normal";
     }
 
-    public static class Serializer implements IConditionSerializer<VaultNormalTierCondition> {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public void write(JsonObject json, VaultNormalTierCondition value) { }
-
-        @Override
-        public VaultNormalTierCondition read(JsonObject json) {
-            return VaultNormalTierCondition.INSTANCE;
-        }
-
-        @Override
-        public ResourceLocation getID() {
-            return VaultNormalTierCondition.NAME;
-        }
-    }
 }

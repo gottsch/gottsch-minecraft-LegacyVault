@@ -17,37 +17,30 @@
  */
 package mod.gottsch.neo.legacyvault.core.recipe;
 
+import com.mojang.serialization.MapCodec;
 import mod.gottsch.neo.legacyvault.core.LegacyVault;
 import mod.gottsch.neo.legacyvault.core.recipe.condition.VaultEasyTierCondition;
 import mod.gottsch.neo.legacyvault.core.recipe.condition.VaultHardTierCondition;
 import mod.gottsch.neo.legacyvault.core.recipe.condition.VaultNormalTierCondition;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
- * @author Mark Gottschling on May 26, 2021
- *
+ * Registers the recipe tier condition codecs (json "type": "legacyvault:vault_*_tier").
  */
-@EventBusSubscriber(modid = LegacyVault.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class LegacyVaultRecipes {
+	private static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS =
+			DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, LegacyVault.MOD_ID);
 
-	@SubscribeEvent
-	public static void registerRecipeSerialziers(RegisterEvent event) {
-		if (event.getRegistryKey() == ForgeRegistries.Keys.RECIPE_SERIALIZERS) {
-			LegacyVault.LOGGER.info("in recipe subscribe event");
-			event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
-					helper -> CraftingHelper.register(VaultEasyTierCondition.Serializer.INSTANCE)
-					);
-			event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
-					helper -> CraftingHelper.register(VaultNormalTierCondition.Serializer.INSTANCE)
-					);
-			event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS,
-					helper -> CraftingHelper.register(VaultHardTierCondition.Serializer.INSTANCE)
-					);
-		}
+	static {
+		CONDITION_CODECS.register("vault_easy_tier", () -> VaultEasyTierCondition.CODEC);
+		CONDITION_CODECS.register("vault_normal_tier", () -> VaultNormalTierCondition.CODEC);
+		CONDITION_CODECS.register("vault_hard_tier", () -> VaultHardTierCondition.CODEC);
+	}
+
+	public static void register(IEventBus eventBus) {
+		CONDITION_CODECS.register(eventBus);
 	}
 }
