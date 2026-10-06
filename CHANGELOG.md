@@ -1,9 +1,22 @@
-# Changelog for Forge 1.20.1 - Legacy Vault
+# Changelog for NeoForge 1.21.1 - Legacy Vault
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.0.1] - 2026-10-06
+
+### 🐛 Fixed
+
+- **Dying reset your vault records** — after you died and respawned, Legacy Vault forgot
+  how many personal vaults you had placed, where they were, and your vault size tier.
+  That meant you could place more vaults than the server allows, `/legacyvault locations`
+  came up empty, and the forgotten state was saved for good when you logged out. Your
+  vault records now carry over through death (and returning from the End).
+- **"Vaults remaining" was wrong after respawning or changing dimension** — the vault
+  screen showed the wrong number of vaults left until you logged out and back in. It now
+  updates as soon as you respawn or change dimension.
 
 ## [3.0.0] - 2026-05-24
 
